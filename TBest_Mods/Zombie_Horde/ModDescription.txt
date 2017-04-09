@@ -1,0 +1,3 @@
+This Mods can make Zombies!
+
+Choose how many AI's, how big starting stacks, and number of starting territories for the Zombie. 
