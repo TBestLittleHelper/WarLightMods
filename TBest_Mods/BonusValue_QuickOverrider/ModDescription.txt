@@ -6,5 +6,6 @@ Typicaly N is -1 for the many of the competative templates. This mods makes it e
 
 Additionaly there are checkboxses to alter what formula is used. 
 Specsifically it can also change all bonus by N, multply by N using either the default bonus value or the number of territories in that bonus. 
+There is alos an optional X factor, that can randomely change each bonus by X (which may be posetive or negative).
 
 Bonuses that are 0 or negative can be excluded from the mod the effects of this mod.
