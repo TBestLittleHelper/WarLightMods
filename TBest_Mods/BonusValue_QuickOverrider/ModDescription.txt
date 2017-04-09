@@ -8,4 +8,4 @@ Additionaly there are checkboxses to alter what formula is used. It makes it pos
 For example: numTerriroties + N, numTerriroties * N, deafultBonusValue + N, deafultBonusValue * N. 
 There is also an optional X factor, that can randomely change each bonus by +/- X after any of the above formula is used.
 
-Bonuses that are 0 or negative can be excluded from the mod the effects of this mod.
+Bonuses that are 0 or negative can be excluded from the effects of this mod.
