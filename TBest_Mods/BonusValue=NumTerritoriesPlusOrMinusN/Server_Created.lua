@@ -5,12 +5,16 @@ function Server_Created(game, settings)
     for _, bonus in pairs(game.Map.Bonuses) do
 		--skip negative bonuses unless AllowNegative was checked
 		if (bonus.Amount > 0 or Mod.Settings.AllowNegative) then 
-			local numTerritories = numTerritories(bonus);				
+			local numTerritories = numTerritories(bonus);
 			local newValue = numTerritories + Mod.Settings.Amount;
+				if (Mod.Settings.Multiply) then
+					newValue = numTerritories * Mod.Settings.Amount;
+				end
+				
 
-			-- -100 to +100 is the maximum allowed range for overridden bonuses, never go beyond that
-			if (newValue < -100) then newValue = -100 end;
-			if (newValue > 100) then newValue = 100 end;
+			-- -1000 to +1000 is the maximum allowed range for overridden bonuses, never go beyond that
+			if (newValue < -1000) then newValue = -1000 end;
+			if (newValue > 1000) then newValue = 1000 end;
 		
 			overriddenBonuses[bonus.ID] = newValue;
 		end
