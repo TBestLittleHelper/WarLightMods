@@ -1,3 +1,8 @@
 This Mods can make Zombies!
 
-Choose how many AI's, how big starting stacks, and number of starting territories for the Zombie. 
+Zombies is a 'survival' game, in which the last standing humen player/team wins. 
+This is accoplished by having the AI surrendering when there is one humen player/team left.
+
+It is played mainly in two forms. Either Zombie-AI vs One Humen Team or ZombieAI + Humen FFA.
+
+Choose how many AI zombies, how big starting stacks,number of starting bonuses and income from the starting bonus. 
