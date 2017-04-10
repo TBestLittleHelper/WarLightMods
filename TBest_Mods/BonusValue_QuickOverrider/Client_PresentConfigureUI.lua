@@ -9,19 +9,18 @@ function Client_PresentConfigureUI(rootParent)
 	if initialValue == nil then initialValue = -1; end
 	if initialNegatives == nil then initialNegatives = true; end
 	if initialMultiply == nil then initialMultiply = false; end
-    if initialBonusValue == nil then initialBonusValue = false; end
+ 	if initialBonusValue == nil then initialBonusValue = false; end
 	if initialValueRandom == nil then initialValueRandom = 0; end
 	
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	UI.CreateLabel(vert).SetText("By default the formula used is BonusValue = numberOfTerritories + N ");	
 	UI.CreateLabel(vert).SetText("X randomely changes each bonus value AFTER the formula by any number from - X to + X");
 
-
     local horz = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(horz).SetText('N: ');
     numberInputField = UI.CreateNumberInputField(horz)
-		.SetSliderMinValue(-10)
-		.SetSliderMaxValue(10)
+		.SetSliderMinValue(-5)
+		.SetSliderMaxValue(5)
 		.SetValue(initialValue);
 		
 	UI.CreateLabel(horz).SetText('X: ');
