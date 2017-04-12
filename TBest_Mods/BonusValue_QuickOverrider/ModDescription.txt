@@ -1,11 +1,12 @@
 Each bonus is by default set according to the following formula.
 
-BonusValue = numTerritories + N
+BonusValue = numTerriotries + N
 
-Typically N is -1 for the many of the competitive templates. This mods makes it easy to make this the case on all maps.
+Typicaly N is -1 for the many of the competative templates. This mods makes it easy to make this the case on all maps.
 
-Additionally there are checkboxes to alter what formula is used. It makes it possible to override bonuses in several common ways.
-For example: numTerriroties + N, numTerriroties * N, deafultBonusValue + N, deafultBonusValue * N. 
-There is also an optional X factor, that can randomly change each bonus by +/- X after any of the above formulas is applied.
+Additionaly there are checkboxses to alter what formula is used. 
+Specsifically it can also change all bonus by N, multply by N using either the default bonus value or the number of territories in that bonus. 
+There is alos an optional X factor, that can randomely change each bonus by X (which may be posetive or negative).
 
-Bonuses that are 0 or negative can be excluded from the effects of this mod.
+Bonuses that are 0 or negative can be excluded from the mod the effects of this mod.
+You can also exclude Superbonuses (defined by T territories) , set them to 1, or let them be overridden to.
