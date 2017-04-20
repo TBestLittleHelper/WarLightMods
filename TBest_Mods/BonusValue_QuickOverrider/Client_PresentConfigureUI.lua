@@ -2,7 +2,7 @@
 function Client_PresentConfigureUI(rootParent)
 	local initialValue = Mod.Settings.Amount;
 	local initialNegatives = Mod.Settings.ChangeNegavtive;
-	local initialMultiply = Mod.Settings.ChangeMultiply;
+	local initialMultiply = Mod.Settings.Multiply;
 	local initialBonusValue = Mod.Settings.ChangeDefaultBonus;
 	local initialValueRandom = Mod.Settings.RandomFactor;
 	local initialChangeSuperBonuses = Mod.Settings.ChangeSuperBonuses;
