@@ -29,7 +29,7 @@ function isAtWar(game, order)
 	local FromTerrID = order.From; 
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --LatestTurnStanding always shows the current state of the game.
 	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --LatestTurnStanding always shows the current state of the game.
-	for(WL.CardID.Spy in ActiveCard) do
+	for WL.CardID.Spy in pairs (ActiveCard) do
 		if(TargetPlayerID = terrAttacker) then
 			return true;
 		end
