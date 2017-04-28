@@ -11,8 +11,11 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
     if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		and order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
 		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
-		and not IsDestinationNeutral(game, order) or isAtWar) then --is the destination owned by neutral? (without this check we'd stop people from attacking neutrals)
-		skipThisOrder(WL.ModOrderControl.Skip);
+		and not IsDestinationNeutral(game, order)) then --is the destination owned by neutral? (without this check we'd stop people from attacking neutrals)
+			print ("Check isAtWar");
+			if (isAtWar(game, order) == false) then
+				skipThisOrder(WL.ModOrderControl.Skip);
+			end
 
 	end
 
@@ -29,7 +32,7 @@ function isAtWar(game, order)
 	local FromTerrID = order.From; 
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --The player defending
 	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --The player attacking
-	print ("here_isAtWar");
+	print ("running_isAtWar");
 --	for _, GameOrderPlayCard in pairs (game.ServerGame.LatestTurnStanding.ActiveCard) do
 --		print (GameOrderPlayCard);
 --		if(GameOrderPlayCard == GameOrderPlayCardSpy) then
