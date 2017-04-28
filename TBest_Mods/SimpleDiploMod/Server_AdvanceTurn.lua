@@ -31,9 +31,8 @@ function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
 	if (standing.ActiveCards ~= nill) then --if active cards
 		for _, card in pairs (standing.ActiveCards) do 	
-		
-			print ("running_isAtWar");
-			print (card.Card)
+
+		print (card.Card.CardID)
 		if(card.Card.CardID == GameOrderPlayCardSpy) then --look at spy cards
 			if(card.TargetPlayerID == terrDefender) then	--if we spy on the rigth player			
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
