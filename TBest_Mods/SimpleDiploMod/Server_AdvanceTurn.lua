@@ -33,8 +33,7 @@ function isAtWar(game, order)
 		for _, card in pairs (standing.ActiveCards) do 	
 		
 			print ("running_isAtWar");
-			print (standing.ActiveCards);
-			print (card.CardID)
+			print (card.CardInstanceID)
 		if(card.CardID == GameOrderPlayCardSpy) then --look at spy cards
 			if(card.TargetPlayerID == terrDefender) then	--if we spy on the rigth player			
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
