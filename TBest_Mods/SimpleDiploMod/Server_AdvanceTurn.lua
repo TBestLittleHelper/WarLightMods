@@ -30,7 +30,7 @@ function isAtWar(game, order)
 	if (standing.ActiveCards ~= nill) then --if there are active cards
 		for _, card in pairs (standing.ActiveCards) do 	
 			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
-			print (card.ExpiresAfterTurn);
+			print (card.Card.ExpiresAfterTurn);
 				if(card.Card.CardInstanceID.TargetPlayerID == terrDefender) then	
 					return true;	--if we are at war
 				end
