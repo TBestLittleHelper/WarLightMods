@@ -2,6 +2,7 @@
 --Give players 1 card if they have no cards. Prvent stuck games
 --Make AI's able to declere war?
 --Add WL.GameOrderEvent when a player declers war (aka plays spycard)
+--IF spy is played, play a spy on the SpiedPlayer to the Spying player, so war is mutal
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
