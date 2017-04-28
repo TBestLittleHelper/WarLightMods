@@ -1,1 +1,3 @@
 Players need to declear war on each other in order to attack. This is done using Dimplomacy card, between you and the one you want to attack.
+
+A war is active as loong as there is an active Diplocard.
