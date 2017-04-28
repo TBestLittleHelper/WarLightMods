@@ -29,8 +29,8 @@ end
 
 function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
-	if (standing.ActiveCard ~= nill) then --if active cards
-		for _, card in pairs (standing.ActiveCard) do 	
+	if (standing.ActiveCards ~= nill) then --if active cards
+		for _, card in pairs (standing.ActiveCards) do 	
 		
 			print ("running_isAtWar");
 			print (game.CardID);
