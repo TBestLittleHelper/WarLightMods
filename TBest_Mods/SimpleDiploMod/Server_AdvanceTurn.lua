@@ -15,7 +15,9 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			if (isAtWar(game, order) == false) then --not at war? skip the attack
 				skipThisOrder(WL.ModOrderControl.Skip);
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is not at war with ' .. game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID));
-			end
+		--WL.GameOrderEvent.Create(playerID PlayerID, message string, visibleToOpt HashSet<PlayerID>, terrModsOpt Array<TerritoryModification>) (static) returns GameOrderEvent:
+
+		end
 
 	end
 
