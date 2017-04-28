@@ -12,9 +12,9 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		and order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
 		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
 		and not IsDestinationNeutral(game, order)) then --is the destination owned by neutral? (without this check we'd stop people from attacking neutrals)
-			print ("Check isAtWar");
-			if (isAtWar(game, order) == false) then
+			if (isAtWar(game, order) == false) then --not at war? skip the attack
 				skipThisOrder(WL.ModOrderControl.Skip);
+				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is not at war with ' .. game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID));
 			end
 
 	end
@@ -32,10 +32,10 @@ function isAtWar(game, order)
 	local FromTerrID = order.From; 
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --The player defending
 --attempts to index nil error	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --The player attacking
-	print ("running_isAtWar");
 	if (game.ActiveCard ~= nill) then
 		for _, GameOrderPlayCard in pairs (game.ActiveCard) do
-		print (GameOrderPlayCard);
+				print ("running_isAtWar");
+		print (game.ActiveCard);
 		if(GameOrderPlayCard == GameOrderPlayCardSpy) then
 			if(GameOrderPlayCard.TargetPlayerID == terrDefender) then				
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
