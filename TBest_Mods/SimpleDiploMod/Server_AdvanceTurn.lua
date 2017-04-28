@@ -1,7 +1,7 @@
 --TODO
 --Give players 1 card if they have no cards. Prvent stuck games
 --Make AI's able to declere war?
---Add WL.GameOrderEvent when a player declers war (aka plays spycard)
+--Add WL.GameOrderEvent when a player declers war (aka plays spycard) 	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
 --IF spy is played, play a spy on the SpiedPlayer to the Spying player, so war is mutal
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
@@ -27,14 +27,13 @@ end
 
 function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
-	if (standing.ActiveCards ~= nill) then --if active cards
+	if (standing.ActiveCards ~= nill) then --if there are active cards
 		for _, card in pairs (standing.ActiveCards) do 	
-			if(card.Card.CardID == WL.CardID.Spy) then --look at spy cards
+			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
 				local thisSpyCard = card.Card.CardInstanceID;
-			print (thisSpyCard.TargetPlayerID);
-				if(card.Card.CardInstanceID.TargetPlayerID == terrDefender) then	--if we spy on the rigth player			
-					addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
-				return true;
+			print (thisSpyCard.ExpiresAfterTurn );
+				if(card.Card.CardInstanceID.TargetPlayerID == terrDefender) then	
+					return true;	--if we are at war
 				end
 			end
 		end
