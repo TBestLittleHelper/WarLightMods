@@ -1,5 +1,5 @@
 function Client_PresentSettingsUI(rootParent)
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
-	UI.CreateLabel(vert).SetText('Cannot attack other players for the first ' .. Mod.Settings.NumTurns .. ' turns');
+	UI.CreateLabel(vert).SetText('Can attack other players AFTER ' .. Mod.Settings.NumTurns .. ' turns without declering war');
 end
