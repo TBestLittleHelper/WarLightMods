@@ -1,13 +1,8 @@
 --TODO
 --Give players 1 card if they have no cards. Prvent stuck games
---
-
+--Make AI's able to declere war?
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
-	--[[if (order.proxyType == 'GameOrderAttackTransfer' and order.PlayerID == 4569) then
-		print('NumTurns=' .. game.Game.NumberOfTurns .. ' Mod.Settings.NumTurns=' .. tostring(Mod.Settings.NumTurns) .. ' From=' .. game.Map.Territories[order.From].Name .. ' to=' .. game.Map.Territories[order.To].Name .. ' IsAttack=' .. tostring(result.IsAttack) .. ' DestinationOwner=' .. tostring(game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID));
-	end ]]--
-
     if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		and order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
 		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
@@ -28,14 +23,11 @@ function IsDestinationNeutral(game, order)
 end
 
 function isAtWar(game, order)
-	local TOterrID = order.To; --The order has "To" and "From" which are territory IDs
-	local FromTerrID = order.From; 
-	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --The player defending
---attempts to index nil error	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --The player attacking
-	if (game.ActiveCard ~= nill) then
-		for _, GameOrderPlayCard in pairs (game.ActiveCard) do
-				print ("running_isAtWar");
-		print (game.ActiveCard);
+	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
+	if (game.ActiveCard ~= nill) then --if active cards
+		for _, GameOrderPlayCard in pairs (game.ActiveCard) do --look at spy cards	
+			print ("running_isAtWar");
+			print (game.ActiveCard);
 		if(GameOrderPlayCard == GameOrderPlayCardSpy) then
 			if(GameOrderPlayCard.TargetPlayerID == terrDefender) then				
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
