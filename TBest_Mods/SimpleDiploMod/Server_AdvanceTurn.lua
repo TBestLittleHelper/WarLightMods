@@ -33,7 +33,7 @@ function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --The player defending
 --attempts to index nil error	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --The player attacking
 	print ("running_isAtWar");
-	if (game.ActiveCard ~= nill) do
+	if (game.ActiveCard ~= nill) then
 		for _, GameOrderPlayCard in pairs (game.ActiveCard) do
 		print (GameOrderPlayCard);
 		if(GameOrderPlayCard == GameOrderPlayCardSpy) then
