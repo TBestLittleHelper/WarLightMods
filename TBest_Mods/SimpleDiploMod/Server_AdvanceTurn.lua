@@ -16,9 +16,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, 'You are not at war with the owner of ' .. order.To, {}));
 			end
-
 	end
-
 end
 
 function IsDestinationNeutral(game, order)
@@ -31,14 +29,14 @@ function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
 	if (standing.ActiveCards ~= nill) then --if active cards
 		for _, card in pairs (standing.ActiveCards) do 	
-
-	print (card.Card.CardInstanceID.TargetPlayerIDs);
-		if(card.Card.CardID == GameOrderPlayCardSpy) then --look at spy cards
-			if(card.TargetPlayerID == terrDefender) then	--if we spy on the rigth player			
-				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
-			return true;
+			if(card.Card.CardID == GameOrderPlayCardSpy) then --look at spy cards
+			print	(card.TargetPlayerID == terrDefender);
+			print (card.Card.CardInstanceID.TargetPlayerID);
+				if(card.Card.CardInstanceID.TargetPlayerID == terrDefender) then	--if we spy on the rigth player			
+					addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
+				return true;
+				end
 			end
-		end
 		end
 	end
 	return false;
