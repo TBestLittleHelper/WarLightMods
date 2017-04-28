@@ -4,6 +4,9 @@
 --Add WL.GameOrderEvent when a player declers war (aka plays spycard)
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
+	standing = game.ServerGame.LatestTurnStanding;
+
+	
     if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		and order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
 		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
@@ -25,13 +28,13 @@ end
 
 function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
-	if (game.ActiveCard ~= nill) then --if active cards
-		for _, CardID in pairs (game.ActiveCard) do --look at spy cards	
+	if (standing.ActiveCard ~= nill) then --if active cards
+		for _, card in pairs (standing.ActiveCard) do 	
 		
 			print ("running_isAtWar");
 			print (game.CardID);
-		if(CardID == GameOrderPlayCardSpy) then
-			if(CardID.TargetPlayerID == terrDefender) then				
+		if(card == GameOrderPlayCardSpy) then --look at spy cards
+			if(CardID.TargetPlayerID == terrDefender) then	--if we spy on the rigth player			
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
 			return true;
 			end
