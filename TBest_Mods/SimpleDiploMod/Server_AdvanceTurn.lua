@@ -30,6 +30,7 @@ function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --The player defending
 	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --The player attacking
 	for _, GameOrderPlayCard in pairs (game.ServerGame.LatestTurnStanding.ActiveCard) do
+		print (GameOrderPlayCard);
 		if(GameOrderPlayCard == GameOrderPlayCardSpy) then
 			if(GameOrderPlayCard.TargetPlayerID == terrDefender) then
 				
