@@ -1,6 +1,7 @@
 --TODO
 --Give players 1 card if they have no cards. Prvent stuck games
 --Make AI's able to declere war?
+--Add WL.GameOrderEvent when a player declers war (aka plays spycard)
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
     if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
