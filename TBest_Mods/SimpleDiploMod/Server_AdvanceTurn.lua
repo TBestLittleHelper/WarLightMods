@@ -14,10 +14,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		and not IsDestinationNeutral(game, order)) then --is the destination owned by neutral? (without this check we'd stop people from attacking neutrals)
 			if (isAtWar(game, order) == false) then --not at war? skip the attack
 				skipThisOrder(WL.ModOrderControl.Skip);
-				
-		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, 'You are not at war with ' .. game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID, {}));
---addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Nuked ' .. game.Map.Territories[order.TargetTerritory].Name,{},Effect));
-		end
+				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, 'You are not at war with ' .. game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID.NAME, {}));
+			end
 
 	end
 
