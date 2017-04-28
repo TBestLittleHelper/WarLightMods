@@ -27,13 +27,14 @@ end
 function isAtWar(game, order)
 	local TOterrID = order.To; --The order has "To" and "From" which are territory IDs
 	local FromTerrID = order.From; 
-	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --LatestTurnStanding always shows the current state of the game.
-	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --LatestTurnStanding always shows the current state of the game.
-	for WL.CardID.Spy in pairs (ActiveCard) do
-		if(TargetPlayerID = terrAttacker) then
+	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[TOterrID].OwnerPlayerID; --The player defending
+	local terrAttacker = game.ServerGame.LatestTurnStanding.Territories[FromterrID].OwnerPlayerID; --The player attacking
+	for _, WL.CardID.Spy in pairs (ActiveCard) do
+		if(TargetPlayerID = terrDefender) then
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
+
 			return true;
 		end
 	end
-	
 	return false;
-		
+end	
