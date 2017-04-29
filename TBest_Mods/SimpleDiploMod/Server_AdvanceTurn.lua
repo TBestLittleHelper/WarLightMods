@@ -28,6 +28,7 @@ end
 function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
 	if (standing.ActiveCards ~= nill) then --if there are active cards
+		print (dump(ActiveCards); --debug
 		for _, card in pairs (standing.ActiveCards) do 	
 			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
 			print (card.Card.TargetPlayerID);
@@ -39,3 +40,16 @@ function isAtWar(game, order)
 	end
 	return false;
 end	
+
+function dump(o)
+    if type(o) == 'table' then
+        local s = '{ '
+        for k,v in pairs(o) do
+                if type(k) ~= 'number' then k = '"'..k..'"' end
+                s = s .. '['..k..'] = ' .. dump(v) .. ','
+        end
+        return s .. '} '
+    else
+        return tostring(o)
+    end
+end
