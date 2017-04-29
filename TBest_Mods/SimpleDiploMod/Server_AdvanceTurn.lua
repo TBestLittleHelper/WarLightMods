@@ -32,7 +32,6 @@ function isAtWar(game, order)
 			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
 			print (card.Card.TargetPlayerID);
 			print (card.TargetPlayerID);
-				print (
 				if(card.Card.CardInstanceID.TargetPlayerID == terrDefender) then	
 					return true;	--if we are at war
 				end
