@@ -34,8 +34,8 @@ function isAtWar(game, order)
 --Key TargetPlayerID does not exist for reading on GameOrderPlayCard		print (card.Card.TargetPlayerID);
 --Key TargetPlayerID does not exist for reading on ActiveCard			print (card.TargetPlayerID);
 --returns nill, 								print (card.Card.TargetPlayerID);
-print (card.ExpiresAfterTurn);
-
+	print (card.ExpiresAfterTurn); --works
+				
 				if(card.Card.CardInstanceID.TargetPlayerID == terrDefender) then	
 					return true;	--if we are at war
 				end
