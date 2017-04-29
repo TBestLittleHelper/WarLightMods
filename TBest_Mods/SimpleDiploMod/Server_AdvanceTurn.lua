@@ -28,7 +28,7 @@ end
 function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
 	if (standing.ActiveCards ~= nill) then --if there are active cards
-		print (dump(ActiveCards(); --debug
+		print (dump(ActiveCards)); --debug
 		for _, card in pairs (standing.ActiveCards) do 	
 			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
 			print (card.Card.TargetPlayerID);
