@@ -1,3 +1,5 @@
+--TODO Hardcode Zombie surrender when one non-zombie player ramians
+--TODO cap deploy
 
 function Server_AdvanceTurn_Start(game,addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
