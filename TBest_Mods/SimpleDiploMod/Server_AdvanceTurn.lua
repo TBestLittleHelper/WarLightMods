@@ -1,4 +1,6 @@
 --TODO
+--PUT ON HOLD UNTIL FIZZER FIXSES BUG
+
 --Give players 1 card if they have no cards. Prvent stuck games
 --Make AI's able to declere war?
 --Add WL.GameOrderEvent when a player declers war (aka plays spycard) 	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
