@@ -3,7 +3,7 @@
 
 function Server_Created(game, settings)
   local playersSet = {}
-	  for _, territory in pairs(standing.Territories) do
+	for _, territory in pairs(standing.Territories) do
 	  	if (not territory.IsNeutral) then
 	  		playersSet[territory.OwnerPlayerID] = true
 	  	end
@@ -20,3 +20,4 @@ function Server_Created(game, settings)
 	if (n ~= 2) then 
 		return 
 	end
+end
