@@ -4,6 +4,10 @@
 function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
+	
+	PrintProxyInfo(standing);
+	PrintProxyInfo(result);
+	
 	for _,territory in pairs(standing.Territories) do 	
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 			if (newExtraDeploy + territory.NumArmies.NumArmies < newExtraDeploy *10) then
@@ -19,9 +23,7 @@ end
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 	local playersAlive;
-	
-	PrintProxyInfo(standing);
-	PrintProxyInfo(result);
+
 	
 --need Update from FIzzer on State GamePlayerState
 end
