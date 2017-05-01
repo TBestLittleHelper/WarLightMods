@@ -3,6 +3,8 @@
 
 function Server_AdvanceTurn_Start(game,addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
+	print (Mod.Settings.ZombieID);
+	
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
 	for _,territory in pairs(standing.Territories) do 		
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then -- AI 1, in game
