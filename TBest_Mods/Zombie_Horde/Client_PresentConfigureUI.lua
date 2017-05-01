@@ -1,3 +1,4 @@
+--TODO remove Slider from ZombieID
 
 function Client_PresentConfigureUI(rootParent)
 	local initialValue1 = Mod.Settings.ExtraArmies;
