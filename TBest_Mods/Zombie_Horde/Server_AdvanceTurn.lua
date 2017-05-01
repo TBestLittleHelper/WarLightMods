@@ -5,6 +5,8 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
 	for _,territory in pairs(standing.Territories) do 	
+				
+
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 			if (newExtraDeploy + territory.NumArmies.NumArmies < newExtraDeploy *10) then
 				if (newExtraDeploy < 0) then newExtraDeploy = 0 end;	
@@ -19,12 +21,8 @@ end
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 	local playersAlive;
-	
-	PrintProxyInfo(result);
-	
---need Update from FIzzer on State GamePlayerState
+	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is  ' .. order.PlayerID,{},{}));
+--need Update from FIzzer on to see when a state of a player changes
 end
 
-function PrintProxyInfo(obj)
-   print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
-end
+
