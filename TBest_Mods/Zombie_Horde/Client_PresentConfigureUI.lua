@@ -7,16 +7,19 @@ function Client_PresentConfigureUI(rootParent)
 	if initialValue1 == nil then initialValue1 = 5; end
     	if initialZombieID == nil then initialZombieID = 69603; end
 
-    local horz1 = UI.CreateHorizontalLayoutGroup(rootParent);
-	UI.CreateLabel(horz1).SetText('Extra Armies for Zombie in EACH territory per Turn:');
-    numberInputField1 = UI.CreateNumberInputField(horz1)
+	local mainContainer = UI.CreateVerticalLayoutGroup(rootParent);
+
+	
+    local vert1 = UI.CreateHorizontalLayoutGroup(mainContainer);
+	UI.CreateLabel(vert1).SetText('Extra Armies for Zombie in EACH territory per Turn:');
+    numberInputField1 = UI.CreateNumberInputField(vert1)
 		.SetSliderMinValue(0)
 		.SetSliderMaxValue(10)
 		.SetValue(initialValue1);
 
-    local horz2 = UI.CreateHorizontalLayoutGroup(rootParent);	
-	UI.CreateLabel(horz2).SetText('The PlayerID of the Zombie:');
-    zombieInputField = UI.CreateNumberInputField(horz2)
+    local vert2 = UI.CreateHorizontalLayoutGroup(rootParent);	
+	UI.CreateLabel(vert2).SetText('The PlayerID of the Zombie:');
+    zombieInputField = UI.CreateNumberInputField(vert2)
 		.SetValue(initialZombieID);
 
 end
