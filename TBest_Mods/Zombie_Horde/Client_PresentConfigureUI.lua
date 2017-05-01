@@ -10,9 +10,10 @@ function Client_PresentConfigureUI(rootParent)
 		.SetSliderMinValue(0)
 		.SetSliderMaxValue(10)
 		.SetValue(initialValue1);
-	
-	UI.CreateLabel(horz1).SetText('The PlayerID of the Zombie:');
+
+    local horz2 = UI.CreateHorizontalLayoutGroup(rootParent);	
+	UI.CreateLabel(horz2).SetText('The PlayerID of the Zombie:');
     zombieInputField = UI.CreateNumberInputField(horz1)
-		.SetValue(initialValue1);
+		.SetValue(initialZombieID);
 
 end
