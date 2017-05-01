@@ -1,3 +1,6 @@
+--WIP add Zombie as a Mod.Setting
+--Determine Zombie at game start
+
 function Server_Created(game, settings)
   local playersSet = {}
 	  for _, territory in pairs(standing.Territories) do
