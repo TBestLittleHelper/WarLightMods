@@ -21,9 +21,6 @@ end
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 	local playersAlive;
-
-	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is  ' .. order.PlayerID,nil));
-
 --need Update from FIzzer on to see when a state of a player changes
 end
 
