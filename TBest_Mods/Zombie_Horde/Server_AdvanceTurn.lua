@@ -1,7 +1,7 @@
 --TODO Hardcode Zombie surrender when one non-zombie player ramians. Wait for FizzerUpdate
---TODO Better way of picking Zombie? Then inpuPlayerID
+--TODO Better way of picking Zombie? Then inpuPlayerID. Random Zombie, AI Zombie. Determine ID on server created and store as Mod.Settings.ZombieID
 
-function Server_AdvanceTurn_Start(game,addNewOrder)
+function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
 	for _,territory in pairs(standing.Territories) do 	
@@ -20,5 +20,12 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	standing = game.ServerGame.LatestTurnStanding;
 	local playersAlive;
 	
+	PrintProxyInfo(standing);
+	PrintProxyInfo(result);
+	
 --need Update from FIzzer on State GamePlayerState
+end
+
+function PrintProxyInfo(obj)
+   print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
