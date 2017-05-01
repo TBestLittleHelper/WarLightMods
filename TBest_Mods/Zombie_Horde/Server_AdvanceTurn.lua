@@ -14,7 +14,7 @@ function Server_AdvanceTurn_Start(game,addNewOrder)
 				if (newExtraDeploy < 0) then newExtraDeploy = 0 end;	
 				if (newExtraDeploy > 1000) then newExtraDeploy = 1000 end;	
 
-				addNewOrder(WL.GameOrderDeploy.Create(1, newExtraDeploy, territory.ID,nil,GameOrderDeploy));
+				addNewOrder(WL.GameOrderDeploy.Create(Mod.Settings.ZombieID, newExtraDeploy, territory.ID,nil,GameOrderDeploy));
 			end
 		end
 	end
