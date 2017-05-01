@@ -5,7 +5,6 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
 	
-	PrintProxyInfo(standing);
 	PrintProxyInfo(result);
 	
 	for _,territory in pairs(standing.Territories) do 	
