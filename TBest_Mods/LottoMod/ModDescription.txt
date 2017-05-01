@@ -1,0 +1,1 @@
+Picks a random winner among all players in the game
