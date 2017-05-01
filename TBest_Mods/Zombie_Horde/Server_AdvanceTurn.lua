@@ -16,9 +16,9 @@ function Server_AdvanceTurn_Start(game,addNewOrder)
 	end
 end
 
-Server_AdvanceTurn_Order(game,GameOrder,GameOrderResult)
-	standing = game.ServerGame.LatestTurnStanding;
-	local playersAlive;
+--Server_AdvanceTurn_Order(game,GameOrderResult)
+--	standing = game.ServerGame.LatestTurnStanding;
+--	local playersAlive;
 	
 --need Update fromFIzzer on GameOrderResult: The result of the order being processed. This is writable, so mods can change the result. Currently, only GameOrderAttackTransferResult has writable fields.
-
+--end
