@@ -13,7 +13,7 @@ function Client_PresentConfigureUI(rootParent)
 
     local horz2 = UI.CreateHorizontalLayoutGroup(rootParent);	
 	UI.CreateLabel(horz2).SetText('The PlayerID of the Zombie:');
-    zombieInputField = UI.CreateNumberInputField(horz1)
+    zombieInputField = UI.CreateNumberInputField(horz2)
 		.SetValue(initialZombieID);
 
 end
