@@ -2,6 +2,8 @@
 
 function Client_PresentConfigureUI(rootParent)
 	local initialValue1 = Mod.Settings.ExtraArmies;
+	local initialZombieID = Mod.Settings.ZombieID;
+	
 	if initialValue1 == nil then initialValue1 = 5; end
     	if initialZombieID == nil then initialZombieID = 69603; end
 
