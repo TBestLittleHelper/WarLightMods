@@ -1,1 +1,1 @@
-The Zombie (AI 1) deploys X new armies on each Terrotory it controlls every turn.
+The Zombie deploys X new armies on each Terrotory it controlls every turn. It will not deply more if X + Armies on the territory is more then X*10
