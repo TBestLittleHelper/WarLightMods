@@ -21,4 +21,4 @@ Server_AdvanceTurn_Order(game,GameOrder,GameOrderResult)
 	local playersAlive;
 	
 --need Update fromFIzzer on GameOrderResult: The result of the order being processed. This is writable, so mods can change the result. Currently, only GameOrderAttackTransferResult has writable fields.
-end
+
