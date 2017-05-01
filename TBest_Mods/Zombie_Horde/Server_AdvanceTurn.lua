@@ -5,8 +5,10 @@ function Server_AdvanceTurn_Start(game,addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 	print (Mod.Settings.ZombieID);
 	
+	
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
-	for _,territory in pairs(standing.Territories) do 		
+	for _,territory in pairs(standing.Territories) do 	
+		print (territory.OwnerPlayerID);
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 			if (newExtraDeploy + territory.NumArmies.NumArmies < newExtraDeploy *10) then
 				if (newExtraDeploy < 0) then newExtraDeploy = 0 end;	
