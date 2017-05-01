@@ -1,5 +1,5 @@
 --TODO Hardcode Zombie surrender when one non-zombie player ramians. Wait for FizzerUpdate
---TODO Better way of picking Zombie?
+--TODO Better way of picking Zombie? Then inpuPlayerID
 
 function Server_AdvanceTurn_Start(game,addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
@@ -16,9 +16,9 @@ function Server_AdvanceTurn_Start(game,addNewOrder)
 	end
 end
 
---Server_AdvanceTurn_Order(game,GameOrderResult)
---	standing = game.ServerGame.LatestTurnStanding;
---	local playersAlive;
+function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
+	standing = game.ServerGame.LatestTurnStanding;
+	local playersAlive;
 	
---need Update fromFIzzer on GameOrderResult: The result of the order being processed. This is writable, so mods can change the result. Currently, only GameOrderAttackTransferResult has writable fields.
---end
+--need Update from FIzzer on State GamePlayerState
+end
