@@ -23,7 +23,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	local playersAlive;
 
 	--addOrder(WL.GameOrderEvent.Create(terr.OwnerPlayerID,"Pestilence",{},{terrMod}));
-	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is  ' .. order.PlayerID,{},{order.PlayerID}));
+	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is  ' .. order.PlayerID,{},{order.To}));
 --need Update from FIzzer on to see when a state of a player changes
 end
 
