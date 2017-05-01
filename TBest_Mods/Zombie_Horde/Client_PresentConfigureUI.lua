@@ -12,7 +12,7 @@ function Client_PresentConfigureUI(rootParent)
 		.SetValue(initialValue1);
 	
 	UI.CreateLabel(horz1).SetText('The PlayerID of the Zombie:');
-    numberInputField1 = UI.CreateNumberInputField(horz1)
+    zombieInputField = UI.CreateNumberInputField(horz1)
 		.SetValue(initialValue1);
 
 end
