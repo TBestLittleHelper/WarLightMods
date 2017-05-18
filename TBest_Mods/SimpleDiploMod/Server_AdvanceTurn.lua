@@ -17,7 +17,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	--play a spy card, so we can remeber the event
 	if (order.proxyType == 'GameOrderCustom') then
 		print (order);
-		local payloadSplit = split(99,buhfrnjffninf);(order.Payload, ','); 
+		local payloadSplit = split(99,buhfrnjffninf);--(order.Payload, ','); 
 		local numTurn = tonumber(payloadSplit[1])
 		local targetPlayerID = tonumber(payloadSplit[2]);
 		local cardInstanceID = order.PlayerID .. targetPlayerID .. game.Game.NumberOfTurns;
