@@ -41,11 +41,12 @@ function CheckCreateFinalStep()
 
 		local row3 = UI.CreateHorizontalLayoutGroup(vert);
 		UI.CreateLabel(row3).SetText("How many turns would you like to declere war for?");
-		NumTurnInput = UI.CreateNumberInputField(row3).SetSliderMinValue(1);
 
 		SubmitBtn = UI.CreateButton(vert).SetText("Declere War").SetOnClick(SubmitClicked);
+		NumTurnInput = UI.CreateNumberInputField(row3).SetSliderMinValue(1);
+
 	end
-	NumArmiesInput.SetSliderMaxValue(10).SetValue(5);
+	NumTurnInput.SetSliderMaxValue(10).SetValue(5);
 
 end
 
