@@ -1,4 +1,7 @@
 --TODO, war ends event? countdown war? 
---Turns before
---Fix global war
---Edit: Is it actually possible to remove active cards. Else your system can't handle peace offers. 
+--Turns before in order list?
+--Fix global war issue
+--Switch to Menu to declere war etc. Make it last over turns.
+Optional parameters, (decleration is public or not? ditto alliences,
+
+Warmongenger trigger? war with X players, turns you PE?
