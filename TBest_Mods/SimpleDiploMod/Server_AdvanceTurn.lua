@@ -2,7 +2,10 @@ require('Utilities');
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
-
+	
+	if(order.proxyType =='GameOrderReceiveCard') then
+		Dump(order);
+	
 	if (game.Game.NumberOfTurns < Mod.Settings.NumTurns) then  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		if ( order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
 		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
