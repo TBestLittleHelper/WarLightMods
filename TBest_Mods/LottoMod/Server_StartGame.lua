@@ -4,6 +4,7 @@ function Server_Created(game, settings)
 	
 	for _,territory in pairs(game.ServerGame.LatestTurnStanding.Territories)do
 		territory.OwnerPlayerID = winner;
+		print (winner);
 	end
 	
 end
