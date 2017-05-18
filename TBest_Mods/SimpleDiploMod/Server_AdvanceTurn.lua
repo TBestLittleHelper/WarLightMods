@@ -8,7 +8,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		and not IsDestinationNeutral(game, order)) then --is the destination owned by neutral? (without this check we'd stop people from attacking neutrals)
 			if (isAtWar(game, order) == false) then --not at war? skip the attack
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, 'You are not at war with the owner of ' .. order.To, {}));
-				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
+				skipThisOrder(WL.ModOrderControl.Skip);
 			end
 	end
 	 if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
