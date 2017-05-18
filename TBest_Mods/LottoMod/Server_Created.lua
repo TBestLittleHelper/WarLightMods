@@ -1,22 +1,24 @@
 function Server_Created(game, settings)
---TODO remove all but one player territori
---TODO change settings to AutoDist.
-
-  local playersSet = {}
-	  for _, territory in pairs(standing.Territories) do
-		  if (not territory.IsNeutral) then
-			  playersSet[territory.OwnerPlayerID] = true
-  		end
-	  end
+--TODO remove all but one player territori.
+	game.Settings.AutomaticTerritoryDistribution = true;
 	
-  	local playersTable = {}
-	  local n = 0;
+	local Player = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID;
+	local winner = lucky();
+	for _,territory in pairs(game.ServerGame.LatestTurnStanding.Territories)do
+		territory.OwnerPlayerID = winner;
+		end
+	end
+end
+
+function lucky()
+	local playersTable = {}
+	local n = 0;
 	  for key, _ in pairs(playersSet) do
 		  playersTable[n] = key
 		  n = n + 1;
 	  end	
-  local winner = math.random(0,n);
-	
+  	local winner = math.random(0,n);
+	return winner;
 end
 
 function PrintProxyInfo(obj)
