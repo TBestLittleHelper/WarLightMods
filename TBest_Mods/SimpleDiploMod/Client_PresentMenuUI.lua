@@ -17,7 +17,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(row2).SetText("Offer peace treaty to this player this territory: ");
-	TargetTerritoryBtn = UI.CreateButton(row2).SetText("Select source territory...").SetOnClick(TargetTerritoryClicked);
+	TargetTerritoryBtn = UI.CreateButton(row2).SetText("Select player...").SetOnClick(TargetPlayerClicked);
 
 	local row3 = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(row1).SetText("Offer this player an allience: ");
@@ -38,23 +38,6 @@ function PlayerButton(player)
 	ret["selected"] = function() 
 		TargetPlayerBtn.SetText(name);
 		TargetPlayerID = player.ID;
-	end
-	return ret;
-end
-
-function TargetTerritoryClicked()
-	local options = map(filter(Game.LatestStanding.Territories, function(t) return t.OwnerPlayerID == Game.Us.ID end), TerritoryButton);
-	UI.PromptFromList("Select the territory you'd like to take armies from", options);
-end
-function TerritoryButton(terr)
-	local name = Game.Map.Territories[terr.ID].Name;
-	local ret = {};
-	ret["text"] = name;
-	ret["selected"] = function()
-		TargetTerritoryBtn.SetText(name);
-		TargetTerritoryID = terr.ID;
-
-		CheckCreateFinalStep();
 	end
 	return ret;
 end
