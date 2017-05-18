@@ -20,10 +20,11 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		local numTurn = tonumber(payloadSplit[1])
 		local targetPlayerID = tonumber(payloadSplit[2]);
 		local cardInstanceID = order.PlayerID .. targetPlayerID .. game.Game.NumberOfTurns;
-	--create a spy card, then play it
-	WL.NoParameterCardInstance.Create(cardInstanceID, WL.CardID.Spy);
-	addNewOrder(WL.GameOrderPlayCardSpy.Create(thisCard, order.PlayerID, targetPlayerID));
-	skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --we replaced the GameOrderCustom with a GameOrderEvent,
+		--create a spy card, then play it
+		WL.NoParameterCardInstance.Create(cardInstanceID, WL.CardID.Spy);
+		addNewOrder(WL.GameOrderPlayCardSpy.Create(thisCard, order.PlayerID, targetPlayerID));
+		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --we replaced the GameOrderCustom with a GameOrderEvent,
+	end
 end
 
 function IsDestinationNeutral(game, order)
