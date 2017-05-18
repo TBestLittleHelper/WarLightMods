@@ -1,7 +1,4 @@
 function Server_Created(game, settings)
---TODO remove all but one player territori.
---	game.Settings.AutomaticTerritoryDistribution = true;
-	
 	local Player = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID;
 	local winner = lucky();
 	
