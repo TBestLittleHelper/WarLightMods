@@ -42,8 +42,8 @@ function CheckCreateFinalStep()
 		NumTurnInput = UI.CreateNumberInputField(row3).SetSliderMinValue(1);
 
 		SubmitBtn = UI.CreateButton(vert).SetText("Declere War").SetOnClick(SubmitClicked);
+		NumArmiesInput.SetSliderMaxValue(10).SetValue(5);
 	end
-	NumArmiesInput.SetSliderMaxValue(10).SetValue(5);
 end
 
 function SubmitClicked()
