@@ -1,5 +1,12 @@
 function Server_StartGame(game, standing)
-	local Player = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID;
+	--some code is from https://github.com/kszyhoop/WarlightModPicksSwap/blob/master/SwapPicks.lua
+	local playersSet = {}
+	for _, territory in pairs(standing.Territories) do
+		if (not territory.IsNeutral) then
+			playersSet[territory.OwnerPlayerID] = true
+		end
+	end
+
 	local winner = lucky();
 		print (winner);
 	for _,territory in pairs(game.ServerGame.LatestTurnStanding.Territories)do
@@ -18,8 +25,4 @@ function lucky()
 	end	
   	local winner = math.random(0,n);
 	return winner;
-end
-
-function PrintProxyInfo(obj)
-   print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
