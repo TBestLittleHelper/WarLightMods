@@ -3,6 +3,7 @@
 --Make AI's able to declere war? Make AI alwasy being at war?
 --Add WL.GameOrderEvent when a player declers war (aka plays spycard) 	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
 --IF spy is played, play a spy on the SpiedPlayer to the Spying player, so war is mutal
+--Fix war to be between two players, not one player and the world
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
