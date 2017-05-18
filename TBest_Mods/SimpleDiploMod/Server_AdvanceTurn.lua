@@ -13,7 +13,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	end
 	 if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		and order.proxyType == 'GameOrderPlayCardSpy') then
-		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargerPlayerID, nil)); --Order is public	
+		
+		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID.DisplayName .. ' is now at war with ' .. order.TargerPlayerID, nil)); --Order is public	
 	end
 end
 
