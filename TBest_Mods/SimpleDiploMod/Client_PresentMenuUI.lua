@@ -6,18 +6,23 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	vert = UI.CreateVerticalLayoutGroup(rootParent);
 
 	if (game.Us == nil) then
-		UI.CreateLabel(vert).SetText("You cannot gift armies since you're not in the game");
+		UI.CreateLabel(vert).SetText("You cannot do anything since you're not in the game");
 		return;
 	end
 
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
-	UI.CreateLabel(row1).SetText("Gift armies to this player: ");
+	UI.CreateLabel(row1).SetText("Declere war on this player: ");
 	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
 
 
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
-	UI.CreateLabel(row2).SetText("Gift armies from this territory: ");
+	UI.CreateLabel(row2).SetText("Offer peace treaty to this player this territory: ");
 	TargetTerritoryBtn = UI.CreateButton(row2).SetText("Select source territory...").SetOnClick(TargetTerritoryClicked);
+
+	local row3 = UI.CreateHorizontalLayoutGroup(vert);
+	UI.CreateLabel(row1).SetText("Offer this player an allience: ");
+	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
+
 
 end
 
