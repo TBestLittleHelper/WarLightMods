@@ -9,7 +9,7 @@ function Server_StartGame(game, standing)
 
 	local winner = lucky(playersSet);
 		print (winner);
-	for _,territory in pairs(game.ServerGame.Territories)do
+	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
 		territory.OwnerPlayerID = winner;
 	
 	end
