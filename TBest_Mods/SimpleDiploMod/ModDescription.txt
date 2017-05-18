@@ -1,3 +1,4 @@
-Players need to declear war on each other in order to attack. This is done using the Spy card on the player you want to attack.
+Players need to declear war on each other in order to attack. This is done using this mod's Menu.
 
-A war is active as loong as there is an active spy.
+A war ends if both players delete the Mod's war Order, or it exspires. Diplomacy cards WILL still prevnt players from attacking each other.
+The mod will only last a set number of turn, to prevent stuck games.
