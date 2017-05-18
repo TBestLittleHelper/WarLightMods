@@ -8,12 +8,12 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	vert = UI.CreateVerticalLayoutGroup(rootParent);
 
 	if (game.Us == nil) then
-		UI.CreateLabel(vert).SetText("You cannot gift armies since you're not in the game");
+		UI.CreateLabel(vert).SetText("You cannot conduct diplomatic actions since you're not in the game");
 		return;
 	end
 
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
-	UI.CreateLabel(row1).SetText("Gift armies to this player: ");
+	UI.CreateLabel(row1).SetText("Decler war on this player: ");
 	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
 
 
@@ -26,7 +26,7 @@ end
 
 function TargetPlayerClicked()
 	local options = map(Game.Game.Players, PlayerButton);
-	UI.PromptFromList("Select the player you'd like to give armies to", options);
+	UI.PromptFromList("Select the player you'd like to declere war on", options);
 end
 function PlayerButton(player)
 	local name = player.DisplayName(nil, false);
@@ -71,7 +71,7 @@ function CheckCreateFinalStep()
 end
 
 function SubmitClicked()
-	local msg = 'Gifting ' .. NumArmiesInput.GetValue() .. ' armies from ' .. Game.Map.Territories[TargetTerritoryID].Name .. ' to ' .. Game.Game.Players[TargetPlayerID].DisplayName(nil, false);
+	local msg = 'Declere War on ' .. Game.Game.Players[TargetPlayerID].DisplayName(nil, false);
 
 	local payload = NumArmiesInput.GetValue() .. ',' .. TargetTerritoryID .. ',' .. TargetPlayerID;
 
