@@ -2,12 +2,7 @@ require('Utilities');
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
-	
-	if(order.proxyType =='GameOrderReceiveCard') then
-		print (order);
-		print 'here';
-	end
-	
+		
 	if (game.Game.NumberOfTurns < Mod.Settings.NumTurns) then  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		if ( order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
 		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
@@ -19,7 +14,6 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		end
 	end
 		if (order.proxyType == 'GameOrderPlayCardSpy') then
-			Dump(order); --debug
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargetPlayerID, nil)); --Order is public	
 		end
 	--play a spy card, so we can remeber the event
@@ -30,10 +24,12 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		local targetPlayerID = tonumber(payloadSplit[2]);
 		local cardInstanceID = order.PlayerID .. targetPlayerID .. game.Game.NumberOfTurns;
 		--create a spy card, then play it
+--WL.NoParameterCardInstance.Create(cardInstanceID CardInstanceID, cardID CardID) (static) returns NoParameterCardInstance:
 --WL.GameOrderReceiveCard.Create(cardID Array<CardID>, playerID PlayerID, instancesCreated Array<CardInstance>) (static) returns GameOrderReceiveCard:
+--addNewOrder(WL.GameOrderReceiveCard.Create(<WL.CardID.Spy>, order.PlayerID, cardInstanceID));
 
-		addNewOrder(WL.GameOrderReceiveCard.Create(WL.CardID.Spy, order.PlayerID, cardInstanceID));
 		addNewOrder(WL.GameOrderPlayCardSpy.Create(cardInstanceID, order.PlayerID, targetPlayerID));
+
 		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --we replaced the GameOrderCustom with a GameOrderEvent,
 	end
 end
