@@ -1,10 +1,10 @@
 function Server_Created(game, settings)
 	local Player = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID;
 	local winner = lucky();
-	
+		print (winner);
 	for _,territory in pairs(game.ServerGame.LatestTurnStanding.Territories)do
 		territory.OwnerPlayerID = winner;
-		print (winner);
+	
 	end
 	
 end
