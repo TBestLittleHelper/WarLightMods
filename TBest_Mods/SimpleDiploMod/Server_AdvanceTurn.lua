@@ -35,11 +35,9 @@ function isAtWar(game, order)
 			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
 --Key TargetPlayerID does not exist for reading on GameOrderPlayCard		print (card.Card.TargetPlayerID);
 --Key TargetPlayerID does not exist for reading on ActiveCard			print (card.TargetPlayerID);
-	print (card.Card.GameOrderPlayCardSpy.TargetPlayerID
-); --works
+--	print (card.Card.GameOrderPlayCardSpy.TargetPlayerID); --works
 				
-				if(card.Card.GameOrderPlayCardSpy.TargetPlayerID
- == terrDefender) then	
+		if(card.Card.GameOrderPlayCardSpy.TargetPlayerID == terrDefender) then	
 					return true;	--if we are at war
 				end
 			end
