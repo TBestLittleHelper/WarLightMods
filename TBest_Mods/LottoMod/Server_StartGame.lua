@@ -7,7 +7,7 @@ function Server_StartGame(game, standing)
 		end
 	end
 
-	local winner = lucky();
+	local winner = lucky(playersSet);
 		print (winner);
 	for _,territory in pairs(game.ServerGame.LatestTurnStanding.Territories)do
 		territory.OwnerPlayerID = winner;
@@ -16,7 +16,7 @@ function Server_StartGame(game, standing)
 	
 end
 
-function lucky()
+function lucky(playersSet)
 	local playersTable = {}
 	local n = 0;
 	for key, _ in pairs(playersSet) do
