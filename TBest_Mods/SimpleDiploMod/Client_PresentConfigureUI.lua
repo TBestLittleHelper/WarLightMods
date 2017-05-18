@@ -17,7 +17,7 @@ function Client_PresentConfigureUI(rootParent)
 	
 	local horz1 = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(horz1).SetText("Turns from decering war, until you can attack");
-	numberInputField = UI.timeToWarInputField(horz1)
+	timeToWarInitial = UI.CreateNumberInputField(horz1)
 		.SetSliderMinValue(0)
 		.SetSliderMaxValue(5)
 		.SetValue(timeToWarInitial);
