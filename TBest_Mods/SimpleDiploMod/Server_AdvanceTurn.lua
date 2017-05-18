@@ -1,3 +1,5 @@
+require('Utilities');
+
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 
