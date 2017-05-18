@@ -1,3 +1,5 @@
+require('Utilities');
+
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	Game = game;
 
