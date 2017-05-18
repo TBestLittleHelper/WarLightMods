@@ -15,6 +15,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(row1).SetText("Decler war on this player: ");
 	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
+	
+	CheckCreateFinalStep();
+
 end
 
 function TargetPlayerClicked()
@@ -28,7 +31,6 @@ function PlayerButton(player)
 	ret["selected"] = function() 
 		TargetPlayerBtn.SetText(name);
 		TargetPlayerID = player.ID;
-		CheckCreateFinalStep();
 
 	end
 	return ret;
