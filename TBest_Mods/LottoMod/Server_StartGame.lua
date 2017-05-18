@@ -1,4 +1,4 @@
-function Server_Created(game, settings)
+function Server_StartGame(game, settings)
 	local Player = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID;
 	local winner = lucky();
 		print (winner);
