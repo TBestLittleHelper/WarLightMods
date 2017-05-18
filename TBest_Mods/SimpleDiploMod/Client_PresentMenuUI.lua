@@ -50,7 +50,7 @@ function CheckCreateFinalStep()
 end
 
 function SubmitClicked()
-	local msg = 'Declere War on ' .. Game.Game.Players[TargetPlayerID].DisplayName(nil, false);
+	local msg = 'Declere War on ' .. Game.Game.Players[TargetPlayerID].DisplayName(nil, false) .. ' for ' NumTurnInput.GetValue() .. 'turns';
 
 	local payload = NumTurnInput.GetValue() .. ',' .. TargetPlayerID;
 
