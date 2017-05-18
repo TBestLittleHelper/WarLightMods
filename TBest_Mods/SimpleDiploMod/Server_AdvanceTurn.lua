@@ -16,7 +16,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		local playerOne = order.PlayerID;
 		local playerTwo = order.TargetPlayerID;
 		local turnsLeftOfWar = 3; --for now harcode to  3 turns
-		addNewOrder(WL.GameOrderCustom.Create(Game.Us.ID, 'Mod System Order. DO NOT DELETE THIS ORDER',playerOne, playerTwo, turnsLeftOfWar));
+		addNewOrder(WL.GameOrderCustom.Create(order.PlayerID, 'Mod System Order. DO NOT DELETE THIS ORDER',playerOne, playerTwo, turnsLeftOfWar));
 	end
 end
 
