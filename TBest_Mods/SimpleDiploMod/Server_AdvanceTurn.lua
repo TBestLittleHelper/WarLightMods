@@ -12,8 +12,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			end
 	end
 	 if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
-		and order.proxyType == 'GameOrderPlayCardDiplomacy') then  --look at diplo
-		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerOne .. ' is now at war with ' .. order.PlayerTwo, {}));	
+		and order.proxyType == 'GameOrderPlayCardSpy') then  --look at diplo
+		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargerPlayerID, {}));	
 	end
 end
 
@@ -28,9 +28,10 @@ function isAtWar(game, order)
 	if (standing.ActiveCards ~= nill) then --if there are active cards
 		for _, card in pairs (standing.ActiveCards) do 	
 			if(card.Card.CardID == WL.CardID.Diplomacy) then --look only at diplo cards
-				if(card.Card.PlayerOne ==terrDefender or order.PlayerID
-				and card.Card.PlayerTwo ==terrDefender or order.PlayerID) then	
-					return true;	--if we are at war
+				if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
+					if(card.Card.TargetPlayerID == terrDefender) then
+						return true;	--if we are at war
+					end	
 				end
 			end
 		end
