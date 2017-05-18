@@ -15,7 +15,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargetPlayerID, nil)); --Order is public	
 		local playerOne = order.PlayerID;
 		local playerTwo = order.TargetPlayerID;
-		local turnsLeftOfWar = CardGameSpy.Duration;
+		local turnsLeftOfWar = Cards.CardGameSpy.Duration;
 		addNewOrder(WL.GameOrderCustom.Create(Game.Us.ID, 'Mod System Order. DO NOT DELETE THIS ORDER',playerOne, playerTwo, turnsLeftOfWar));
 	end
 end
