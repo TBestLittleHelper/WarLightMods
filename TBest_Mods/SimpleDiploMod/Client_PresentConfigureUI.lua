@@ -8,8 +8,8 @@ function Client_PresentConfigureUI(rootParent)
     local horz = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(horz).SetText("This mod will only be active until turn");
     numberInputField = UI.CreateNumberInputField(horz)
-		.SetSliderMinValue(1)
-		.SetSliderMaxValue(30)
+		.SetSliderMinValue(50)
+		.SetSliderMaxValue(100)
 		.SetValue(turnsInitial);
 
 end
