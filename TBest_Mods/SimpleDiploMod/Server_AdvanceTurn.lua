@@ -14,9 +14,16 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		if (order.proxyType == 'GameOrderPlayCardSpy') then
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargetPlayerID, nil)); --Order is public	
 		end
-	
-	--TODO	if (order.proxyType == 'GameOrderCustom') then
-			
+	--play a spy card, so we can remeber the event
+	if (order.proxyType == 'GameOrderCustom') then
+		local payloadSplit = split(order.Payload, ','); 
+		local numTurn = tonumber(payloadSplit[1])
+		local targetPlayerID = tonumber(payloadSplit[2]);
+		local cardInstanceID = order.PlayerID .. targetPlayerID .. game.Game.NumberOfTurns;
+	--create a spy card, then play it
+	WL.NoParameterCardInstance.Create(cardInstanceID, WL.CardID.Spy);
+	addNewOrder(WL.GameOrderPlayCardSpy.Create(thisCard, order.PlayerID, targetPlayerID);
+	skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --we replaced the GameOrderCustom with a GameOrderEvent,
 end
 
 function IsDestinationNeutral(game, order)
