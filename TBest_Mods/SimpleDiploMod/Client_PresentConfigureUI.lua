@@ -4,7 +4,7 @@ function Client_PresentConfigureUI(rootParent)
 	local timeToWarInitial = Mod.Settings.TimeToWar;
 	
 	if turnsInitial == nil then turnsInitial = 10; end
-    	if timeToWarInitial == nile then timeToWarInitial = 0; end
+    	if timeToWarInitial == nil then timeToWarInitial = 0; end
 	
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
