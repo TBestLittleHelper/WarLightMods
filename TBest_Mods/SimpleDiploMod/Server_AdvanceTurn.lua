@@ -1,10 +1,3 @@
---TODO
---Give players 1 card if they have no cards. Prvent stuck games
---Make AI's able to declere war? Make AI alwasy being at war?
---Add WL.GameOrderEvent when a player declers war (aka plays spycard) 	addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,'Is at war with ' .. terrDefender));
---IF spy is played, play a spy on the SpiedPlayer to the Spying player, so war is mutal
---Fix war to be between two players, not one player and the world
-
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 
@@ -19,8 +12,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			end
 	end
 	 if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
-		and order.proxyType == 'GameOrderPlayCardSpy') then  --look at spycard
-		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' Declered war with ' .. order.TargetPlayerID, {}));	
+		and order.proxyType == 'GameOrderPlayCardDiplomacy') then  --look at diplo
+		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerOne .. ' is now at war with ' .. order.PlayerTwo, {}));	
 	end
 end
 
@@ -34,8 +27,9 @@ function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
 	if (standing.ActiveCards ~= nill) then --if there are active cards
 		for _, card in pairs (standing.ActiveCards) do 	
-			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
-				if(card.Card.TargetPlayerID == terrDefender) then	
+			if(card.Card.CardID == WL.CardID.Diplomacy) then --look only at diplo cards
+				if(card.Card.PlayerOne ==terrDefender or order.PlayerID
+				and card.Card.PlayerTwo ==terrDefender or order.PlayerID) then	
 					return true;	--if we are at war
 				end
 			end
