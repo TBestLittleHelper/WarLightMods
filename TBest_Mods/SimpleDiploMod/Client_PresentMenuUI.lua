@@ -57,4 +57,6 @@ function SubmitClicked()
 	local orders = Game.Orders;
 	table.insert(orders, WL.GameOrderCustom.Create(Game.Us.ID, msg, payload));
 	Game.Orders = orders;
+	
+	Dump(Game.Orders);
 end
