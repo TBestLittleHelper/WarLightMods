@@ -14,6 +14,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		end
 	end
 		if (order.proxyType == 'GameOrderPlayCardSpy') then
+			Dump(order); --debug
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargetPlayerID, nil)); --Order is public	
 		end
 	--play a spy card, so we can remeber the event
