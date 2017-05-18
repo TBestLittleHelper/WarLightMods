@@ -20,8 +20,6 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	 if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		and order.proxyType == 'GameOrderPlayCardSpy') then  --look at spycard
 		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,' Declered war with ' .. order.TargetPlayerID, {}));	
-		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, 'You are not at war with the owner of ' .. order.To, {}));
-
 	end
 end
 
