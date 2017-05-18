@@ -27,10 +27,9 @@ function isAtWar(game, order)
 	local terrDefender = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID; --The player defending
 	if (standing.ActiveCards ~= nill) then --if there are active cards
 		for _, card in pairs (standing.ActiveCards) do 	
-			if(card.Card.CardID == WL.CardID.Diplomacy) then --look only at diplo cards
-				if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
-					if(card.Card.TargetPlayerID == terrDefender) then
-						return true;	--if we are at war
+			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
+				if(card.Card.TargetPlayerID == terrDefender) then
+					return true;	--if we are at war
 					end	
 				end
 			end
