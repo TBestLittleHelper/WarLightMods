@@ -1,5 +1,6 @@
 function Server_Created(game, settings)
---TODO change state of non-winners
+--TODO remove all but one player territori
+--TODO change settings to AutoDist.
 
   local playersSet = {}
 	  for _, territory in pairs(standing.Territories) do
