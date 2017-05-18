@@ -1,7 +1,7 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	Game = game;
 
-	setMaxSize(450, 250);
+	setMaxSize(900, 600);
 
 	vert = UI.CreateVerticalLayoutGroup(rootParent);
 
@@ -21,7 +21,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 
 	local row3 = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(row1).SetText("Offer this player an allience: ");
-	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
+	TargetPlayerBtn = UI.CreateButton(row3).SetText("Select player...").SetOnClick(TargetPlayerClicked);
 
 
 end
