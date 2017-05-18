@@ -9,6 +9,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, 'You are not at war with the owner of ' .. game.Map.Territories[order.To].Name, {}));
 				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 			end
+		end
 	end
 		if (order.proxyType == 'GameOrderPlayCardSpy') then
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargetPlayerID, nil)); --Order is public	
