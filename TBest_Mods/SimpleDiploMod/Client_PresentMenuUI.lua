@@ -53,7 +53,6 @@ function SubmitClicked()
 	local msg = 'Declered War on ' .. Game.Game.Players[TargetPlayerID].DisplayName(nil, false) .. ' for ' .. NumTurnInput.GetValue() .. ' turns';
 
 	local payload = NumTurnInput.GetValue() .. ',' .. TargetPlayerID;
-	print (payload);
 	local orders = Game.Orders;
 	table.insert(orders, WL.GameOrderCustom.Create(Game.Us.ID, msg, payload));
 	Game.Orders = orders;
