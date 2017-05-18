@@ -5,6 +5,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	
 	if(order.proxyType =='GameOrderReceiveCard') then
 		print (order);
+		print 'here';
 	end
 	
 	if (game.Game.NumberOfTurns < Mod.Settings.NumTurns) then  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
