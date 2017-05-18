@@ -1,8 +1,7 @@
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 
-	
-    if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
+	if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		and order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
 		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
 		and not IsDestinationNeutral(game, order)) then --is the destination owned by neutral? (without this check we'd stop people from attacking neutrals)
@@ -11,7 +10,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 			end
 	end
-	 if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
+	if (game.Game.NumberOfTurns < Mod.Settings.NumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
 		and order.proxyType == 'GameOrderPlayCardSpy') then
 		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.PlayerID .. ' is now at war with ' .. order.TargetPlayerID, nil)); --Order is public	
 		local playerOne = order.PlayerID;
@@ -34,8 +33,8 @@ function isAtWar(game, order)
 			if(card.Card.CardID == WL.CardID.Spy) then --look only at spy cards
 				if(card.Card.TargetPlayerID == terrDefender) then
 					return true;	--if we are at war
-					end	
-				end
+				end	
+			
 			end
 		end
 	end
