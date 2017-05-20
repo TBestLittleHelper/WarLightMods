@@ -1,4 +1,4 @@
-function Server_StartGame(game, standing)
+function Server_AdvanceTurn(game, standing,addNewOrder)
 	--some code is from https://github.com/kszyhoop/WarlightModPicksSwap/blob/master/SwapPicks.lua
 	local playersSet = {}
 	for _, territory in pairs(standing.Territories) do
@@ -8,12 +8,10 @@ function Server_StartGame(game, standing)
 	end
 
 	local winner = lucky(playersSet);
-		print (winner);
 	for _,territory in pairs(standing.Territories)do
 		territory.OwnerPlayerID = winner;
-	
 	end
-	
+	addNewOrder(WL.GameOrderEvent.Create(winner,"Won the lottery!",nil));
 end
 
 function lucky(playersSet)
