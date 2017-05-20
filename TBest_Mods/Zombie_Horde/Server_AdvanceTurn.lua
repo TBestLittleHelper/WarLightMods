@@ -24,6 +24,8 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
       end
     end
     print(found)
+DumpTable(found);
+DumpProxy(Order66[found]);
 
 	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
