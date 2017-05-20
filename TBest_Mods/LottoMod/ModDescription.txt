@@ -1,1 +1,1 @@
-Picks a random winner among all players in the game. Make sure to turn AutoDistribution on, to skip wastful picking.
+Picks a random winner among all players in the game, during the first turn. Make sure to turn AutoDistribution on, to skip wastful picking.
