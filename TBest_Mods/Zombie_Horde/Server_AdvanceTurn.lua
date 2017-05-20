@@ -17,7 +17,7 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 			end
 		end
 	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
-	end
+	else
 	for _,territory in pairs(standing.Territories) do 	
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 			if (newExtraDeploy + territory.NumArmies.NumArmies < newExtraDeploy *10) then
