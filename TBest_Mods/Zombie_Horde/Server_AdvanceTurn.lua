@@ -12,7 +12,7 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 			terrMod2.SetArmiesTo=1;
 			Order66[CurrentIndex]=terrMod2;
 			CurrentIndex=CurrentIndex+1;
-	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
+	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 
 
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
@@ -27,7 +27,7 @@ print (CurrentIndex)
 DumpTable(Order66[CurrentIndex]);
 DumpProxy(Order66[CurrentIndex]);
 
-	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
+	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
 	for _,territory in pairs(standing.Territories) do 	
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
