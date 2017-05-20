@@ -16,7 +16,7 @@ function Server_AdvanceTurn_Start (game,addNewOrder)
 		winnerCapturesAll[CurrentIndex]=terrMod;
 		CurrentIndex=CurrentIndex+1;
 	end
-print (standing.Game.Players[winner].DisplayName(nil, true)
+print (standing.Game.Players[winner].DisplayName(nil, true));
 --	DisplayName(standingOpt GameStanding, includeAIWas boolean) returns string:
 
 	addNewOrder(WL.GameOrderEvent.Create(winner,"Won the lottery!",nil,winnerCapturesAll));
