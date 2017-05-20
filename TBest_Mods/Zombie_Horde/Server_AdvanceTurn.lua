@@ -16,10 +16,9 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 --the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
 			end
 		end
-	local value = nil;
 	local found = nil;
 	for i=1,Order66.CurrentIndex do
-      	if Order66[i] == value then
+      	if Order66[i] == nil then
 		found = i      -- save value of `i'
       	  break
       end
