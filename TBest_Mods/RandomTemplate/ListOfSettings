@@ -1,25 +1,25 @@
-AIsSurrenderWhenOneHumanRemains boolean:
-AllowAttackOnly boolean:
-AllowPercentageAttacks boolean:
-AllowTransferOnly boolean:
-AllowVacations boolean:
-ArmyCap Nullable<number>:
-AtStartDivideIntoTeamsOf integer:
-AutoBootEnabled boolean:
-AutoBootTime TimeSpan:
-AutoForceJoinTime TimeSpan:
-AutomaticTerritoryDistribution boolean:
+AIsSurrenderWhenOneHumanRemains boolean: TRUE
+AllowAttackOnly boolean:  RANDOM
+AllowPercentageAttacks boolean: RANDOM
+AllowTransferOnly boolean: RANDOM
+AllowVacations boolean: UP TO HOST
+ArmyCap Nullable<number>: RANDOM
+AtStartDivideIntoTeamsOf integer: RANDOM
+AutoBootEnabled boolean:UP TO HOST
+AutoBootTime TimeSpan:UP TO HOST
+AutoForceJoinTime TimeSpan:UP TO HOST
+AutomaticTerritoryDistribution boolean:RANDOM
 AutoStartGame boolean:
 BankDuration integer:
 BankingBootTimes Nullable<integer>:
-BonusArmyPer integer:
-BootedPlayersTurnIntoAIs boolean:
-CardHoldingsAndReceivesFogged boolean:
-CardPlayingsFogged boolean:
-Cards Table<CardID,CardGame>:
+BonusArmyPer integer:RANDOM
+BootedPlayersTurnIntoAIs boolean:RANDOM
+CardHoldingsAndReceivesFogged boolean:RANDOM
+CardPlayingsFogged boolean:RANDOM
+Cards Table<CardID,CardGame>:RANDOM
 CoinEntryFee integer:
 CoinPrize integer:
-Commanders boolean:
+Commanders boolean:RANDOM
 Created DateTime:
 CustomScenario CustomScenario:
 DefenseKillRate number:
