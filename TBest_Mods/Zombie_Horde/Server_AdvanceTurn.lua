@@ -19,10 +19,11 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	local found = nil;
 	for i=1, 100 do
       	if Order66[i] == nil then
-		found = i -1;     -- save value of `i'
+		found = i ;     -- save value of `i'
       	  break
       end
     end
+print (CurrentIndex)
     print(found)
 DumpTable(Order66[found]);
 DumpProxy(Order66[found]);
