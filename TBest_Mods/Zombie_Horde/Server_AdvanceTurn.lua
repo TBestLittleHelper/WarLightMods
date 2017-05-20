@@ -1,4 +1,3 @@
---TODO Hardcode Zombie surrender in a better way, 
 --TODO Better way of picking Zombie? Then inpuPlayerID. Random Zombie, AI Zombie. Determine ZombieID on server created and store as Mod.Settings.ZombieID
 
 function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
