@@ -1,12 +1,18 @@
 --TODO Hardcode Zombie surrender when one non-zombie player ramians. Wait for FizzerUpdate
---TODO Better way of picking Zombie? Then inpuPlayerID. Random Zombie, AI Zombie. Determine ID on server created and store as Mod.Settings.ZombieID
+--TODO Better way of picking Zombie? Then inpuPlayerID. Random Zombie, AI Zombie. Determine ZombieID on server created and store as Mod.Settings.ZombieID
 
 function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
-	for _,territory in pairs(standing.Territories) do 	
-				
-
+	if (playersAlive() > 2) then
+		addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,'Last surviver wins',nil));
+		for _,territory in pairs(standing.Territories) do 	
+			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
+				territory.SetOwnerOpt=WL.PlayerID.Neutral;
+			end
+		end
+	else	
+		for _,territory in pairs(standing.Territories) do 	
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 			if (newExtraDeploy + territory.NumArmies.NumArmies < newExtraDeploy *10) then
 				if (newExtraDeploy < 0) then newExtraDeploy = 0 end;	
@@ -24,4 +30,17 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 --need Update from FIzzer on to see when a state of a player changes
 end
 
-
+function playersAlive()
+	local playersSet = {}
+	for _, territory in pairs(standing.Territories) do
+		if (not territory.IsNeutral) then
+			playersSet[territory.OwnerPlayerID] = true
+		end
+	local playersTable = {}
+	local n = 0;
+	for key, _ in pairs(playersSet) do
+		playersTable[n] = key
+		n = n + 1;
+	end	
+	return n;
+end
