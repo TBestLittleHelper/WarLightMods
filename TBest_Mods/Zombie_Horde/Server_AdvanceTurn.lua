@@ -8,13 +8,8 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	Order66={};
 	if (playersAlive() == 2) then --update to count teams, not players
 		for _,territory in pairs(standing.Territories) do 
-			terrMod2=WL.TerritoryModification.Create(territory.ID);
-			terrMod2.SetArmiesTo=1;
 			Order66[CurrentIndex]=terrMod2;
 			CurrentIndex=CurrentIndex+1;
-	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
-
-
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 				terrMod = WL.TerritoryModification.Create(territory.ID);
 				terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
@@ -23,10 +18,6 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 --the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
 			end
 		end
-print (CurrentIndex)
-DumpTable(Order66[CurrentIndex]);
-DumpProxy(Order66[CurrentIndex]);
-
 	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
 	for _,territory in pairs(standing.Territories) do 	
@@ -55,15 +46,4 @@ function playersAlive()
 		n = n + 1;
 	end	
 	return n;
-end
-
-function DumpTable(tbl)
-    for k,v in pairs(tbl) do
-        print('k = ' .. tostring(k) .. ' (' .. type(k) .. ') ' .. ' v = ' .. tostring(v) .. ' (' .. type(v) .. ')');
-    end
-end
-
-function DumpProxy(obj)
-
-    print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
