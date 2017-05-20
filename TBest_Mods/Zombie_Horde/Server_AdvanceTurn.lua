@@ -4,15 +4,15 @@
 function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
-	CurrentIndex=0;
+	CurrentIndex=1;
 	Order66={};
 	if (playersAlive() == 2) then --update to count teams, not players
 		for _,territory in pairs(standing.Territories) do 
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
-				CurrentIndex=CurrentIndex+1;
 				terrMod = WL.TerritoryModification.Create(territory.ID);
 				terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
 				Order66[CurrentIndex]=terrMod;
+				CurrentIndex=CurrentIndex+1;
 --the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
 			end
 		end
