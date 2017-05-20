@@ -16,17 +16,9 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 --the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
 			end
 		end
-	local found = nil;
-	for i=1, 100 do
-      	if Order66[i] == nil then
-		found = i ;     -- save value of `i'
-      	  break
-      end
-    end
 print (CurrentIndex)
-    print(found)
-DumpTable(Order66[found]);
-DumpProxy(Order66[found]);
+DumpTable(Order66[CurrentIndex]);
+DumpProxy(Order66[CurrentIndex]);
 
 	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
