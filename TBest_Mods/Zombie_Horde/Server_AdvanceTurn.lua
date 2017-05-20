@@ -31,6 +31,7 @@ function playersAlive()
 		if (not territory.IsNeutral) then
 			playersSet[territory.OwnerPlayerID] = true
 		end
+	end
 	local playersTable = {}
 	local n = 0;
 	for key, _ in pairs(playersSet) do
