@@ -1,5 +1,4 @@
 function Server_AdvanceTurn_Start (game,addNewOrder)
-	--some code is from https://github.com/kszyhoop/WarlightModPicksSwap/blob/master/SwapPicks.lua
 	standing = game.ServerGame.LatestTurnStanding;
 	local playersSet = {}
 	local CurrentIndex=1;
@@ -10,7 +9,6 @@ function Server_AdvanceTurn_Start (game,addNewOrder)
 			playersSet[territory.OwnerPlayerID] = true
 		end
 	end
-
 	local winner = lucky(playersSet);
 	for _,territory in pairs(standing.Territories)do
 		terrMod = WL.TerritoryModification.Create(territory.ID);
@@ -18,9 +16,12 @@ function Server_AdvanceTurn_Start (game,addNewOrder)
 		winnerCapturesAll[CurrentIndex]=terrMod;
 		CurrentIndex=CurrentIndex+1;
 	end
+print (standing.Game.Players[winner].DisplayName(nil, true)
+--	DisplayName(standingOpt GameStanding, includeAIWas boolean) returns string:
+
 	addNewOrder(WL.GameOrderEvent.Create(winner,"Won the lottery!",nil,winnerCapturesAll));
 end
-
+--some code is from https://github.com/kszyhoop/WarlightModPicksSwap/blob/master/SwapPicks.lua
 function lucky(playersSet)
 	local playersTable = {}
 	local n = 0;
