@@ -5,7 +5,7 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
 	if (playersAlive() > 2) then
---		addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,'Last surviver wins',nil));
+		order66={};
 		for _,territory in pairs(standing.Territories) do 
 			CurrentIndex=0;
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
