@@ -8,6 +8,13 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	Order66={};
 	if (playersAlive() == 2) then --update to count teams, not players
 		for _,territory in pairs(standing.Territories) do 
+			terrMod2=WL.TerritoryModification.Create(terr.ID);
+			terrMod2.SetArmiesTo=math.max(Count-Mod.Settings.PestilenceStrength,0);
+			Order66[CurrentIndex]=terrMod2;
+			CurrentIndex=CurrentIndex+1;
+	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
+
+
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 				terrMod = WL.TerritoryModification.Create(territory.ID);
 				terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
