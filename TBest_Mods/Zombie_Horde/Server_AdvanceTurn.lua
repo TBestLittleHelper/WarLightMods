@@ -8,7 +8,7 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	Order66={};
 	if (playersAlive() == 2) then --update to count teams, not players
 		for _,territory in pairs(standing.Territories) do 
-			terrMod2=WL.TerritoryModification.Create(terr.ID);
+			terrMod2=WL.TerritoryModification.Create(territory.ID);
 			terrMod2.SetArmiesTo=1;
 			Order66[CurrentIndex]=terrMod2;
 			CurrentIndex=CurrentIndex+1;
