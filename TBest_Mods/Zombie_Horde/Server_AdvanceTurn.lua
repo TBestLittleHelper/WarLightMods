@@ -18,7 +18,7 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 		end
 	local value = nil;
 	local found = nil;
-	for i=1,Order66.n do
+	for i=1,Order66.CurrentIndex do
       	if Order66[i] == value then
 		found = i      -- save value of `i'
       	  break
