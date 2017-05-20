@@ -21,8 +21,6 @@ function Client_PresentConfigureUI(rootParent)
 	local mainContainer = UI.CreateVerticalLayoutGroup(rootParent);
 	
 	local vert = UI.CreateVerticalLayoutGroup(mainContainer);
-	UI.CreateLabel(vert).SetText("By default the formula used is BonusValue = numberOfTerritories + N ");	
-	UI.CreateLabel(vert).SetText("X randomely changes each bonus value AFTER the formula by any number from - X to + X");
 	UI.CreateLabel(vert).SetText("T defines the minimum territories for a superbonus. By default superbonuses are NOT changed.");	
         	
 	local slidersNXT = UI.CreateHorizontalLayoutGroup(mainContainer);
