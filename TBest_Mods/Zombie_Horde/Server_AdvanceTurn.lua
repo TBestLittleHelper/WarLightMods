@@ -4,9 +4,9 @@
 function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
 	standing = game.ServerGame.LatestTurnStanding;
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
+	CurrentIndex=1;
+	Order66={};
 	if (playersAlive() == 2) then --update to count teams, not players
-		Order66={};
-		CurrentIndex=1;
 		for _,territory in pairs(standing.Territories) do 
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 				terrMod = WL.TerritoryModification.Create(territory.ID);
@@ -16,7 +16,6 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 --the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
 			end
 		end
-		addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",{},Order66));
 	else	
 		for _,territory in pairs(standing.Territories) do 	
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
@@ -29,6 +28,7 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 			end
 		end
 	end
+	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 end
 
 function playersAlive()
