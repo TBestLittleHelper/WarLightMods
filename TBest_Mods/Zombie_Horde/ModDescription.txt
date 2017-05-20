@@ -1,4 +1,4 @@
-The Zombie deploys X new armies on each territory it controlls every turn. It will not deply more if (X + Armies on the territory) > (X*10). Zombie will never win a game, as it surrenders when ther is only 1 other player left.
+The Zombie deploys X new armies on each territory it controlls every turn. It will not deploy more if (X + Armies on the territory) > (X*10). Zombie will never win a game, as it surrenders when there is only 1 other player left.
 
 PlayerID is found by excluding the two first and last numbers from a players URL. 
 
