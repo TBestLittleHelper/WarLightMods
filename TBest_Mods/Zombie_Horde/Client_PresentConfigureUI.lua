@@ -26,6 +26,6 @@ function Client_PresentConfigureUI(rootParent)
 	local vert3 = UI.CreateHorizontalLayoutGroup(mainContainer);
 	UI.CreateLabel(vert3).SetText('Check this and a random player is turned into a Zombie');
 	local checkBoxses = UI.CreateVerticalLayoutGroup(mainContainer);
-	initialRandomZombie = UI.CreateCheckBox(checkBoxses).SetText('RandomZombie').SetIsChecked(initialRandomZombie);
+	RandomZombieBox = UI.CreateCheckBox(checkBoxses).SetText('RandomZombie').SetIsChecked(initialRandomZombie);
 
 end
