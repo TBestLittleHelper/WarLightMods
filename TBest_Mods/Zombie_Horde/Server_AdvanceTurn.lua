@@ -18,7 +18,8 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 		end
 	print (Order66);
 	DumpTable(Order66[1]);
-	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66[1]));
+	DumpProxy(Order66[1]);
+	addOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
 	for _,territory in pairs(standing.Territories) do 	
 		if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
@@ -52,4 +53,9 @@ function DumpTable(tbl)
     for k,v in pairs(tbl) do
         print('k = ' .. tostring(k) .. ' (' .. type(k) .. ') ' .. ' v = ' .. tostring(v) .. ' (' .. type(v) .. ')');
     end
+end
+
+function DumpProxy(obj)
+
+    print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
