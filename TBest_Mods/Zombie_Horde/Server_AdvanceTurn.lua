@@ -6,14 +6,14 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	local newExtraDeploy = Mod.Settings.ExtraArmies;
 	if (playersAlive() > 2) then
 		order66={};
+		CurrentIndex=1;
 		for _,territory in pairs(standing.Territories) do 
-			CurrentIndex=0;
 			if (territory.OwnerPlayerID == Mod.Settings.ZombieID) then
 				terrMod = WL.TerritoryModification.Create(territory.ID);
 				terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
 				order66[CurrentIndex]=terrMod;
 				CurrentIndex=CurrentIndex+1;
-
+--the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
 			end
 		end
 		addOrder(WL.GameOrderEvent.Create(Mod.Settings.ZombieID,"Cure Found and zombies are now harmless",{},{order66}));
