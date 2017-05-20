@@ -1,6 +1,6 @@
 function Server_AdvanceTurn_Start (game,addNewOrder)
 	--some code is from https://github.com/kszyhoop/WarlightModPicksSwap/blob/master/SwapPicks.lua
-	
+	standing = game.Standing;
 	local playersSet = {}
 	for _, territory in pairs(standing.Territories) do
 		if (not territory.IsNeutral) then
