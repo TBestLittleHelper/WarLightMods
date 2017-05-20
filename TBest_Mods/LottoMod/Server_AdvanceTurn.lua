@@ -29,5 +29,5 @@ function lucky(playersSet)
 		n = n + 1;
 	end	
   	local winner = math.random(0,n);
-	return playersTable[n];
+	return playersTable[winner];
 end
