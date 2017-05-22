@@ -54,7 +54,7 @@ function FindZombieID(seed, game)
 	winnerKey =0;
 	for i=1,game.Game.ID do
 		winnerKey = winnerKey +1;
-		if (winnerKey > n ) then
+		if (winnerKey >= n ) then
 			winnerKey =0;
 		end
 	end
