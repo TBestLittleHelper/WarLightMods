@@ -47,7 +47,6 @@ function FindZombieID(seed, game)
 	local playersSet = {}
 --	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
 		for _,territory in pairs(standing.Territories) do 	
-		print ('here')
 		if (not territory.IsNeutral) then
 			playersSet[territory.OwnerPlayerID] = true
 		end
