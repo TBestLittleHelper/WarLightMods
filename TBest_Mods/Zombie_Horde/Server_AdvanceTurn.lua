@@ -34,7 +34,8 @@ end
 
 function FindZombieID(seed)
 	print( "Seeding with "..seed )
-	--math.randomseed(seed)
+	print( game.Settings.Created)
+	math.randomseed(game.Settings.Created)
 	print (math.random())
 	print (math.random())
 	print (math.random())
