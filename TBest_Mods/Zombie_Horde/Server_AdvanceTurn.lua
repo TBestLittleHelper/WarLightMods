@@ -53,7 +53,7 @@ function FindZombieID(game)
 		n = n + 1;
 	end	
 	winnerKey =0;
-	gameNummber = game.Game.ID - 13500000;
+	gameNummber = game.Game.ID - 13523400; --if not, gets timeout issues
 	for i=1,(game.Game.ID) do
 		winnerKey = winnerKey +1;
 		if (winnerKey >= n ) then
