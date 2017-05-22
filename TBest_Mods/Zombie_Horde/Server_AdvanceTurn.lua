@@ -39,10 +39,8 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 end
 
 function FindZombieID(seed, game)
-	print( "Seeding with "..seed )
-	print(game.Game.NumberOfTurns)
-	print(game.Game.Started)
---	math.randomseed(seed) --gives nil error
+	print( "Seeding with "..game.Game.Started )
+	math.randomseed(game.Game.Started)
 	print (math.random())
 	print (math.random())
 	print (math.random())
