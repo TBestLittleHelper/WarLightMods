@@ -8,7 +8,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	if (Mod.Settings.RandomZombie ==true) then
 		ZombieID = FindZombieID(Mod.Settings.RandomSeed, game);
 	end
-	if (playersAlive() == 2) then --update to count teams, not players
+	if (playersAlive() == 2) then --update to count teams, not players? 
 		for _,territory in pairs(standing.Territories) do 
 			if (territory.OwnerPlayerID == ZombieID) then
 				terrMod = WL.TerritoryModification.Create(territory.ID);
@@ -18,6 +18,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 --the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
 			end
 		end
+	skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --the order don't get carried out, if Zombie is killed
 	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
 end
@@ -58,13 +59,8 @@ function FindZombieID(seed, game)
 			winnerKey =0;
 		end
 	end
-	print( "Seeding with "..game.Game.ID  )
---nil	print ('playerSet ' ..playersSet[winnerKey])
-	print ('playersTable ' ..playersTable[winnerKey])
-	print ('winnerKey ' .. winnerKey)
 	return playersTable[winnerKey];
 end
-
 
 function playersAlive()
 	local playersSet = {}
