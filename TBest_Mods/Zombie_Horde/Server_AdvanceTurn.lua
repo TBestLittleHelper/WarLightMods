@@ -60,7 +60,7 @@ function FindZombieID(seed, game)
 	end
 	print( "Seeding with "..game.Game.ID  )
 --nil	print ('playerSet ' ..playersSet[winnerKey])
---nil	print ('playersTable ' ..playersTable[winnerKey])
+	print ('playersTable ' ..playersTable[winnerKey])
 	print ('winnerKey ' .. winnerKey)
 	return playersTable[winnerKey];
 end
