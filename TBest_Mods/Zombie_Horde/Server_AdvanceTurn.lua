@@ -34,6 +34,7 @@ end
 
 function FindZombieID(seed)
 	print( "Seeding with "..seed )
+	print(game.Game.NumberOfTurns)
 	print(game.Game.Started)
 --	math.randomseed(seed) --gives nil error
 	print (math.random())
