@@ -58,11 +58,10 @@ function FindZombieID(seed, game)
 			winnerKey =0;
 		end
 	end
-
-	
-	print ('winnerKey ' .. winnerKey)
 	print( "Seeding with "..game.Game.ID  )
-	print (playersTable[winnerKey])
+	print ('playerSet 'playersSet[winnerKey])
+	print ('playersTable 'playersTable[winnerKey])
+	print ('winnerKey ' .. winnerKey)
 	return playersTable[winnerKey];
 end
 
