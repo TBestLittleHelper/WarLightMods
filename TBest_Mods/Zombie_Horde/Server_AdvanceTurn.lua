@@ -6,7 +6,7 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	local ZombieID = ZombieID(Mod.Settings.RandomSeed);
 	
 	if (playersAlive() == 2) then --update to count teams, not players
-		for _,territory in pairs(standing.Territories) do 
+		for _,territory in pairs(standing.Territories) do --also make it check each order. Not at the end of a turn
 			if (territory.OwnerPlayerID == ZombieID) then
 				terrMod = WL.TerritoryModification.Create(territory.ID);
 				terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
@@ -31,8 +31,11 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 end
 
 function ZombieID(seed)
+	print( "Seeding with "..seed )
+	math.randomseed(seed)
 	local playersSet = {}
-	for _, territory in pairs(game.ServerGame.TurnZeroStanding.Territories) do
+	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
+		print ('here')
 		if (not territory.IsNeutral) then
 			playersSet[territory.OwnerPlayerID] = true
 		end
@@ -42,19 +45,12 @@ function ZombieID(seed)
 	for key, _ in pairs(playersSet) do
 		playersTable[n] = key
 		n = n + 1;
-	end
-	local x = #playersTable;
-	local count;
-	local  i =0;
-	local y = 0;
-	while (seed <i )do
-		i = i + 1;
-		while (y < x) do
-			y = y +1;
-		end
-	end
-	return playersTable[y];
+	end	
+	
+	ID = playersTable[math.random];
+	return ID;
 end
+
 
 function playersAlive()
 	local playersSet = {}
