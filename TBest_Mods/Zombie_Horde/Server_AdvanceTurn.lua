@@ -35,7 +35,6 @@ end
 function FindZombieID(seed)
 	print( "Seeding with "..seed )
 	--math.randomseed(seed)
-	math.randomseed(1234)
 	print (math.random())
 	print (math.random())
 	print (math.random())
