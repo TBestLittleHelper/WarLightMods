@@ -39,14 +39,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 end
 
 function FindZombieID(seed, game)
-	print( "Seeding with "..game.Game.Started )
-	math.randomseed(game.Game.Started)
-	print (math.random())
-	print (math.random())
-	print (math.random())
+	print( "Seeding with "..game.Game.ID  )
+	--13522725 subtract 10 000 000 from this.
 	local playersSet = {}
---	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
-		for _,territory in pairs(standing.Territories) do 	
+	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do	
 		if (not territory.IsNeutral) then
 			playersSet[territory.OwnerPlayerID] = true
 		end
@@ -57,9 +53,16 @@ function FindZombieID(seed, game)
 		playersTable[n] = key
 		n = n + 1;
 	end	
-	
-	ID = playersTable[math.random(n)];
+	winnerKey =1;
+	for i=1,game.Game.ID do
+		winnerKey = winnerKey +1;
+		if (winnerKey > n ) then
+			winnerKey =1;
+		end
+	end
+	ID = playersTable[winnerKey];
 	print (ID)
+	print (playersTable[winnerKey])
 	return ID;
 end
 
@@ -79,3 +82,10 @@ function playersAlive()
 	end	
 	return n;
 end
+			
+function tablelength(T)
+  local count = 0
+  for _ in pairs(T) do count = count + 1 end
+  return count
+end
+
