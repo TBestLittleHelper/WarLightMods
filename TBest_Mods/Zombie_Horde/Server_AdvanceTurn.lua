@@ -39,8 +39,6 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 end
 
 function FindZombieID(seed, game)
-	print( "Seeding with "..game.Game.ID  )
-	--13522725 subtract 10 000 000 from this.
 	local playersSet = {}
 	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do	
 		if (not territory.IsNeutral) then
@@ -53,14 +51,16 @@ function FindZombieID(seed, game)
 		playersTable[n] = key
 		n = n + 1;
 	end	
-	winnerKey =1;
+	winnerKey =0;
 	for i=1,game.Game.ID do
 		winnerKey = winnerKey +1;
 		if (winnerKey > n ) then
-			winnerKey =1;
+			winnerKey =0;
 		end
 	end
+	print ('winnerKey ' .. winnerKey)
 	ID = playersTable[winnerKey];
+	print( "Seeding with "..game.Game.ID  )
 	print (ID)
 	print (playersTable[winnerKey])
 	return ID;
