@@ -1,6 +1,5 @@
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
-	newExtraDeploy = Mod.Settings.ExtraArmies;
 	CurrentIndex=1;
 	Order66={};
 	ZombieID = Mod.Settings.ZombieID;
@@ -24,7 +23,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 end
 
 function Server_AdvanceTurn_End(game, addNewOrder)
-		standing = game.ServerGame.LatestTurnStanding;
+	standing = game.ServerGame.LatestTurnStanding;
+	newExtraDeploy = Mod.Settings.ExtraArmies;
 	if (playersAlive() > 2) then --update to count teams, not players	
 		for _,territory in pairs(standing.Territories) do 	
 			if (territory.OwnerPlayerID == ZombieID) then
@@ -53,7 +53,7 @@ function FindZombieID(game)
 		n = n + 1;
 	end	
 	winnerKey =0;
-	gameNummber = game.Game.ID - 13523400; --if not, gets timeout issues
+	gameNummber = game.Game.ID - 13523439; --if not, gets timeout issues
 	for i=1,(game.Game.ID) do
 		winnerKey = winnerKey +1;
 		if (winnerKey >= n ) then
