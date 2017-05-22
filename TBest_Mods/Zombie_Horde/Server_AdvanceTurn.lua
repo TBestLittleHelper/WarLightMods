@@ -6,7 +6,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	ZombieID = Mod.Settings.ZombieID;
 	--ignore unimportent orders TODO
 	if (Mod.Settings.RandomZombie ==true) then
-		ZombieID = FindZombieID(Mod.Settings.RandomSeed);
+		ZombieID = FindZombieID(Mod.Settings.RandomSeed, game);
 	end
 	if (playersAlive() == 2) then --update to count teams, not players
 		for _,territory in pairs(standing.Territories) do 
@@ -38,7 +38,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	end
 end
 
-function FindZombieID(seed)
+function FindZombieID(seed, game)
 	print( "Seeding with "..seed )
 	print(game.Game.NumberOfTurns)
 	print(game.Game.Started)
