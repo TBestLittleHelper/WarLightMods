@@ -34,13 +34,13 @@ end
 
 function FindZombieID(seed)
 	print( "Seeding with "..seed )
-	print( game.Settings.Created)
-	math.randomseed(game.Settings.Created)
+--	math.randomseed(seed) --gives nil error
 	print (math.random())
 	print (math.random())
 	print (math.random())
 	local playersSet = {}
-	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
+--	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
+		for _,territory in pairs(standing.Territories) do 	
 		print ('here')
 		if (not territory.IsNeutral) then
 			playersSet[territory.OwnerPlayerID] = true
