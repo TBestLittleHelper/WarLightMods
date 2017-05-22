@@ -34,6 +34,6 @@ function Client_PresentConfigureUI(rootParent)
 	local vert4 = UI.CreateHorizontalLayoutGroup(mainContainer);	
 	UI.CreateLabel(vert4).SetText('The random seed generated');
 	seedInputField = UI.CreateNumberInputField(vert4)
-		.SetValue(initialZombieID);
+		.SetValue(initialRandomSeed);
 
 end
