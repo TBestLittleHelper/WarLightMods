@@ -6,7 +6,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	ZombieID = Mod.Settings.ZombieID;
 	--ignore unimportent orders TODO
 	if (Mod.Settings.RandomZombie ==true) then
-		ZombieID = FindZombieID(Mod.Settings.RandomSeed, game);
+		ZombieID = FindZombieID(game);
 	end
 	if (playersAlive() == 2) then --update to count teams, not players? 
 		for _,territory in pairs(standing.Territories) do 
@@ -39,7 +39,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	end
 end
 
-function FindZombieID(seed, game)
+function FindZombieID(game)
 	local playersSet = {}
 	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do	
 		if (not territory.IsNeutral) then
@@ -53,7 +53,8 @@ function FindZombieID(seed, game)
 		n = n + 1;
 	end	
 	winnerKey =0;
-	for i=1,game.Game.ID do
+	gameNummber = game.Game.ID - 13500000;
+	for i=1,(game.Game.ID) do
 		winnerKey = winnerKey +1;
 		if (winnerKey >= n ) then
 			winnerKey =0;
