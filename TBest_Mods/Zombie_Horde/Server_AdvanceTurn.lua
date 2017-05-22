@@ -34,7 +34,10 @@ end
 
 function FindZombieID(seed)
 	print( "Seeding with "..seed )
-	math.randomseed(seed);
+	math.randomseed(seed)
+	print (math.random())
+	print (math.random())
+	print (math.random())
 	local playersSet = {}
 	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
 		print ('here')
