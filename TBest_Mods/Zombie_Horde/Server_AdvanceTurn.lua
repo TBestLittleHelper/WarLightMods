@@ -59,11 +59,9 @@ function FindZombieID(seed, game)
 		end
 	end
 	print ('winnerKey ' .. winnerKey)
-	ID = playersTable[winnerKey];
 	print( "Seeding with "..game.Game.ID  )
-	print (ID)
-	print (playersTable[winnerKey])
-	return ID;
+	print (playersSet[winnerKey])
+	return playersSet[winnerKey];
 end
 
 
@@ -82,10 +80,3 @@ function playersAlive()
 	end	
 	return n;
 end
-			
-function tablelength(T)
-  local count = 0
-  for _ in pairs(T) do count = count + 1 end
-  return count
-end
-
