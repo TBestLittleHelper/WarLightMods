@@ -7,7 +7,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	if (Mod.Settings.RandomZombie ==true) then
 		ZombieID = FindZombieID(game);
 	end
-	if (game.Game.NumberOfTurns > Mod.Settings.NumTurns or Mod.Settings.ZombieWin == false) then --can the zombie win? turn limit on win?
+--Mod.Settings.NumTurns instead of hardcoded turn limit
+	if (game.Game.NumberOfTurns > 10 or Mod.Settings.ZombieWin == false) then --can the zombie win? turn limit on win?
 		if (playersAlive() == 2) then --update to count teams, not players? 
 			for _,territory in pairs(standing.Territories) do 
 				if (territory.OwnerPlayerID == ZombieID) then
