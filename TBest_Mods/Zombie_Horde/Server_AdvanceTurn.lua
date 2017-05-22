@@ -20,6 +20,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		end
 	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
+end
+
 function Server_AdvanceTurn_End(game, addNewOrder)
 		standing = game.ServerGame.LatestTurnStanding;
 	if (playersAlive() > 2) then --update to count teams, not players	
