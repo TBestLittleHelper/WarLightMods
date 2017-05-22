@@ -1,14 +1,15 @@
-function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
+function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	standing = game.ServerGame.LatestTurnStanding;
 	newExtraDeploy = Mod.Settings.ExtraArmies;
 	CurrentIndex=1;
 	Order66={};
 	ZombieID = Mod.Settings.ZombieID;
+	--ignore unimportent orders TODO
 	if (Mod.Settings.RandomZombie ==true) then
 		ZombieID = FindZombieID(Mod.Settings.RandomSeed);
 	end
 	if (playersAlive() == 2) then --update to count teams, not players
-		for _,territory in pairs(standing.Territories) do --also make it check each order. Not at the end of a turn
+		for _,territory in pairs(standing.Territories) do 
 			if (territory.OwnerPlayerID == ZombieID) then
 				terrMod = WL.TerritoryModification.Create(territory.ID);
 				terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
@@ -18,13 +19,16 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 			end
 		end
 	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
-	else
+	end
+function Server_AdvanceTurn_End(game, addNewOrder)
+		standing = game.ServerGame.LatestTurnStanding;
+	if (playersAlive() > 2) then --update to count teams, not players	
 		for _,territory in pairs(standing.Territories) do 	
 			if (territory.OwnerPlayerID == ZombieID) then
 				if (newExtraDeploy + territory.NumArmies.NumArmies < newExtraDeploy *10) then
 					if (newExtraDeploy < 0) then newExtraDeploy = 0 end;	
 					if (newExtraDeploy > 1000) then newExtraDeploy = 1000 end;	
---make this only add one event, that is "All Zombie territories deployex X armies. ?
+--make this only add one event, that is "All Zombie territories deployex X armies. ?TODO
 					addNewOrder(WL.GameOrderDeploy.Create(ZombieID, newExtraDeploy, territory.ID,nil,GameOrderDeploy));
 				end
 			end
