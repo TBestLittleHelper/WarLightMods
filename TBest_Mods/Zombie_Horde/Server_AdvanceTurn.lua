@@ -32,7 +32,7 @@ end
 
 function ZombieID(seed)
 	local playersSet = {}
-	for _, territory in pairs(game.TurnZeroStanding ) do
+	for _, territory in pairs(game.ServerGame.TurnZeroStanding.Territories) do
 		if (not territory.IsNeutral) then
 			playersSet[territory.OwnerPlayerID] = true
 		end
