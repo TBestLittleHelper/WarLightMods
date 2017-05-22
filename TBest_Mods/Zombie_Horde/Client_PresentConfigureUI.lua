@@ -4,13 +4,10 @@ function Client_PresentConfigureUI(rootParent)
 	local initialValue1 = Mod.Settings.ExtraArmies;
 	local initialZombieID = Mod.Settings.ZombieID;
 	local initialRandomZombie = Mod.Settings.RandomZombie;
-	local initialRandomSeed = Mod.Settings.RandomSeed; --used for randomZombie
 	
 	if initialValue1 == nil then initialValue1 = 5; end
     	if initialZombieID == nil then initialZombieID = 69603; end
 	if initialRandomZombie == nil then initialRandomZombie = false; end
-	if initialRandomSeed == nil then initialRandomSeed = math.random(1000); end
-
 	
 	local mainContainer = UI.CreateVerticalLayoutGroup(rootParent);
 	
@@ -30,10 +27,5 @@ function Client_PresentConfigureUI(rootParent)
 	UI.CreateLabel(vert3).SetText('Check this and a random player is turned into a Zombie');
 	local checkBoxses = UI.CreateVerticalLayoutGroup(mainContainer);
 	RandomZombieBox = UI.CreateCheckBox(checkBoxses).SetText('RandomZombie').SetIsChecked(initialRandomZombie);
-	
-	local vert4 = UI.CreateHorizontalLayoutGroup(mainContainer);	
-	UI.CreateLabel(vert4).SetText('The random seed generated');
-	seedInputField = UI.CreateNumberInputField(vert4)
-		.SetValue(initialRandomSeed);
 
 end
