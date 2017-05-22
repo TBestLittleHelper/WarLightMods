@@ -7,18 +7,20 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	if (Mod.Settings.RandomZombie ==true) then
 		ZombieID = FindZombieID(game);
 	end
-	if (playersAlive() == 2) then --update to count teams, not players? 
-		for _,territory in pairs(standing.Territories) do 
-			if (territory.OwnerPlayerID == ZombieID) then
-				terrMod = WL.TerritoryModification.Create(territory.ID);
-				terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
-				Order66[CurrentIndex]=terrMod;
-				CurrentIndex=CurrentIndex+1;
+	if (game.Game.NumberOfTurns > Mod.Settings.NumTurns or Mod.Settings.ZombieWin == false) then --can the zombie win? turn limit on win?
+		if (playersAlive() == 2) then --update to count teams, not players? 
+			for _,territory in pairs(standing.Territories) do 
+				if (territory.OwnerPlayerID == ZombieID) then
+					terrMod = WL.TerritoryModification.Create(territory.ID);
+					terrMod.SetOwnerOpt=WL.PlayerID.Neutral;
+					Order66[CurrentIndex]=terrMod;
+					CurrentIndex=CurrentIndex+1;
 --the order66 is a modefication from https://github.com/dabo123148/WarlightMod/blob/master/Pestilence/Server_AdvanceTurn.lua
+				end
 			end
+		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --the order don't get carried out, if Zombie is killed
+		addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 		end
-	skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --the order don't get carried out, if Zombie is killed
-	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cure Found and zombies are now harmless",nil,Order66));
 	end
 end
 
