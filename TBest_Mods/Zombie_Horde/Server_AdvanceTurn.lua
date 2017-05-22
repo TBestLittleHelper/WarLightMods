@@ -53,7 +53,8 @@ function FindZombieID(seed)
 		n = n + 1;
 	end	
 	
-	ID = playersTable[math.random];
+	ID = playersTable[math.random(n)];
+	print (ID)
 	return ID;
 end
 
