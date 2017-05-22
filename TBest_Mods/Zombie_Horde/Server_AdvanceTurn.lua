@@ -1,10 +1,12 @@
 function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the end of a turn
 	standing = game.ServerGame.LatestTurnStanding;
-	local newExtraDeploy = Mod.Settings.ExtraArmies;
+	newExtraDeploy = Mod.Settings.ExtraArmies;
 	CurrentIndex=1;
 	Order66={};
-	local ZombieID = ZombieID(Mod.Settings.RandomSeed);
-	
+	ZombieID = Mod.Settings.ZombieID;
+	if (Mod.Settings.RandomZombie ==true) then
+		ZombieID = FindZombieID(Mod.Settings.RandomSeed);
+	end
 	if (playersAlive() == 2) then --update to count teams, not players
 		for _,territory in pairs(standing.Territories) do --also make it check each order. Not at the end of a turn
 			if (territory.OwnerPlayerID == ZombieID) then
@@ -30,9 +32,9 @@ function Server_AdvanceTurn_End(game,addNewOrder) --Give Zoombie armies at the e
 	end
 end
 
-function ZombieID(seed)
+function FindZombieID(seed)
 	print( "Seeding with "..seed )
-	math.randomseed(seed)
+	math.randomseed(seed);
 	local playersSet = {}
 	for _,territory in pairs(game.ServerGame.TurnZeroStanding.Territories)do
 		print ('here')
