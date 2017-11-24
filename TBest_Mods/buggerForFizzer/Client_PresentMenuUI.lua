@@ -1,6 +1,9 @@
+--TODO BUGS: Needs to update the menu when turn advances. Else we get a strange bug?
+
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	Game = game; --global variables
 	LastTurn = {}; 
+	Distribution = {};
 	
 	setMaxSize(450, 350);
 
@@ -15,58 +18,83 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 		UI.CreateLabel(vert).SetText("You cannot do anything since you're not in the game");
 		return;
 	end
-
+	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
 	addOrders = UI.CreateButton(row1).SetText("Add last turn's deployment and transfears").SetOnClick(AddOrdersConfirmes);
+	
+	local row2 =  UI.CreateHorizontalLayoutGroup(vert);
+	clearOrders = UI.CreateButton(row1).SetText("Clear Orders").SetOnClick(clearOrders);
 end
 
-function AddOrdersConfirmes()
-	
+function clearOrders()
+	local orderTabel = Game.Orders;--get clinet order list
+	if(next(orderTabel) ~= nil) then
+		orderTabel = {};
+		Game.Orders = orderTabel;
+	end;
+end;
+
+
+function AddOrdersConfirmes()	
+	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
+	local turn = Game.Game.TurnNumber;
+	local firstTurn = 1;
+	if (Distribution == nil) then --no dist
+		firstTurn = 0;
+	end;
+	if(turn  <= firstTurn) then
+		UI.Alert("You can't use the mod during distribution or for the first turn.");
+		return;
+	end;
 	if(Game.Us.HasCommittedOrders == true)then
 		UI.Alert("You need to uncommit first");
-		--since you can't write in the order table when the player has already commited
 		return;
 	end
-	
-	if(Game.Game.TurnNumber  == 0) then
-		--TODO proper instead of lazy fix for no past turns
-		UI.Alert("You can't use the mods for the first turn.");
+	local turn = turn -2;
+	Game.GetTurn(turn, function(turnThis) getTurnHelper(turnThis) end)
+	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
+	local orderTabel = Game.Orders;--get clinet order list
+	if (next(orderTabel) ~= nil) then --make sure we don't have past orders, since that is alot of extra work
+		UI.Alert('Please clear your order list before using this mod.')
 		return;
 	end;
 	
-	print('Getting turn ' .. Game.Game.TurnNumber - 2); -- -2, since this returns the uncompleted turn, and counts turn 0
-	local turn = Game.Game.TurnNumber -2;
-	Game.GetTurn(turn, function(turn) getTurnHelper(turn) end)
-
-	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
-	
-	local orderTabel = Game.Orders;--get clinet order list
-	
-	if lastTurn == nil then print ('nil') end;
+	if (lastTurn == nil) then 
+		print('lastTurn == nil')
+		UI.Alert('Failed to retrive history. Please try again')
+		return;
+	end;
+	local newOrder;
 	for _,order in pairs(lastTurn) do
-
 		if (order.PlayerID == Game.Us.ID) then
 			if (order.proxyType == "GameOrderDeploy")then
 					--check that we own the territory
 				if (Game.Us.ID == standing.Territories[order.DeployOn].OwnerPlayerID) then
-					table.insert(orderTabel, order);
+					newOrder = WL.GameOrderDeploy.Create(Game.Us.ID, 99999, order.DeployOn, false)
+					table.insert(orderTabel, newOrder);
 				end;
 			end;
 			if (order.proxyType == "GameOrderAttackTransfer") then
-				if (Game.Us.ID == standing.Territories[order.From].OwnerPlayerID) then
-					if (Game.Us.ID == standing.Territories[order.To].OwnerPlayerID) then
-						table.insert(orderTabel, order);
+				if (Game.Us.ID == standing.Territories[order.From].OwnerPlayerID) then --from us 
+					if (Game.Us.ID == standing.Territories[order.To].OwnerPlayerID) then -- to us
+						newOrder = WL.GameOrderAttackTransfer.Create(Game.Us.ID, order.From, order.To,3, false, order.NumArmies, false)
+						table.insert(orderTabel, newOrder);
 					end;
 				end;
 			end;
 		end;
 	end;
+	--TODO check that we don't deploy more armies then we have	
 	--update client orders list
 	Game.Orders = orderTabel;
 end;
 
 function getTurnHelper(turn)
 	lastTurn = turn.Orders;
+end;
+
+function getDistHelper(standing)
+	Distribution = standing;
 end;
 
 
