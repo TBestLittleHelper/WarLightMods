@@ -28,6 +28,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 end
 
 function clearOrders()
+	if(Game.Us.HasCommittedOrders == true)then
+		UI.Alert("You need to uncommit first");
+		return;
+	end
 	local orderTabel = Game.Orders;--get clinet order list
 	if(next(orderTabel) ~= nil) then
 		orderTabel = {};
@@ -42,7 +46,7 @@ Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 	if (Distribution == nil) then --no dist
 		firstTurn = 0;
 	end;
-	if(turn  <= firstTurn) then
+	if(turn -1 <= firstTurn) then
 		UI.Alert("You can't use the mod during distribution or for the first turn.");
 		return;
 	end;
@@ -106,14 +110,11 @@ end;
 function AddOrdersConfirmes()	
 	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 	local turn = Game.Game.TurnNumber;
-	local firstTurn = 1;
-	
-	
-	
+	local firstTurn = 1;	
 	if (Distribution == nil) then --no dist
 		firstTurn = 0;
 	end;
-	if(turn  <= firstTurn) then
+	if(turn -1  <= firstTurn) then
 		UI.Alert("You can't use the mod during distribution or for the first turn.");
 		return;
 	end;
@@ -150,7 +151,7 @@ function AddOrdersConfirmes()
 					--check that we have armies to deploy
 					local bonusID;
 					for i, bonus in ipairs(Game.Map.Territories[order.DeployOn].PartOfBonuses) do
-						print(bonus)
+						print(bonus .. ' bonusID')
 						bonusID = bonus;
 						break;
 					end;
@@ -199,13 +200,4 @@ function Dump(obj)
 	else
 		print('Dump ' .. type(obj));
 	end
-end
-function DumpTable(tbl)
-    for k,v in pairs(tbl) do
-        print('k = ' .. tostring(k) .. ' (' .. type(k) .. ') ' .. ' v = ' .. tostring(v) .. ' (' .. type(v) .. ')');
-    end
-end
-function DumpProxy(obj)
-
-    print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
