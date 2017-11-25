@@ -191,13 +191,3 @@ end;
 function getDistHelper(standing)
 	Distribution = standing;
 end;
-
-function Dump(obj)
-	if obj.proxyType ~= nil then
-		DumpProxy(obj);
-	elseif type(obj) == 'table' then
-		DumpTable(obj);
-	else
-		print('Dump ' .. type(obj));
-	end
-end
