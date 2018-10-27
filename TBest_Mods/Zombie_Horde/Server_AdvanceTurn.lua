@@ -5,7 +5,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	ZombieID = Mod.Settings.ZombieID;
 	--ignore unimportent orders TODO
 	if (Mod.Settings.RandomZombie ==true) then
-		ZombieID = FindZombieID(game);
+		--ZombieID = FindZombieID(game);
+		ZombieID = 69603; --tempFix for ongoing game.
 	end
 --Mod.Settings.NumTurns instead of hardcoded turn limit
 	if (game.Game.NumberOfTurns > 10 or Mod.Settings.ZombieWin == false) then --can the zombie win? turn limit on win?
