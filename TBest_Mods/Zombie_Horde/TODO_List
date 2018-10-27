@@ -1,1 +1,3 @@
 RandomZombie
+Make zombieID saved at beginning of game.
+Make a popup that states the mod is in use, and who is the zombie? + store in game settings.
