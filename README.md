@@ -1,5 +1,5 @@
 #WarLightMods
-https://www.warlight.net/
+https://www.warzone.com
 
 Made by TBest
-https://www.warlight.net/Profile?p=856960317
+https://www.warzone.com/Profile?p=856960317
