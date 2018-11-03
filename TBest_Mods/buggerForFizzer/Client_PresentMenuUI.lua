@@ -1,9 +1,6 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	Game = game; --global variables
 	LastTurn = {}; 
-	Distribution = {};
-	
-
 	
 	setMaxSize(450, 300);
 
@@ -20,9 +17,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 		UI.CreateLabel(vert).SetText("This mod only works in Local Deployment games.  This isn't a Local Deployment.");
 		return;
 	end
-	
-	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
-
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
 	addOrders = UI.CreateButton(row1).SetText("Add last turn's deployment and transfers").SetOnClick(AddOrdersConfirmes);
@@ -49,10 +43,6 @@ function AddDeploy()
 	local turn = Game.Game.TurnNumber;
 	local firstTurn = 1;
 	
-	if (Distribution == nil) then --no dist
-		firstTurn = 0;
-	end;
-
 	if(turn -1 <= firstTurn) then
 		UI.Alert("You can't use the mod during distribution or for the first turn.");
 		return;
@@ -131,12 +121,9 @@ function AddDeploy()
 end;
 
 function AddOrdersConfirmes()	
-	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 	local turn = Game.Game.TurnNumber;
 	local firstTurn = 1;	
-	if (Distribution == nil) then --no dist
-		firstTurn = 0;
-	end;
+	
 	if(turn -1  <= firstTurn) then
 		UI.Alert("You can't use the mod during distribution or for the first turn.");
 		return;
@@ -209,8 +196,4 @@ end;
 
 function getTurnHelper(turn)
 	lastTurn = turn.Orders;
-end;
-
-function getDistHelper(standing)
-	Dist = standing;
 end;
