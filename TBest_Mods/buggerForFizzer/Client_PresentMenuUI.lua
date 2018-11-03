@@ -21,7 +21,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 		return;
 	end
 	
-	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
+	-- Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
