@@ -1,6 +1,9 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	Game = game; --global variables
 	LastTurn = {}; 
+	Distribution = {};
+	
+
 	
 	setMaxSize(450, 300);
 
@@ -17,6 +20,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 		UI.CreateLabel(vert).SetText("This mod only works in Local Deployment games.  This isn't a Local Deployment.");
 		return;
 	end
+	
+	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
@@ -43,6 +48,10 @@ end;
 function AddDeploy()
 	local turn = Game.Game.TurnNumber;
 	local firstTurn = 1;
+	
+	if (Distribution == nil) then --no dist
+		firstTurn = 0;
+	end;
 
 	if(turn -1 <= firstTurn) then
 		UI.Alert("You can't use the mod during distribution or for the first turn.");
@@ -54,6 +63,7 @@ function AddDeploy()
 	end
 	local turn = turn -2;
 	Game.GetTurn(turn, function(turnThis) getTurnHelper(turnThis) end)
+	
 	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
 	local orderTabel = Game.Orders;--get clinet order list
 	
@@ -61,11 +71,19 @@ function AddDeploy()
 		UI.Alert("You need to uncommit first");
 		return;
 	end
-	local turn = turn -2;
 	
 	if (next(orderTabel) ~= nil) then --make sure we don't have past orders, since that is alot of extra work
 		UI.Alert('Please clear your order list before using this mod.')
 		return;
+	end;
+	
+	busyWait;
+	while (lastTurn == nil) do
+		busyWait ++;
+		if busyWait >100000 then
+			break;
+		end;
+		UI.Alert('Getting Last Turn's Orders')
 	end;
 	
 	if (lastTurn == nil) then 
@@ -194,5 +212,5 @@ function getTurnHelper(turn)
 end;
 
 function getDistHelper(standing)
-	Distribution = standing;
+	Dist = standing;
 end;
