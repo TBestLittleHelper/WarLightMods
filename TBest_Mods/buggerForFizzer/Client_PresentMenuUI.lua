@@ -41,12 +41,9 @@ function clearOrdersFunction()
 end;
 
 function AddDeploy()
-	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 	local turn = Game.Game.TurnNumber;
 	local firstTurn = 1;
-	if (Distribution == nil) then --no dist
-		firstTurn = 0;
-	end;
+
 	if(turn -1 <= firstTurn) then
 		UI.Alert("You can't use the mod during distribution or for the first turn.");
 		return;
@@ -60,13 +57,6 @@ function AddDeploy()
 	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
 	local orderTabel = Game.Orders;--get clinet order list
 	
-		if (Distribution == nil) then --no dist
-		firstTurn = 0;
-	end;
-	if(turn -1 <= firstTurn) then
-		UI.Alert("You can't use the mod during distribution or for the first turn.");
-		return;
-	end;
 	if(Game.Us.HasCommittedOrders == true)then
 		UI.Alert("You need to uncommit first");
 		return;
