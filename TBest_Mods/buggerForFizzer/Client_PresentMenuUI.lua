@@ -21,7 +21,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 		return;
 	end
 	
-	-- Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
+	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
@@ -77,7 +77,7 @@ function AddDeploy()
 		return;
 	end;
 	
-	busyWait;
+	local busyWait =0;
 	while (lastTurn == nil) do
 		busyWait ++;
 		if busyWait >100000 then
