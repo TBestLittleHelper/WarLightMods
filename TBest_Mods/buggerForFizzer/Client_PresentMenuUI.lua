@@ -21,7 +21,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
-	addOrders = UI.CreateButton(row1).SetText("Add last turn's deployment and transfears").SetOnClick(AddOrdersConfirmes);
+	addOrders = UI.CreateButton(row1).SetText("Add last turn's deployment and transfers").SetOnClick(AddOrdersConfirmes);
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
 	addDeployOnly = UI.CreateButton(row2).SetText("Add last turn's deployment only").SetOnClick(AddDeploy);
 	
