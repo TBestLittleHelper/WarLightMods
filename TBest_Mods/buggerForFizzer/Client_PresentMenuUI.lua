@@ -8,15 +8,17 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	vert = UI.CreateVerticalLayoutGroup(rootParent);
 	vert2 = UI.CreateVerticalLayoutGroup(rootParent);
 
+	
+	if (game.Us == nil or game.Us.State ~= WL.GamePlayerState.Playing) then
+		UI.CreateLabel(vert).SetText("You cannot do anything since you're not in the game");
+		return;
+	end
+	
 	if (game.Settings.LocalDeployments == false) then
 		UI.CreateLabel(vert).SetText("This mod only works in Local Deployment games.  This isn't a Local Deployment.");
 		return;
 	end
 
-	if (game.Us == nil or game.Us.State ~= WL.GamePlayerState.Playing) then
-		UI.CreateLabel(vert).SetText("You cannot do anything since you're not in the game");
-		return;
-	end
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
 	addOrders = UI.CreateButton(row1).SetText("Add last turn's deployment and transfears").SetOnClick(AddOrdersConfirmes);
@@ -40,12 +42,12 @@ function clearOrdersFunction()
 end;
 
 function AddDeploy()
-Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
+--Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 	local turn = Game.Game.TurnNumber;
 	local firstTurn = 1;
-	if (Distribution == nil) then --no dist
-		firstTurn = 0;
-	end;
+--	if (Distribution == nil) then --no dist
+--		firstTurn = 0;
+--	end;
 	if(turn -1 <= firstTurn) then
 		UI.Alert("You can't use the mod during distribution or for the first turn.");
 		return;
