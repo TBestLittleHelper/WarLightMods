@@ -69,7 +69,7 @@ function AddDeploy()
 	
 	local busyWait =0;
 	while (lastTurn == nil) do
-		busyWait ++;
+		busyWait = busyWait + 1;
 		if busyWait >100000 then
 			break;
 		end;
