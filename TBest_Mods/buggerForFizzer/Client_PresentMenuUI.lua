@@ -73,7 +73,7 @@ function AddDeploy()
 		if busyWait >100000 then
 			break;
 		end;
-		UI.Alert('Getting Last Turn's Orders')
+		UI.Alert('Getting Last Turns Orders')
 	end;
 	
 	if (lastTurn == nil) then 
