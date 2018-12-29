@@ -1,72 +1,60 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	Game = game; --global variables
-	LastTurn = {}; 
-	Distribution = {};
+	print(Game.Game.ID .. ' GameID');
+	
+	LastTurn = {};   --we get the orders from History later
+	Distribution = {};	
 	
 	setMaxSize(450, 300);
 
 	vert = UI.CreateVerticalLayoutGroup(rootParent);
 	vert2 = UI.CreateVerticalLayoutGroup(rootParent);
 
-	if (game.Settings.LocalDeployments == false) then
-		UI.CreateLabel(vert).SetText("This mod only works in Local Deployment games.  This isn't a Local Deployment.");
-		return;
+	if (not game.Settings.LocalDeployments) then
+		return UI.CreateLabel(vert).SetText("This mod only works in Local Deployment games. This isn't a Local Deployment.")
+	elseif (not game.Us or game.Us.State ~= WL.GamePlayerState.Playing) then
+		return UI.CreateLabel(vert).SetText("You cannot do anything since you're not in the game.");
 	end
 
-	if (game.Us == nil or game.Us.State ~= WL.GamePlayerState.Playing) then
-		UI.CreateLabel(vert).SetText("You cannot do anything since you're not in the game");
-		return;
-	end
-	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
-	addOrders = UI.CreateButton(row1).SetText("Add last turn's deployment and transfears").SetOnClick(AddOrdersConfirmes);
+	addOrders = UI.CreateButton(row1).SetText("Add last turns deployment and transfers").SetOnClick(AddOrdersConfirmes);
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
-	addDeployOnly = UI.CreateButton(row2).SetText("Add last turn's deployment only").SetOnClick(AddDeploy);
-	
+	addDeployOnly = UI.CreateButton(row2).SetText("Add last turns deployment only").SetOnClick(AddDeployHelper);
 	local row3 =  UI.CreateHorizontalLayoutGroup(vert);
-	clearOrders = UI.CreateButton(row3).SetText("Clear Orders").SetOnClick(clearOrders);
+	clearOrders = UI.CreateButton(row3).SetText("Clear Orders").SetOnClick(clearOrdersFunction);
 end
 
-function clearOrders()
-	if(Game.Us.HasCommittedOrders == true)then
-		UI.Alert("You need to uncommit first");
-		return;
+function clearOrdersFunction()
+	if(Game.Us.HasCommittedOrders)then
+		return UI.Alert("You need to uncommit first");
 	end
-	local orderTabel = Game.Orders;--get clinet order list
-	if(next(orderTabel) ~= nil) then
-		orderTabel = {};
-		Game.Orders = orderTabel;
-	end;
+	local orderTabel = Game.Orders;--get client order list
+
+	if (next(orderTabel) ~= nil) then
+		orderTabel = {}
+		Game.Orders = orderTabel
+	end
 end;
 
 function AddDeploy()
-Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
-	local turn = Game.Game.TurnNumber;
-	local firstTurn = 1;
-	if (Distribution == nil) then --no dist
-		firstTurn = 0;
-	end;
-	if(turn -1 <= firstTurn) then
-		UI.Alert("You can't use the mod during distribution or for the first turn.");
-		return;
-	end;
+	print ('running AddDeploy');
+
+	
 	if(Game.Us.HasCommittedOrders == true)then
 		UI.Alert("You need to uncommit first");
 		return;
 	end
-	local turn = turn -2;
-	Game.GetTurn(turn, function(turnThis) getTurnHelper(turnThis) end)
-	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
-	local orderTabel = Game.Orders;--get clinet order list
+	
+	local orderTabel = Game.Orders;--get client order list
 	if (next(orderTabel) ~= nil) then --make sure we don't have past orders, since that is alot of extra work
 		UI.Alert('Please clear your order list before using this mod.')
 		return;
 	end;
 	
-	if (lastTurn == nil) then 
-		UI.Alert('Failed to retrive history. Please try again')
-		return;
-	end;
+--	if (LastTurn == nil) then 
+--		UI.Alert('Failed to retrieve history. Please try again')
+--		return;
+--	end;
 	
 	local maxDeployBonues = {}; --aray with the bonuses
 	for _, bonus in pairs (Game.Map.Bonuses) do
@@ -75,7 +63,7 @@ Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
 	
 	local newOrder;
 	
-	for _,order in pairs(lastTurn) do
+	for _,order in pairs(LastTurn) do
 		if (order.PlayerID == Game.Us.ID) then
 			if (order.proxyType == "GameOrderDeploy")then
 					--check that we own the territory
@@ -124,14 +112,14 @@ function AddOrdersConfirmes()
 	end
 	local turn = turn -2;
 	Game.GetTurn(turn, function(turnThis) getTurnHelper(turnThis) end)
-	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
+	local standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
 	local orderTabel = Game.Orders;--get clinet order list
 	if (next(orderTabel) ~= nil) then --make sure we don't have past orders, since that is alot of extra work
 		UI.Alert('Please clear your order list before using this mod.')
 		return;
 	end;
 	
-	if (lastTurn == nil) then 
+	if (LastTurn == nil) then 
 		UI.Alert('Failed to retrive history. Please try again')
 		return;
 	end;
@@ -143,7 +131,7 @@ function AddOrdersConfirmes()
 	
 	local newOrder;
 	
-	for _,order in pairs(lastTurn) do
+	for _,order in pairs(LastTurn) do
 		if (order.PlayerID == Game.Us.ID) then
 			if (order.proxyType == "GameOrderDeploy")then
 					--check that we own the territory
@@ -184,10 +172,47 @@ function AddOrdersConfirmes()
 	Game.Orders = orderTabel;
 end;
 
-function getTurnHelper(turn)
-	lastTurn = turn.Orders;
+function AddDeployHelper()
+	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
+	LastTurn = Game.Orders
+
+	--can we get rid of this Call?
+	Game.GetDistributionStanding(function(data) getDistHelper(data)  end)
+	
+	local turn = Game.Game.TurnNumber;
+	local firstTurn = 1;
+	if (Distribution == nil) then --auto dist
+		firstTurn = 0;
+	end;
+	if(turn -1 <= firstTurn) then
+		UI.Alert("You can't use the mod during distribution or for the first turn.");
+		return;
+	end;
+	
+	local turn = turn -2;
+	print('request Game.GetTurn for turn: ' .. turn);
+	Game.GetTurn(turn, function(data) getTurnHelperAdd(data) end)--getTurnHelperAdd(data) end)
 end;
 
-function getDistHelper(standing)
-	Distribution = standing;
+function getTurnHelperAdd(prevTurn)
+	print('got prevTurn');
+	LastTurn = prevTurn.Orders;
+	AddDeploy();
 end;
+
+--Your function will be called with nil if the distribution standing is not available, 
+--for example if it's an automatic distribution game
+function getDistHelper(data)
+	print('got Distribution');
+	Distribution = data;
+end;
+
+function Dump(obj)
+	if obj.proxyType ~= nil then
+		DumpProxy(obj);
+	elseif type(obj) == 'table' then
+		DumpTable(obj);
+	else
+		print('Dump ' .. type(obj));
+	end
+end
