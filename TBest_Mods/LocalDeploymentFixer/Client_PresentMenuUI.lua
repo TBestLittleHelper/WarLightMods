@@ -17,7 +17,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	end
 
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
-	addOrders = UI.CreateButton(row1).SetText("Add last turns deployment and transfers").SetOnClick(AddOrdersConfirmes);
+	addOrders = UI.CreateButton(row1).SetText("Add last turns deployment and transfers").SetOnClick(AddOrdersHelper);
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
 	addDeployOnly = UI.CreateButton(row2).SetText("Add last turns deployment only").SetOnClick(AddDeployHelper);
 	local row3 =  UI.CreateHorizontalLayoutGroup(vert);
@@ -51,10 +51,6 @@ function AddDeploy()
 		return;
 	end;
 	
---	if (LastTurn == nil) then 
---		UI.Alert('Failed to retrieve history. Please try again')
---		return;
---	end;
 	
 	local maxDeployBonues = {}; --aray with the bonuses
 	for _, bonus in pairs (Game.Map.Bonuses) do
@@ -96,22 +92,11 @@ function AddDeploy()
 end;
 
 function AddOrdersConfirmes()	
-	Game.GetDistributionStanding(function(standing) getDistHelper(standing) end)
-	local turn = Game.Game.TurnNumber;
-	local firstTurn = 1;	
-	if (Distribution == nil) then --no dist
-		firstTurn = 0;
-	end;
-	if(turn -1  <= firstTurn) then
-		UI.Alert("You can't use the mod during distribution or for the first turn.");
-		return;
-	end;
+	print ('running addOrders');
 	if(Game.Us.HasCommittedOrders == true)then
 		UI.Alert("You need to uncommit first");
 		return;
 	end
-	local turn = turn -2;
-	Game.GetTurn(turn, function(turnThis) getTurnHelper(turnThis) end)
 	local standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
 	local orderTabel = Game.Orders;--get clinet order list
 	if (next(orderTabel) ~= nil) then --make sure we don't have past orders, since that is alot of extra work
@@ -119,10 +104,6 @@ function AddOrdersConfirmes()
 		return;
 	end;
 	
-	if (LastTurn == nil) then 
-		UI.Alert('Failed to retrive history. Please try again')
-		return;
-	end;
 	
 	local maxDeployBonues = {}; --aray with the bonuses
 	for _, bonus in pairs (Game.Map.Bonuses) do
@@ -194,10 +175,38 @@ function AddDeployHelper()
 	Game.GetTurn(turn, function(data) getTurnHelperAdd(data) end)--getTurnHelperAdd(data) end)
 end;
 
+function AddOrdersHelper()
+	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
+	LastTurn = Game.Orders
+
+	--can we get rid of this Call?
+	Game.GetDistributionStanding(function(data) getDistHelper(data)  end)
+
+	local turn = Game.Game.TurnNumber;
+	local firstTurn = 1;
+	if (Distribution == nil) then --auto dist
+		firstTurn = 0;
+	end;
+	if(turn -1 <= firstTurn) then
+		UI.Alert("You can't use the mod during distribution or for the first turn.");
+		return;
+	end;
+	
+	local turn = turn -2;
+	print('request Game.GetTurn for turn: ' .. turn);
+	Game.GetTurn(turn, function(data) getTurnHelperAddOrders(data) end)--getTurnHelperAdd(data) end)
+end;
+
 function getTurnHelperAdd(prevTurn)
 	print('got prevTurn');
 	LastTurn = prevTurn.Orders;
 	AddDeploy();
+end;
+
+function getTurnHelperAddOrders(prevTurn)
+	print('got prevTurn');
+	LastTurn = prevTurn.Orders;
+	AddOrdersConfirmes();
 end;
 
 --Your function will be called with nil if the distribution standing is not available, 
