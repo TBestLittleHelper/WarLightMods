@@ -1,0 +1,1 @@
+Prevent a player from using the sanction card on themselves. Recommended for use with negative sanctions and have a diplo/rp game. 
