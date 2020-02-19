@@ -45,7 +45,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 				local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled) 
 				result.AttackingArmiesKilled = NewAttackingArmiesKilled
 				msg = "The city has " .. tostring(DefBonus)
-				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg ,nil,winnerCapturesAll));
+				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg));
 				end
 			end
 		end
