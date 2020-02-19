@@ -1,6 +1,8 @@
 function Server_AdvanceTurn_Start (game, addNewOrder)	
-	--Every 5 turn, Cities grow by 1
-	if (game.Game.NumberOfTurns %5 == 0 and game.Game.NumberOfTurns > 3) then
+	--The turns cities grow. For now, we hardcode some turns
+	if (game.Game.NumberOfTurns == 5 or game.Game.NumberOfTurns == 10 or game.Game.NumberOfTurns == 15) then
+
+--	if (game.Game.NumberOfTurns %5 == 0 and game.Game.NumberOfTurns > 3) then
 		standing = game.ServerGame.LatestTurnStanding;
 		CurrentIndex=1;
 		NewOrders={};
@@ -22,6 +24,8 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 	end
 end
 
+
+--TODO have fog on new orders
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)	
 	--Give a 10% def. bonus per city on defending territory 
 	if (order.proxyType == 'GameOrderAttackTransfer')  then
@@ -29,20 +33,26 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then	
 				DefBonus = game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] * 0.10;
 				attackersKilled = result.AttackingArmiesKilled.NumArmies +  result.AttackingArmiesKilled.DefensePower * DefBonus
-				--round up, always
-				math.ceil(attackersKilled);
+				
+				--Minimum kill 1 attacking army
+				if(attackersKilled == 0) then
+					attackersKilled = 1
+			
 				--Max armies lost is equal to actualArmies
-				if (attackersKilled - result.ActualArmies.NumArmies < 0) then
+				elseif (attackersKilled - result.ActualArmies.NumArmies < 0) then
 					attackersKilled = result.ActualArmies.NumArmies;
 					--Note : At the moment we don't dmg special units
 					--That would be a rare edge case
+				else
+					--round up, always
+					attackersKilled = math.ceil(attackersKilled);
 				end
-	
-				--Write to GameOrderResult	
+				
+				--Write to GameOrderResult	 (result)
 				local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled) 
 				result.AttackingArmiesKilled = NewAttackingArmiesKilled
-				msg = "The city has " .. tostring(DefBonus*100) .. "% defencive bonus";
-				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg));
+				msg = "The city has " .. tostring(DefBonus*100) .. "% fortification bonus";
+				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{}));
 			end
 		end
 	
@@ -56,7 +66,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
-			addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"City was bombed",nil,NewOrders));
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"City was bombed",NewOrders));
 		end
 	end
 end
