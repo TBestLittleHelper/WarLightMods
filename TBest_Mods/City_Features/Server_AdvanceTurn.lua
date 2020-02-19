@@ -41,17 +41,17 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 					--result.IsSuccessful is not writable atm
 					--result.IsSuccessful = false;
 				end
+	
 				--Write to GameOrderResult	
 				local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled) 
 				result.AttackingArmiesKilled = NewAttackingArmiesKilled
 				msg = "The city has " .. tostring(DefBonus)
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg));
-				end
 			end
 		end
 	
 	--For now, bomb cards set cities to 1.
-	else if(order.proxyType == 'GameOrderPlayCardBomb') then
+	elseif(order.proxyType == 'GameOrderPlayCardBomb') then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
 			local structure = {}
 			NewOrders={};
