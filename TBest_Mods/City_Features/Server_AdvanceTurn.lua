@@ -1,10 +1,8 @@
 --give % def bonus to cities
 
-function Server_AdvanceTurn_Start (game, addNewOrder)
-	
-	--Every 10 turn, Cities grow by 1
-	if (game.Game.NumberOfTurns %2 == 0 and game.Game.NumberOfTurns > 3) then
-		print(game.Game.NumberOfTurns)
+function Server_AdvanceTurn_Start (game, addNewOrder)	
+	--Every 5 turn, Cities grow by 1
+	if (game.Game.NumberOfTurns %5 == 0 and game.Game.NumberOfTurns > 3) then
 		standing = game.ServerGame.LatestTurnStanding;
 		CurrentIndex=1;
 		NewOrders={};
@@ -25,10 +23,35 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 		addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Cities have grown",nil,NewOrders));
 	end
 end
+
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)	
-	--Cities can be removed by bomb card
+	--Give a 10% def. bonus per city on defending territory 
+	if (order.proxyType == 'GameOrderAttackTransfer')  then
+		if (result.IsAttack) then
+			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then	
+				DefBonus = game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] * 0.10;
+				attackersKilled = result.AttackingArmiesKilled.NumArmies +  result.AttackingArmiesKilled.DefensePower * DefBonus
+				--round up, always
+				math.ceil(attackersKilled);
+				--Max armies lost is equal to actualArmies
+				if (attackersKilled - result.ActualArmies.NumArmies < 0) then
+					attackersKilled = result.ActualArmies.NumArmies;
+					--Note : At the moment we don't dmg special units
+					--lost all armies, so attack failed
+					--result.IsSuccessful is not writable atm
+					--result.IsSuccessful = false;
+				end
+				--Write to GameOrderResult	
+				local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled) 
+				result.AttackingArmiesKilled = NewAttackingArmiesKilled
+				msg = "The city has " .. tostring(DefBonus)
+				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg ,nil,winnerCapturesAll));
+				end
+			end
+		end
+	
 	--For now, bomb cards set cities to 1.
-	if(order.proxyType == 'GameOrderPlayCardBomb') then
+	else if(order.proxyType == 'GameOrderPlayCardBomb') then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
 			local structure = {}
 			NewOrders={};
@@ -41,9 +64,3 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		end
 	end
 end
-
-
-
- function PrintProxyInfo(obj)
-   print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
- end
