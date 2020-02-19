@@ -1,5 +1,3 @@
---give % def bonus to cities
-
 function Server_AdvanceTurn_Start (game, addNewOrder)	
 	--Every 5 turn, Cities grow by 1
 	if (game.Game.NumberOfTurns %5 == 0 and game.Game.NumberOfTurns > 3) then
@@ -37,15 +35,13 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 				if (attackersKilled - result.ActualArmies.NumArmies < 0) then
 					attackersKilled = result.ActualArmies.NumArmies;
 					--Note : At the moment we don't dmg special units
-					--lost all armies, so attack failed
-					--result.IsSuccessful is not writable atm
-					--result.IsSuccessful = false;
+					--That would be a rare edge case
 				end
 	
 				--Write to GameOrderResult	
 				local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled) 
 				result.AttackingArmiesKilled = NewAttackingArmiesKilled
-				msg = "The city has " .. tostring(DefBonus)
+				msg = "The city has " .. tostring(DefBonus*100) .. "% defencive bonus";
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg));
 			end
 		end
