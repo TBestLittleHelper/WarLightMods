@@ -66,7 +66,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
-			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"City was bombed",NewOrders));
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"City was bombed",{},NewOrders));
 		end
 	end
 end
