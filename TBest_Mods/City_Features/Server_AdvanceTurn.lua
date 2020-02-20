@@ -4,8 +4,8 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 		standing = game.ServerGame.LatestTurnStanding;
 		CurrentIndex=1;
 		NewOrders={};
-
---As of now WarZone only has one type of structure. If this changes in the future, this code may break.
+		
+		--As of now WarZone only has one type of structure. If this changes in the future, this code may break.
 		local structure = {}
 		Cities = WL.StructureType.City
 		for _, territory in pairs(standing.Territories) do
@@ -37,14 +37,13 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 				
 				--Minimum kill 1 attacking army
 				if(attackersKilled == 0) then
-					attackersKilled = 1
-			
-				--Max armies lost is equal to actualArmies
-				elseif (attackersKilled - result.ActualArmies.NumArmies < 0) then
+					attackersKilled = 1					
+					--Max armies lost is equal to actualArmies
+					elseif (result.ActualArmies.NumArmies - attackersKilled < 0) then
 					attackersKilled = result.ActualArmies.NumArmies;
 					--Note : At the moment we don't dmg special units
 					--That would be a rare edge case
-				else
+					else
 					--round up, always
 					attackersKilled = math.ceil(attackersKilled);
 				end
@@ -56,18 +55,23 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{}));
 			end
 		end
-	
-	--For now, bomb cards reduces cities to 1.
-	elseif(order.proxyType == 'GameOrderPlayCardBomb') then
+		
+		--For now, bomb cards reduces cities to 1.
+		elseif(order.proxyType == 'GameOrderPlayCardBomb') then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
 			local structure = {}
 			NewOrders={};
 			Cities = WL.StructureType.City
 			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -1;
+			msg = "City was bombed";
+			if structure[Cities] == 0 then
+				structure = nil;
+				msg = "City was destroyed!"
+			end
 			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
-			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"City was bombed",{},NewOrders));
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{},NewOrders));
 		end
 	end
 end
