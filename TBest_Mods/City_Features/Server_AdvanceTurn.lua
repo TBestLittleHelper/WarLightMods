@@ -1,12 +1,11 @@
 function Server_AdvanceTurn_Start (game, addNewOrder)	
-	--The turns cities grow. For now, we hardcode some turns
-	if (game.Game.NumberOfTurns == 5 or game.Game.NumberOfTurns == 10 or game.Game.NumberOfTurns == 15) then
-
---	if (game.Game.NumberOfTurns %5 == 0 and game.Game.NumberOfTurns > 3) then
+	--The turns cities can grow.
+	if ((game.Game.NumberOfTurns+1) %5 == 0) then
 		standing = game.ServerGame.LatestTurnStanding;
 		CurrentIndex=1;
 		NewOrders={};
 
+--As of now WarZone only has one type of structure. If this changes in the future, this code may break.
 		local structure = {}
 		Cities = WL.StructureType.City
 		for _, territory in pairs(standing.Territories) do
@@ -14,9 +13,12 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 				if not(territory.Structures == nil) then
 					terrMod = WL.TerritoryModification.Create(territory.ID);		
 					structure[Cities] = territory.Structures[WL.StructureType.City] +1;
-					terrMod.SetStructuresOpt   = structure
-					NewOrders[CurrentIndex]=terrMod;
-					CurrentIndex=CurrentIndex+1;
+					--A cap on how big cities can get
+					if (structure[Cities] < 8 ) then
+						terrMod.SetStructuresOpt   = structure
+						NewOrders[CurrentIndex]=terrMod;
+						CurrentIndex=CurrentIndex+1;
+					end
 				end
 			end
 		end					
@@ -24,15 +26,14 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 	end
 end
 
-
---TODO have fog on new orders
+--As of now WarZone only has one type of structure. If this changes in the future, this code may break.
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)	
 	--Give a 10% def. bonus per city on defending territory 
 	if (order.proxyType == 'GameOrderAttackTransfer')  then
 		if (result.IsAttack) then
 			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then	
 				DefBonus = game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] * 0.10;
-				attackersKilled = result.AttackingArmiesKilled.NumArmies +  result.AttackingArmiesKilled.DefensePower * DefBonus
+				attackersKilled = result.AttackingArmiesKilled.NumArmies +  result.AttackingArmiesKilled.NumArmies * DefBonus
 				
 				--Minimum kill 1 attacking army
 				if(attackersKilled == 0) then
@@ -56,13 +57,13 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			end
 		end
 	
-	--For now, bomb cards set cities to 1.
+	--For now, bomb cards reduces cities to 1.
 	elseif(order.proxyType == 'GameOrderPlayCardBomb') then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
 			local structure = {}
 			NewOrders={};
 			Cities = WL.StructureType.City
-			structure[Cities] = 1;
+			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -1;
 			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;

@@ -1,5 +1,5 @@
 function Server_StartGame(game, standing)	
-
+	--Make a city on all starting territories/pc=icks
 	local structure = {}
 	Cities = WL.StructureType.City
 	structure[Cities] = 1;
