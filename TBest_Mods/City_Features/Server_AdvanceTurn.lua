@@ -64,10 +64,10 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			Cities = WL.StructureType.City
 			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -1;
 			msg = "City was bombed";
-			-- if structure[Cities] == 0 then
-				-- structure = nil;
-				-- msg = "City was destroyed!"
-			-- end
+			if structure[Cities] < 1 then
+				structure = nil;
+				msg = "City was destroyed!"
+			end
 			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
