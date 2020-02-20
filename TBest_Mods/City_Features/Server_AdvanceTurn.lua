@@ -73,6 +73,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{},NewOrders));
+			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 		end
 	end	
 	
