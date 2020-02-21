@@ -16,14 +16,11 @@ function Server_StartGame(game, standing)
 		
 		--Capitals results in bigger city (fixed value for now)
 		--Useful for Custom scenario, where players starts with a lot of territories
-		if (territory.NumArmies.NumArmies == 5) then
+		if (territory.NumArmies.NumArmies == Mod.Settings.CustomSenarioCapitals) then
 			structure[Cities] = 5;
 			territory.Structures = structure;
+			--Reset to 1, as we loop back to avg territories.
 			structure[Cities] = 1;
 		end
 	end
-end
-
-function PrintProxyInfo(obj)
-	print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
