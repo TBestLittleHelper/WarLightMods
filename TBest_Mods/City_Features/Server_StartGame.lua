@@ -5,7 +5,7 @@ function Server_StartGame(game, standing)
 	structure[Cities] = 1;
 	
 	for _, territory in pairs(standing.Territories) do
-		if (not territory.IsNeutral) then
+		if (territory.IsNeutral == false and Mod.Settings.StartingCitiesActive == true) then
 			--Players starts with a city
 			territory.Structures  = structure
 			

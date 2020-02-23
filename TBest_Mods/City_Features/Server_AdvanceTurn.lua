@@ -42,7 +42,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 						elseif (result.ActualArmies.NumArmies - attackersKilled < 0) then
 						attackersKilled = result.ActualArmies.NumArmies;
 						--Note : At the moment we don't dmg special units
-						--That would be a rare edge case
+						--That would be a rare edge case, we might want to handle in the future
 						else
 						--round up, always
 						attackersKilled = math.ceil(attackersKilled);
@@ -58,14 +58,20 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		end
 	end	
 	--For now, bomb cards reduces cities to 1.
-	if(order.proxyType == 'GameOrderPlayCardBomb') then
+	if(order.proxyType == 'GameOrderPlayCardBomb' and Mod.Settings.BombcardActive == true) then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
+			--if city is already destroyed, return
+			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
+				return;
+			end
+		
 			local structure = {}
 			NewOrders={};
 			Cities = WL.StructureType.City
 			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -Mod.Settings.BombcardPower;
 			msg = "City was bombed";
 			if (structure[Cities] < 1) then
+				--We can't set to nil, so we set to zero
 				structure[Cities] = 0;
 				msg = "The City is destroyed!"
 			end
@@ -78,8 +84,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	end	
 	
 	--If we blockade or emergency blockade on a city we own. We build on that city
-	--Maybe, we want this to be a way to make new cities in the future
-	if(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon') then
+	if(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon' and Mod.Settings.BlockadeBuildCityActive == true) then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
 			local structure = {}
 			NewOrders={};
