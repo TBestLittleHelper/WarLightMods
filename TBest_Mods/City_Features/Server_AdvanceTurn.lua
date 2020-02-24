@@ -25,6 +25,9 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 	end
 end
 
+--TODO make if free to depoy in cities in commerce?
+
+
 --As of now WarZone only has one type of structure. If this changes in the future, this code may break.
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)	
 	--Give a 10% def. bonus per city on defending territory 

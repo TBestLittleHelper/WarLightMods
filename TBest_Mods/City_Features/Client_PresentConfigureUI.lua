@@ -1,14 +1,13 @@
 function Client_PresentConfigureUI(rootParent)
-	 showSettings = false;
+	showInstructions = false;
 	
-	--TODO compere with mod settings here.
-	 initialDefPower = Mod.Settings.DefPower;
-	 initialBombcardPower = Mod.Settings.BombcardPower;
-	 initialCustomSenarioCapitals = Mod.Settings.CustomSenarioCapitals;
+	initialDefPower = Mod.Settings.DefPower;
+	initialBombcardPower = Mod.Settings.BombcardPower;
+	initialCustomSenarioCapitals = Mod.Settings.CustomSenarioCapitals;
 	
-	 initialBombcardActive = Mod.Settings.BombcardActive;
-	 initialCitiesActive = Mod.Settings.StartingCitiesActive;
-	 initialBuildCityActive = Mod.Settings.BlockadeBuildCityActive;		
+	initialBombcardActive = Mod.Settings.BombcardActive;
+	initialCitiesActive = Mod.Settings.StartingCitiesActive;
+	initialBuildCityActive = Mod.Settings.BlockadeBuildCityActive;		
 	
 	if initialDefPower == nil then initialDefPower = 25; end
     if initialBombcardPower == nil then initialBombcardPower = 2; end
@@ -17,54 +16,105 @@ function Client_PresentConfigureUI(rootParent)
 	if initialCitiesActive == nil then initialCitiesActive = true; end
 	if initialBombcardActive == nil then initialBombcardActive = true; end
 	if initialBuildCityActive == nil then initialBuildCityActive = true; end
-			
+	
 	horzlist = {};
 	horzlist[0] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[10] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[20] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[30] = UI.CreateHorizontalLayoutGroup(rootParent);
+	
+	showWallOfTextToggle= UI.CreateCheckBox(horzlist[0]).SetText('Show Advanced Instructions').SetIsChecked(showInstructions).SetOnValueChanged(ShowAdvancedInstructions);	
 	horzlist[1] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[2] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[3] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[4] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
-	showSettingsToggle= UI.CreateCheckBox(horzlist[0]).SetText('Change Advanced Settings').SetIsChecked(showSettings).SetOnValueChanged(ShowAdvancedSettingsFunction);	
+	defPowerToggle= UI.CreateCheckBox(horzlist[10]).SetText('City Walls').SetIsChecked(initialCitiesActive).SetOnValueChanged(ShowCitySettings);
+	horzlist[11] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[12] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
-	defPowerToggle= UI.CreateCheckBox(horzlist[1]).SetText('City Walls').SetIsChecked(initialCitiesActive)
-	bombCardToggle= UI.CreateCheckBox(horzlist[2]).SetText('Bomb card destory cities').SetIsChecked(initialBombcardActive)
-	capitalsToggle= UI.CreateCheckBox(horzlist[3]).SetText('Capitals').SetIsChecked(initialBuildCityActive)
-
 	
-	horzlist[5] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[6] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[7] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[8] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[9] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[10] = UI.CreateHorizontalLayoutGroup(rootParent);
-
 	
-	if (showSettings == true) then
-		ShowAdvancedSettingsFunction();
+	bombCardToggle= UI.CreateCheckBox(horzlist[20]).SetText('Bomb card destory cities').SetIsChecked(initialBombcardActive).SetOnValueChanged(ShowBombSettings);
+	horzlist[21] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[22] = UI.CreateHorizontalLayoutGroup(rootParent);
+	
+	
+	capitalsToggle= UI.CreateCheckBox(horzlist[30]).SetText('Capitals').SetIsChecked(initialBuildCityActive).SetOnValueChanged(ShowCapitalsSettings);
+	horzlist[31] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[32] = UI.CreateHorizontalLayoutGroup(rootParent);
+	
+	
+	
+	if (showInstructions == true) then
+		ShowAdvancedInstructions();
+	end
+	
+	if (initialCitiesActive == true) then
+		ShowCitySettings();
+	end
+	
+	if (initialBombcardActive == true) then
+		ShowBombSettings();
+	end
+	
+	if (initialBuildCityActive == true) then
+		ShowCapitalsSettings();
 	end
 end
 
 
-function ShowAdvancedSettingsFunction()
+function ShowAdvancedInstructions()
+	if(text1 ~= nil) then
+		UI.Destroy(text1);
+		UI.Destroy(text2);
+		UI.Destroy(text3);
+		UI.Destroy(text4);
+		
+		text1 = nil;
+		else
+		text1 = UI.CreateLabel(horzlist[1]).SetText('City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, so for example 1 city gives 50% extra defence and 2 cities gives 100%');
+		text2 = UI.CreateLabel(horzlist[2]).SetText('Bomb card can reduce the number of cities on a territory. You can custimize the strength. A city of any size will protect the armies in that city from the bomb card!');	
+		text3 = UI.CreateLabel(horzlist[3]).SetText('If a starting territory has a set number of armies at the begining of a game, they will start with a large city. This is intended to be used in combination with Custom Senario, so that a game creator can make some key territories start with cities.');
+		text4 = UI.CreateLabel(horzlist[4]).SetText('If you run into any issues please contact me, TBest. [Click Mod Info, open my profle and send me a mail]');
+		
+	end
+end	
+
+
+function ShowCitySettings()
 	if(textDefBonus ~= nil) then
 		UI.Destroy(textDefBonus);
 		UI.Destroy(sliderDefBonus);
-	
-		UI.Destroy(textBombCard);
-		UI.Destroy(sliderBombCard);
-
-		UI.Destroy(textCapitals);
-		UI.Destroy(sliderCapitals);
 		
 		textDefBonus = nil;
 		else
-		textDefBonus = UI.CreateLabel(horzlist[5]).SetText('Percantage bonus for each city on a territory is');
-		sliderDefBonus = UI.CreateNumberInputField(horzlist[6]).SetSliderMinValue(10).SetSliderMaxValue(50).SetValue(initialDefPower);
+		textDefBonus = UI.CreateLabel(horzlist[11]).SetText('Percantage bonus for each city on a territory is');
+		sliderDefBonus = UI.CreateNumberInputField(horzlist[12]).SetSliderMinValue(10).SetSliderMaxValue(50).SetValue(initialDefPower);
+	end
+end	
+
+function ShowBombSettings()
+	if(textBombCard ~= nil) then	
+		UI.Destroy(textBombCard);
+		UI.Destroy(sliderBombCard);
 		
-		textBombCard= UI.CreateLabel(horzlist[7]).SetText('Bomb card reduces a city by');
-		sliderBombCard = UI.CreateNumberInputField(horzlist[8]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialBombcardPower);
+		textBombCard = nil;
+		else
+		textBombCard= UI.CreateLabel(horzlist[21]).SetText('Bomb card reduces a city by');
+		sliderBombCard = UI.CreateNumberInputField(horzlist[22]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialBombcardPower);
+	end
+end	
+
+function ShowCapitalsSettings()
+	if(textCapitals ~= nil) then
+		UI.Destroy(textCapitals);
+		UI.Destroy(sliderCapitals);
 		
-		textCapitals= UI.CreateLabel(horzlist[9]).SetText('Capitals starts with this many arimes');
-		sliderCapitals = UI.CreateNumberInputField(horzlist[10]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(initialCustomSenarioCapitals);
+		textCapitals = nil;
+		else
+		
+		textCapitals= UI.CreateLabel(horzlist[31]).SetText('Capitals starts with this many arimes');
+		sliderCapitals = UI.CreateNumberInputField(horzlist[32]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(initialCustomSenarioCapitals);
 	end
 end	
