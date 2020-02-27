@@ -25,13 +25,13 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 	end
 end
 
---TODO make if free to depoy in cities in commerce?
+--TODO Investigate if we can make if free to deploy to cities in commerce? Might be an intresting twist on the army mulitiplier. 
 
 
 --As of now WarZone only has one type of structure. If this changes in the future, this code may break.
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)	
 	--Give a 10% def. bonus per city on defending territory 
-	if (order.proxyType == 'GameOrderAttackTransfer')  then
+	if (order.proxyType == 'GameOrderAttackTransfer' and Mod.Settings.CityWallsActive == true)  then
 		if (result.IsAttack) then
 			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then	
 				if (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] > 0) then
@@ -67,7 +67,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
 				return;
 			end
-		
+			
 			local structure = {}
 			NewOrders={};
 			Cities = WL.StructureType.City
@@ -92,7 +92,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			local structure = {}
 			NewOrders={};
 			Cities = WL.StructureType.City
-			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] +1;
+			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] +Mod.Settings.BlockadePower;
 			msg = "The City have been improved!";
 			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
@@ -102,4 +102,3 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		end
 	end
 end
-	

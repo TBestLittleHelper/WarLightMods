@@ -1,5 +1,5 @@
 function Server_StartGame(game, standing)	
-	--Make a city on all starting territories/pc=icks
+	--Make a city on all starting territories
 	local structure = {}
 	Cities = WL.StructureType.City
 	structure[Cities] = 1;
@@ -9,13 +9,13 @@ function Server_StartGame(game, standing)
 			--Players starts with a city
 			territory.Structures  = structure
 			
-			elseif (territory.NumArmies.NumArmies == game.Settings.WastelandSize) then
+			elseif (territory.NumArmies.NumArmies == game.Settings.WastelandSize and Mod.Settings.WastlandCities == true) then
 			--Wastelands starts with a city.
 			territory.Structures  = structure	
 		end
 		
 		--Capitals results in bigger city (fixed value for now)
-		--Useful for Custom scenario, where players starts with a lot of territories
+		--Useful for Custom scenario, where players can start with a lot of territories
 		if (territory.NumArmies.NumArmies == Mod.Settings.CustomSenarioCapitals) then
 			structure[Cities] = 5;
 			territory.Structures = structure;
