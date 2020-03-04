@@ -7,5 +7,5 @@ function Server_Created(game, settings)
 	
 	--Set cost of city high, to prevent players building cities
 	--At the moment, can build cities is not a writable setting
-	settings.CommerceCityBaseCost  = 150;
+	settings.CommerceCityBaseCost  = 500;
 end

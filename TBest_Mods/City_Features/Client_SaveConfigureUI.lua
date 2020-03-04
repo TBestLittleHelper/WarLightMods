@@ -32,8 +32,7 @@ function Client_SaveConfigureUI(alert)
 				if (Mod.Settings.CustomSenarioCapitals < 0) then Mod.Settings.CustomSenarioCapitals = 0; end
 		if (Mod.Settings.CustomSenarioCapitals > 1000) then Mod.Settings.CustomSenarioCapitals = 1000; end
 
-		--Mod.Settings.CapitalExtraStartingCities
-		--TODO
+		--TODO Mod.Settings.CapitalExtraStartingCities
 	end
 	
     Mod.Settings.BlockadeBuildCityActive = false;
@@ -49,4 +48,10 @@ function Client_SaveConfigureUI(alert)
 	if (wastelandsToggle.GetIsChecked()) then
 		Mod.Settings.WastlandCities = wastelandsToggle.GetIsChecked();
 	end;
+	
+	Mod.Settings.CommerceFreeCityDeploy = false;
+	if (commerceFreeDeployCityToggle.GetIsChecked()) then
+		Mod.Settings.CommerceFreeCityDeploy = commerceFreeDeployCityToggle.GetIsChecked();
+	end;
+
 end	

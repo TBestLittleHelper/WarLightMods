@@ -11,6 +11,8 @@ function Client_PresentConfigureUI(rootParent)
 	
 	initialCitiesActive = Mod.Settings.StartingCitiesActive;
 	initialWastlandCities = Mod.Settings.WastlandsCities;
+	initialCommerceFree = Mod.Settings.CommerceFreeCityDeploy;
+
 	
 	initialBuildCityActive = Mod.Settings.CapitalsActive;		
 	initialBlockCityActive = Mod.Settings.BlockadeBuildCityActive;
@@ -25,6 +27,7 @@ function Client_PresentConfigureUI(rootParent)
 	if initialBuildCityActive == nil then initialBuildCityActive = true; end
 	if initialWastlandCities == nil then initialWastlandCities = true; end
 	if initialBlockCityActive == nil then initialBlockCityActive = true; end
+	if initialCommerceFree == nil then initialCommerceFree = true; end
 	
 	
 	horzlist = {};
@@ -45,10 +48,9 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[40] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[50] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[60] = UI.CreateHorizontalLayoutGroup(rootParent);
-	
+	horzlist[70] = UI.CreateHorizontalLayoutGroup(rootParent);
+
 	--TODO reorder the settings?
-	wastelandsToggle= UI.CreateCheckBox(horzlist[50]).SetText('Wastlands starts with a neutral city').SetIsChecked(initialWastlandCities);
-	startingCitiesToggle= UI.CreateCheckBox(horzlist[60]).SetText("Distributed territories start with a city").SetIsChecked(initialCitiesActive);
 	
 	
 	cityWallsToggle= UI.CreateCheckBox(horzlist[10]).SetText('City Walls').SetIsChecked(initialCityWalls).SetOnValueChanged(ShowCitySettings);
@@ -66,6 +68,10 @@ function Client_PresentConfigureUI(rootParent)
 	buildCitiesToggle= UI.CreateCheckBox(horzlist[40]).SetText('Use cards to build a city').SetIsChecked(initialBuildCityActive).SetOnValueChanged(ShowBlockSettings);
 	horzlist[41] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[42] = UI.CreateHorizontalLayoutGroup(rootParent);
+	
+	wastelandsToggle= UI.CreateCheckBox(horzlist[50]).SetText('Wastlands starts with a neutral city').SetIsChecked(initialWastlandCities);
+	startingCitiesToggle= UI.CreateCheckBox(horzlist[60]).SetText("Distributed territories start with a city").SetIsChecked(initialCitiesActive);
+	commerceFreeDeployCityToggle= UI.CreateCheckBox(horzlist[70]).SetText("In commerce game, deploying in a city will refund your gold for the next turn").SetIsChecked(initialCommerceFree);
 	
 	
 	if (showInstructions == true) then
