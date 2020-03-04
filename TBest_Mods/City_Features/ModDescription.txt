@@ -1,1 +1,1 @@
-Several enchancments for cities. For example, cities can grow, be bombed and provide defensive bonuses. 
+Several enchancments and new features for cities. For example, cities can grow, be bombed and provide defensive bonuses and more! 
