@@ -12,12 +12,12 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 			--Can be 0, if a territory has been bombed. We don't want that city to grow.
 			if not(territory.Structures == nil or territory.Structures[WL.StructureType.City] == 0) then
 				local terrMod = WL.TerritoryModification.Create(territory.ID);		
-				local structure[Cities] = territory.Structures[WL.StructureType.City] +1;
+				structure[Cities] = territory.Structures[WL.StructureType.City] +1;
 				--A hardcoded cap on how big cities can grow
 				if (structure[Cities] < 11 ) then
-					local terrMod.SetStructuresOpt   = structure
-					local NewOrders[CurrentIndex]=terrMod;
-					local CurrentIndex=CurrentIndex+1;
+					terrMod.SetStructuresOpt   = structure
+					NewOrders[CurrentIndex]=terrMod;
+					CurrentIndex=CurrentIndex+1;
 				end
 			end
 		end					
@@ -37,7 +37,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			local NewOrders={};	
 			local terrMod = WL.TerritoryModification.Create(order.DeployOn);	
 			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + order.NumArmies;
-			local NewOrders[1]=terrMod;
+			NewOrders[1]=terrMod;
 			
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deploy " .. terrMod.SetArmiesTo .. " in " .. game.Map.Territories[order.DeployOn].Name .. " for free", {}, NewOrders));
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);			
@@ -86,7 +86,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			local structure = {}
 			local NewOrders={};
 			local Cities = WL.StructureType.City
-			local structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -Mod.Settings.BombcardPower;
+			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -Mod.Settings.BombcardPower;
 			local msg = "City was bombed";
 			if (structure[Cities] < 1) then
 				--We can't set to nil, so we set to zero
@@ -103,8 +103,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 			return;
 		end
-		
-		
+				
 		--If we blockade or emergency blockade on a city we own. We build on that city
 		elseif(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon' and Mod.Settings.BlockadeBuildCityActive == true) then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
@@ -116,7 +115,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			local structure = {}
 			local NewOrders={};
 			local Cities = WL.StructureType.City
-			local structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] +Mod.Settings.BlockadePower;
+			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] +Mod.Settings.BlockadePower;
 			local msg = "The City's defenses have been increased!";
 			local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
