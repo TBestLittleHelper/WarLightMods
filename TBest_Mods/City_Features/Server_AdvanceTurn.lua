@@ -1,23 +1,23 @@
 function Server_AdvanceTurn_Start (game, addNewOrder)	
 	--The turns cities can grow.
 	if ((game.Game.NumberOfTurns+1) %5 == 0) then
-		standing = game.ServerGame.LatestTurnStanding;
-		CurrentIndex=1;
-		NewOrders={};
+		local standing = game.ServerGame.LatestTurnStanding;
+		local CurrentIndex=1;
+		local NewOrders={};
 		
 		--As of now WarZone only has one type of structure.
 		local structure = {}
-		Cities = WL.StructureType.City
+		local Cities = WL.StructureType.City
 		for _, territory in pairs(standing.Territories) do
 			--Can be 0, if a territory has been bombed. We don't want that city to grow.
 			if not(territory.Structures == nil or territory.Structures[WL.StructureType.City] == 0) then
-				terrMod = WL.TerritoryModification.Create(territory.ID);		
-				structure[Cities] = territory.Structures[WL.StructureType.City] +1;
+				local terrMod = WL.TerritoryModification.Create(territory.ID);		
+				local structure[Cities] = territory.Structures[WL.StructureType.City] +1;
 				--A hardcoded cap on how big cities can grow
 				if (structure[Cities] < 11 ) then
-					terrMod.SetStructuresOpt   = structure
-					NewOrders[CurrentIndex]=terrMod;
-					CurrentIndex=CurrentIndex+1;
+					local terrMod.SetStructuresOpt   = structure
+					local NewOrders[CurrentIndex]=terrMod;
+					local CurrentIndex=CurrentIndex+1;
 				end
 			end
 		end					
@@ -34,24 +34,23 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] == 0) then
 				return;
 			end			
-			NewOrders={};	
-			terrMod = WL.TerritoryModification.Create(order.DeployOn);	
+			local NewOrders={};	
+			local terrMod = WL.TerritoryModification.Create(order.DeployOn);	
 			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + order.NumArmies;
-			NewOrders[1]=terrMod;
+			local NewOrders[1]=terrMod;
 			
-			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deployed " .. terrMod.SetArmiesTo .. " in a city for free", {}, NewOrders));
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deploy " .. terrMod.SetArmiesTo .. " in " .. game.Map.Territories[order.DeployOn].Name .. " for free", {}, NewOrders));
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);			
 			return;
-		end
-	end	
-	
-	--Give a X% def. bonus per city on defending territory 
-	if (order.proxyType == 'GameOrderAttackTransfer' and Mod.Settings.CityWallsActive == true)  then
+		end	
+		
+		--Give a X% def. bonus per city on defending territory 
+		elseif (order.proxyType == 'GameOrderAttackTransfer' and Mod.Settings.CityWallsActive == true)  then
 		if (result.IsAttack) then
 			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then	
 				if (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] > 0) then
-					DefBonus = game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] * Mod.Settings.DefPower;
-					attackersKilled = result.AttackingArmiesKilled.NumArmies +  result.AttackingArmiesKilled.NumArmies * DefBonus
+					local DefBonus = game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] * Mod.Settings.DefPower;
+					local attackersKilled = result.AttackingArmiesKilled.NumArmies +  result.AttackingArmiesKilled.NumArmies * DefBonus
 					
 					--Minimum kill 1 attacking army
 					if(attackersKilled == 0) then
@@ -69,32 +68,32 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 					--Write to GameOrderResult	 (result)
 					local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled) 
 					result.AttackingArmiesKilled = NewAttackingArmiesKilled
-					msg = "The city has " .. tostring(DefBonus*100) .. "% fortification bonus";
-					addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID}));
+					local msg = "The city has " .. tostring(DefBonus*100) .. "% fortification bonus";
+					addNewOrder(WL.GameOrderEvent.Create(game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID,msg,{order.PlayerID}));
 					return;
-					end
 				end
 			end
-		end	
+		end
+		
 		--Bomb cards reduces cities by the given X strength.
-		if(order.proxyType == 'GameOrderPlayCardBomb' and Mod.Settings.BombcardActive == true) then
-			if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
-				--if city is already destroyed, return
-				if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
-					return;
-				end
-				
-				local structure = {}
-				NewOrders={};
-				Cities = WL.StructureType.City
-				structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -Mod.Settings.BombcardPower;
-				msg = "City was bombed";
-				if (structure[Cities] < 1) then
-					--We can't set to nil, so we set to zero
-					structure[Cities] = 0;
+		elseif(order.proxyType == 'GameOrderPlayCardBomb' and Mod.Settings.BombcardActive == true) then
+		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
+			--if city is already destroyed, return
+			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
+				return;
+			end
+			
+			local structure = {}
+			local NewOrders={};
+			local Cities = WL.StructureType.City
+			local structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] -Mod.Settings.BombcardPower;
+			local msg = "City was bombed";
+			if (structure[Cities] < 1) then
+				--We can't set to nil, so we set to zero
+				structure[Cities] = 0;
 				msg = "The City is destroyed! It is now a ruin and won't grow before it's been rebuilt."
 			end
-			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
+			local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
 			
@@ -104,10 +103,10 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 			return;
 		end
-	end	
-	
-	--If we blockade or emergency blockade on a city we own. We build on that city
-	if(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon' and Mod.Settings.BlockadeBuildCityActive == true) then
+		
+		
+		--If we blockade or emergency blockade on a city we own. We build on that city
+		elseif(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon' and Mod.Settings.BlockadeBuildCityActive == true) then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
 			--Check that the player controls the territory
 			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].OwnerPlayerID ~= order.PlayerID) then
@@ -115,11 +114,11 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			end;
 			
 			local structure = {}
-			NewOrders={};
-			Cities = WL.StructureType.City
-			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] +Mod.Settings.BlockadePower;
-			msg = "The City's defenses have been increased!";
-			terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
+			local NewOrders={};
+			local Cities = WL.StructureType.City
+			local structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] +Mod.Settings.BlockadePower;
+			local msg = "The City's defenses have been increased!";
+			local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
 			
