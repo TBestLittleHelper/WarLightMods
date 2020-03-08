@@ -3,9 +3,8 @@ MirrorPicker
 RandomTemplate
 We respect your privacy : leeks random info about players
 
-Max # Cities
-
-#Testing
+#Testing/WIP
+Group Chat Mod
 
 #Public
 no-self-sanc
