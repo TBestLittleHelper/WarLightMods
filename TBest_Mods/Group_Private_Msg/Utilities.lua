@@ -36,7 +36,7 @@ function split(str, pat)
    return t
 end
 
-
+--TODO make this be able to handle color of a button as well
 function map(array, func)
 	local new_array = {}
 	local i = 1;

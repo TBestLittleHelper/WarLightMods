@@ -4,33 +4,48 @@ require('Client');
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	--If a spectator, just alert then close itself
 	if (game.Us == nil) then
-		UI.Alert("You can do anything as a spectator");
-		close();
+		--TODO can we close PresentMenu?
+		UI.Alert("You can't do anything as a spectator");
+		return;
+	else
+	UI.CreateLabel(rootParent).SetText("Don't mind me")
+	--TODO make a force refreash button?
+	setMaxSize(200,150);
+		--Make globally accessible
+		ClientGame = game;
+		RefreshClientDialog();
 	end
-	
-	PlayerGameData = Mod.PlayerGameData;
-	
-	-- if next(PlayerGameData) == nil then
-	-- print(" empty playerdata")	
-	-- else 
-	-- print("DumpTable(PlayerGameData")
-	-- DumpTable(PlayerGameData)
-	-- end
-	
-	
+	close(); --TODO close the parent dosn't work.
+end
+--Called by Client_GameRefresh
+function RefreshGame(gameRefresh)
+	print("RefreshClientDialog")
+	if (MainDialog ~= nil) then UI.Destroy(MainDialog) end;
+	RefreshClientDialog();
+end
+
+--TODO better reresh method
+function RefreshClientDialog()
+	ClientGame.CreateDialog(ClientMainDialog); 	
+end
+
+function ClientMainDialog(rootParent, setMaxSize, setScrollable, game, close)	
+	PlayerGameData = Mod.PlayerGameData;		
 	Game = game; --make it globally accessible
 	
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
+	setMaxSize(450, 410);
+	setScrollable(true);
 	
 	--List current groups.
+	--TODO only show selected group?
 	if (next(PlayerGameData) ~= nil) then
 		local groupMembers = "";
 		local playerID;
 		local ListMsg = "";
 		
 		for groupID, v in pairs(PlayerGameData) do
-			print(groupID .. " i, ")
-			groupMembers = PlayerGameData[groupID].GroupName .. " have the following members:  "
+			groupMembers = PlayerGameData[groupID].GroupName .. " has the following members:  "
 			for j, val in pairs(PlayerGameData[groupID].Members) do
 				if (val == true) then
 					playerID = j
@@ -48,29 +63,111 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		UI.CreateLabel(row).SetText(ListMsg);
 		
 	end
-	--Edit group button
-	UI.CreateButton(vert).SetText("Edit a group chat").SetOnClick(function()
-		game.CreateDialog(CreateEditDialog);
-	end);
-	
-	--If we are in a group, have a chat option
+	horizontalLayout = UI.CreateHorizontalLayoutGroup(vert);
+
+	--If we are in a group, show the chat options
 	if (next(PlayerGameData) ~= nil) then
+		--For the last X chat msg
+		local color = 	Game.Game.Players[Game.Us.ID].Color.HtmlColor;
+		local rowChatRecived = UI.CreateVerticalLayoutGroup(vert);
+		local horz = UI.CreateHorizontalLayoutGroup(rowChatRecived);
+		rowChatRecived.setScrollable = true;
+		ChatRecived =	UI.CreateButton(horz)
+		.SetFlexibleWidth(0.2)
+		.SetPreferredWidth(100)
+		.SetPreferredHeight(40)
+		.SetInteractable(true)
+		.SetText("Sender Name")
+		.SetColor('#880085')	
+		ChatMessageText = UI.CreateLabel(horz)
+		.SetFlexibleWidth(0.8)
+		.SetPreferredWidth(200)
+		.SetPreferredHeight(40)
+		.SetText("Chat msg")
+		local horz = UI.CreateHorizontalLayoutGroup(rowChatRecived);
+		rowChatRecived.setScrollable = true;
+		ChatRecived =	UI.CreateButton(horz)
+		.SetFlexibleWidth(0.2)
+		.SetPreferredWidth(100)
+		.SetPreferredHeight(40)
+		.SetInteractable(true)
+		.SetText("Group Name")
+		.SetColor('#880085')	
+		ChatMessageText = UI.CreateLabel(horz)
+		.SetFlexibleWidth(0.8)
+		.SetPreferredWidth(200)
+		.SetPreferredHeight(40)
+		.SetText("Group chat msg")
+
+
+
 		ChatMessageText = UI.CreateTextInputField(vert)
-		.SetPlaceholderText("Chat max 100 char")
-		.SetPreferredWidth(1)
+		.SetPlaceholderText(" Chat max 100 char")
+		.SetFlexibleWidth(0.9)
 		.SetCharacterLimit(100)
-		.SetPreferredWidth(250)
+		.SetPreferredWidth(200)
+		.SetPreferredHeight(40)
+	
+	--A text field for the group selected
+	ChatGroupSelectedID = nil;
+	ChatGroupSelectedText = UI.CreateTextInputField(horizontalLayout)
+		.SetPlaceholderText(" Chat Group Name")
+		.SetFlexibleWidth(0.8)
+		.SetCharacterLimit(100)
+		.SetPreferredWidth(100)
+		.SetInteractable(false)
 		
-		
-		UI.CreateButton(vert).SetText("Select group").SetOnClick(function()
-			game.CreateDialog(ChatGroupClicked); --TODO
-		end);
-		
+	--Make a button for to select chat group
+	UI.CreateButton(horizontalLayout)
+		.SetText("Select group")
+		.SetFlexibleWidth(0.1)
+		.SetOnClick(ChatGroupSelected)
 		
 		UI.CreateButton(vert).SetText("Send chat").SetOnClick(function()
-			game.CreateDialog(SendChatDialog);
+		SendChat();
+		close();--Close this dialog. We will call RefreshClientDialog from SendChat
 		end);
 	end
+	--Edit group button
+	UI.CreateButton(horizontalLayout)
+		.SetText("Edit a group")
+		.SetFlexibleWidth(0.1)
+		.SetPreferredWidth(150)
+		.SetOnClick(function()
+		game.CreateDialog(CreateEditDialog);
+		close();--Close this dialog. We will call RefreshClientDialog from the new Dialog
+	end);
+
+end
+
+
+function ChatGroupSelected()
+	local groups = {}
+	for i, v in pairs(PlayerGameData) do
+		groups[i] = PlayerGameData[i]
+	end
+	local options = map(groups, ChatGroupSelectedButton);
+	UI.PromptFromList("Select a chat group", options);
+end
+function ChatGroupSelectedButton(group)	
+	local name = group.GroupName;
+	local ret = {};
+	ret["text"] = name;
+	ret["selected"] = function() 
+		ChatGroupSelectedText.SetText(name)
+		ChatGroupSelectedID = group.GroupID;
+	end
+	return ret;
+end
+
+function FlipButtons(groupID)
+	--Flip all buttons to interactable and set a color
+	for button, bolVal in pairs(buttonGroupSelected) do
+		buttonGroupSelected[button].SetColor('#0011ff').SetInteractable(true)		
+		--	if PlayerGameData[groupID].GroupName)
+	end
+	--Make selected button green
+	--	buttonGroupSelected[groupID].SetColor('#22ff00').SetInteractable(false)	
 end
 
 function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
@@ -109,16 +206,18 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		--If it's a new group, make an ID for it
 		--TODO better way to make ID
 		if (TargetGroupID == nil) then
-			local temp = #PlayerGameData + 1
+			local temp =0;
+			for groupID, v in pairs(PlayerGameData) do
+				temp = temp +1;				
+			end
 			
-			temp = game.Us.ID .. '000' .. temp
-			
+			temp = game.Us.ID .. '000' .. temp			
 			TargetGroupID = tonumber(temp)
 			
-			print("made new groupID: " .. temp)
+			print("made new groupID: " .. TargetGroupID)
 			
 			else
-			print("group ID " .. TargetPlayerID)
+			print("found old group ID " .. TargetPlayerID)
 		end
 		
 		local payload = {};
@@ -128,8 +227,9 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		payload.TargetGroupName = GroupTextName.GetText();
 		
 		Game.SendGameCustomMessage("Adding group member...", payload, function(returnValue) 
-			UI.Alert("Group member added!");
-			close(); --Close the propose dialog since we're done with it
+			UI.Alert("Group member added!");			
+			close(); --Close the dialog since we're done with it
+--			RefreshClientDialog(); --Refresh the main dialog
 		end);
 	end);
 	
@@ -162,10 +262,25 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	end);
 end
 
-function SendChatDialog(rootParent, setMaxSize, setScrollable, game, close)
-	setMaxSize(420, 330);
-	TargetGroupID = nil;
+function SendChat()
+	if (ChatGroupSelectedID == nil)then
+		UI.Alert("Pick a chat group first")
+		return;
+	end
+	if (string.len(ChatMessageText.GetText()) < 2 or ChatMessageText.GetText() == ChatMessageText.GetPlaceholderText()) then
+		UI.Alert("A chat msg must be more then 1 characters")
+		return;
+	end
 	
+	local payload = {};
+		payload.Message = "SendChat";
+		payload.TargetGroupID = ChatGroupSelectedID;
+		payload.Chat = ChatMessageText.GetText();
+		print("Chat sent " .. payload.Chat .. " to " .. payload.TargetGroupID .. " from " .. Game.Us.ID)
+		Game.SendGameCustomMessage("Sending chat...", payload, function(returnValue) 
+			UI.Alert("Chat sent!");
+		end);
+	ChatMessageText.SetText("");
 end;
 
 function TargetPlayerClicked()
@@ -185,7 +300,7 @@ function TargetGroupClicked()
 	UI.PromptFromList("Select the group you'd like to add this player too", options);
 end
 
---Determines if the player is one we can propose an alliance to.
+--Determines if the player is one we can interact with.
 function IsPotentialTarget(player)
 	if (Game.Us.ID == player.ID) then return false end; -- we can never propose an alliance with ourselves.
 	
@@ -228,13 +343,10 @@ function ChatGroupClicked()
 		groups[i] = PlayerGameData[i]
 	end
 	local options = map(groups, ChatGroupButton);
-	UI.PromptFromList("Select the group you'd like to add this player too", options);
-	
+	UI.PromptFromList("Select a chat group", options);
 end
-function ChatGroupButton(group)
-	
+function ChatGroupButton(group)	
 	local name = group.GroupName;
-	
 	local ret = {};
 	ret["text"] = name;
 	ret["selected"] = function() 
