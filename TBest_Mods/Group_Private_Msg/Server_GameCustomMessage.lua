@@ -6,6 +6,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		AddToGroup(game,playerID,payload);
 		elseif (payload.Message == "RemoveGroupMember") then
 		--TODO
+		RemoveFromGroup(game,playerID,payload);
 		elseif (payload.Message == "SendChat") then
 		DeliverChat(game,playerID,payload)
 		--TODO
@@ -13,6 +14,29 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		error("Payload message not understood (" .. payload.Message .. ")");
 	end
 end	
+--TODO maybe make sure only owner can remove? The others can only leave?
+function RemoveFromGroup (game,playerID,payload)
+	local playerGameData = Mod.PlayerGameData;
+	local TargetGroupID = payload.TargetGroupID;
+	local TargetPlayerID = payload.TargetPlayerID;
+	
+	local group = {};
+	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
+		print("group to be removed not found " .. TargetGroupID)
+		Dump(playerGameData[playerID])
+		return; --Group can't be found. Do nothing
+		else
+		print("removing " .. TargetPlayerID .. " from  :" .. TargetGroupID .. " ID")
+		Group = playerGameData[playerID][TargetGroupID]
+		Dump(Group.Members)
+		removeFromSet(Group.Members, TargetPlayerID)
+		playerGameData[playerID][TargetGroupID] = Group;
+		
+		Mod.PlayerGameData = playerGameData;	
+	end
+	--If group has no members, remove group TODO or add option to delete
+end
+
 
 --TODO this is a bit redundant
 function AddToGroup(game,playerID,payload)
@@ -67,85 +91,46 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 		
 		Mod.PlayerGameData = playerGameData;
 	end
-
+	
 	return Group;
 end
 
 function DeliverChat(game,PlayerID,payload)
-		local ChatInfo = {};
-		ChatInfo.ID = NewIdentity();
-		ChatInfo.Sender = playerID;
-		ChatInfo.GroupID = payload.GroupID;
-		ChatInfo.Chat = payload.Chat;
-
-		if (game.Settings.SinglePlayer) then
-			--In single-player, just send the chat msg back to the player for testing.
-			
-			local data = Mod.PlayerGameData[PlayerID];
-			if data.Chat == nil then data.Chat = {} end
-
-			--the ID should always be unique, so it shoudl always be {}
-			local chat = data.Chat[ChatInfo.ID] or {};
-			if data.Chat[ChatInfo.ID] == nil then data.Chat[ChatInfo.ID] = {} end
-
-			print("earara")
-			addToSet(data.Chat[ChatInfo.ID],ChatInfo)
-			data.Chat[ChatInfo.ID] = chat;
-
-			Mod.PlayerGameData[PlayerID] = data;
-			
-			print("Chat added to playerdata ")
-			Dump(data)
-			Dump(data.Chat[ChatInfo.ID])
-			print("dump done")
+	local playerGameData = Mod.PlayerGameData
+	local data = playerGameData[PlayerID];
+	
+	
+	local ChatInfo = {};
+	ChatInfo.Sender = PlayerID;
+	ChatInfo.GroupID = payload.TargetGroupID; --TODO move this outside chatInfo. We don't need to store it here
+	ChatInfo.Chat = payload.Chat;			--TODO maybe add support for the time a msg was sent
+	
+	local ChatArrayIndex;
+	if (data[ChatInfo.GroupID] == nil) then 
+		ChatArrayIndex = 1;
+		else ChatArrayIndex = #data[ChatInfo.GroupID] +1
+	end;
+	
+	
+	print("Chat recived " .. ChatInfo.Chat .. " to " .. ChatInfo.GroupID .. " from " .. ChatInfo.Sender .. " total group chat's : " .. ChatArrayIndex)
+	if (game.Settings.SinglePlayer) then
+		--In single-player, just write the chat msg back to the player for testing.
+		--We don't need to store data for the PlayerGameData[AI]
 		
-			--ProposalAccepted(ChatInfo, game);
-		
+		--use the ChatArrayIndex. We want the chat msg to be stored in an array	
+		if data[ChatInfo.GroupID][ChatArrayIndex] == nil then data[ChatInfo.GroupID][ChatArrayIndex] = {} end
+		data[ChatInfo.GroupID].NumChat = ChatArrayIndex;
+		data[ChatInfo.GroupID][ChatArrayIndex] = {};
+		data[ChatInfo.GroupID][ChatArrayIndex] = ChatInfo;
+		playerGameData[PlayerID] = data;
+
+		Mod.PlayerGameData = playerGameData;	
+		print(Mod.PlayerGameData[PlayerID][ChatInfo.GroupID][ChatArrayIndex].Chat .. " was stored in Mod.PlayerGameData")
+
+		--Multiplayer
 		else
-			--Write it into the player-specific data
-			--TODO for each member in TargetGroupID
-			local playerData = Mod.PlayerGameData;
-			if (playerData[payload.TargetPlayerID] == nil) then
-				playerData[payload.TargetPlayerID] = {};
-			end
-
-			local pendingProposals = playerData[payload.TargetPlayerID].PendingProposals or {};
-			table.insert(pendingProposals, proposal);
-			playerData[payload.TargetPlayerID].PendingProposals = pendingProposals;
-			Mod.PlayerGameData = playerData;
-		end
-	
-	
-	
-	
-end
-
---TODO not public
-function NewIdentity()
-	local data = Mod.PublicGameData;
-	local ret = data.Identity or 1;
-	data.Identity = ret + 1;
-	Mod.PublicGameData = data;
-	return ret;
-end
-
-function ProposalAccepted(proposal, game)
-	
-	-- --Create the alliance
-	-- local alliance = {};
-	-- alliance.ID = NewIdentity();
-	-- alliance.PlayerOne = proposal.PlayerOne;
-	-- alliance.PlayerTwo = proposal.PlayerTwo;
-	-- alliance.ExpiresOnTurn = game.Game.NumberOfTurns + proposal.NumTurns;
-
-	-- local data = Mod.PublicGameData;
-	-- local alliances = data.Alliances or {};
-
-	-- --Do we already have an alliance? Remove it if so.
-	-- alliances = filter(alliances, function(a) return not ((a.PlayerOne == alliance.PlayerOne and a.PlayerTwo == alliance.PlayerTwo) or (a.PlayerOne == alliance.PlayerTwo and a.PlayerTwo == alliance.PlayerOne)) end);
-
-	-- --Write it into Mod.PublicGameData for all to see
-	-- table.insert(alliances, alliance);
-	-- data.Alliances = alliances;
-	-- Mod.PublicGameData = data;
+		--Write it into the player-specific data
+		--TODO for each member in TargetGroupID
+		
+	end
 end
