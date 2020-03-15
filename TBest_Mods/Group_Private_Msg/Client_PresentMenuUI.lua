@@ -11,8 +11,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		--Make this globally accessible
 		ClientGame = game;
 		
-		MainDialog = nil; --TODO maybe remove this var?
-		--TODO maybe we don't want to show this menu on every PresentMenuUi call?
+		MainDialog = nil;
 		SizeX = 500; --Chat window
 		SizeY = 500; --Chat window
 		ChatGroupSelectedID = nil; --We want this globaly
@@ -69,7 +68,7 @@ function RefreshGame(gameRefresh)
 end;
 
 function ClientMainDialog(rootParent, setMaxSize, setScrollable, game, close)	
-	PlayerGameData = Mod.PlayerGameData;		--TODO move to global var's
+	PlayerGameData = Mod.PlayerGameData;		--TODO move to global var's ?
 	
 	--TODO rework layout
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
@@ -78,6 +77,7 @@ function ClientMainDialog(rootParent, setMaxSize, setScrollable, game, close)
 	local row = UI.CreateHorizontalLayoutGroup(vert);
 	
 	--List the members of the current selected group.
+	--TODO this dosn't update when refresh chat is called. We should fix that.
 	GroupMembersNames = UI.CreateLabel(row).SetText(getGroupMembers());
 	
 	local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert);
@@ -275,9 +275,21 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		end);
 	end);
 	
-	UI.CreateButton(vert).SetText("Go Back").SetColor("#0062ff").SetOnClick(function() 		
+	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
+	--Go back to MainDialog button
+	UI.CreateButton(buttonRow).SetText("Go Back").SetPreferredWidth(0.4)SetColor("#0062ff").SetOnClick(function() 		
+		RefreshMainDialog(close);
+	end);	
+	
+	--If owner, show delete else show leave? TODO
+	UI.CreateButton(buttonRow).SetText("Leave group").SetFlexibleWidth(0.3).SetColor("#a10000").SetOnClick(function() 		
+		RefreshMainDialog(close);
+	end);	
+	UI.CreateButton(buttonRow).SetText("Delete group").SetFlexibleWidth(0.3).SetColor("#a10000").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);
+	
+	
 end
 
 function SendChat()	
@@ -295,7 +307,7 @@ end;
 --TODO this function can be made faster and better
 function RefreshChat()
 	print("RefreshChat() called")
-	
+	--Update the members of the current selected group.
 	
 	--Remove old elements
 	DestroyOldUIelements(ChatMsgContainerArray)

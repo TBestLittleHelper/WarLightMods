@@ -11,6 +11,9 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		DeliverChat(game,playerID,payload)
 		--DeliverChat
 		else
+		--Delete group
+		--Leave group
+		
 		error("Payload message not understood (" .. payload.Message .. ")");
 	end
 end	
@@ -24,7 +27,13 @@ function RemoveFromGroup (game,playerID,payload)
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
 		print("group to be removed not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
-		else
+	
+		--Check if the TargetPlayerID is the owner 
+		elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
+		print("Can't remove the owner of a group")
+		return;
+		
+	else
 		print("removing " .. TargetPlayerID .. " from  :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
 		removeFromSet(Group.Members, TargetPlayerID)
@@ -41,9 +50,15 @@ function LeaveGroup (game,playerID,payload)
 	
 	local group = {};
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
-		print("group to be leave from not found " .. TargetGroupID)
+		print("group to leave from not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
-		else
+	
+	--Check if the TargetPlayerID is the owner 
+	elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
+		print("The owner of a group can't leave")
+		return;
+		
+	else
 		print(playerID .. " left  :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
 		removeFromSet(Group.Members, TargetPlayerID)
@@ -126,7 +141,7 @@ function DeliverChat(game,PlayerID,payload)
 		else ChatArrayIndex = #data[TargetGroupID] +1
 	end;
 	
-	print("Chat recived " .. ChatInfo.Chat .. " to " .. TargetGroupID .. " from " .. ChatInfo.Sender .. " total group chat's : " .. ChatArrayIndex)
+	print("Chat received " .. ChatInfo.Chat .. " to " .. TargetGroupID .. " from " .. ChatInfo.Sender .. " total group chat's : " .. ChatArrayIndex)
 	
 	--use the ChatArrayIndex. We want the chat msg to be stored in an array	
 	if data[TargetGroupID][ChatArrayIndex] == nil then data[TargetGroupID][ChatArrayIndex] = {} end
@@ -147,6 +162,17 @@ end
 
 
 function UpdateAllGroupMembers(PlayerID, groupID)
-	
-	
+	local playerGameData = Mod.PlayerGameData;
+	local ReffrencePlayerData = playerGameData[PlayerID]; --We already updated the info for this player. Now we need to sync that to the other playerGameData[group.Members]
+	local outdatedPlayerData;
+	local Group = ReffrencePlayerData[playerID][TargetGroupID]
+
+	--Update playerGameData for each member
+	for Members, playerID in pairs (Group.Members) do 
+		outdatedPlayerData = playerGameData[Members];
+		outdatedPlayerData[groupID] = ReffrencePlayerData[groupID];
+		playerGameData[Members] = outdatedPlayerData;
+	end;
+	--Finaly write back to Mod.PlayerGameData
+	Mod.PlayerGameData = playerGameData;
 end
