@@ -165,7 +165,7 @@ function UpdateAllGroupMembers(PlayerID, groupID)
 	local playerGameData = Mod.PlayerGameData;
 	local ReffrencePlayerData = playerGameData[PlayerID]; --We already updated the info for this player. Now we need to sync that to the other playerGameData[group.Members]
 	local outdatedPlayerData;
-	local Group = ReffrencePlayerData[TargetGroupID]
+	local Group = ReffrencePlayerData[groupID]
 
 	--Update playerGameData for each member
 	for Members, playerID in pairs (Group.Members) do 
