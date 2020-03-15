@@ -53,12 +53,17 @@ function RefreshMainDialog(close)
 	end;
 	
 	print("Open ClientDialog")
-	MainDialog = ClientGame.CreateDialog(ClientMainDialog);
+	MainDialog = ClientGame.CreateDialog(ClientMainDialog);	
 end
 
 
 --Called by Client_GameRefresh
 function RefreshGame(gameRefresh)
+	--We don't want to refresh if the PresentMenuUi has not been opned.
+	if (ClientGame == nil or ChatContainer == nil)then
+		print("refresh suppressed.")
+		return;
+	end;	
 	ClientGame = gameRefresh;
 	RefreshChat(); -- todo TEST breaks atm when a new game starts
 end;
@@ -290,6 +295,8 @@ end;
 --TODO this function can be made faster and better
 function RefreshChat()
 	print("RefreshChat() called")
+
+	
 	--Remove old elements
 	DestroyOldUIelements(ChatMsgContainerArray)
 
