@@ -5,11 +5,11 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		--Add to group
 		AddToGroup(game,playerID,payload);
 		elseif (payload.Message == "RemoveGroupMember") then
-		--TODO
+		--RemoveFromGroup
 		RemoveFromGroup(game,playerID,payload);
 		elseif (payload.Message == "SendChat") then
 		DeliverChat(game,playerID,payload)
-		--TODO
+		--DeliverChat
 		else
 		error("Payload message not understood (" .. payload.Message .. ")");
 	end

@@ -6,7 +6,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		close();
 		UI.Alert("You can't do anything as a spectator");
 		return;
-	else
+		else
 		--TODO think about what is made global
 		--Make this globally accessible
 		ClientGame = game;
@@ -37,7 +37,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			if SizeX > 2000 then SizeX = 2000 end
 			if SizeY < 200 then SizeY = 200 end
 			if SizeY > 2000 then SizeY = 2000 end
-
+			
 			RefreshMainDialog(close)
 		end);
 		RefreshMainDialog(close)
@@ -76,7 +76,7 @@ function ClientMainDialog(rootParent, setMaxSize, setScrollable, game, close)
 	setMaxSize(SizeX, SizeY);
 	setScrollable(false,true);
 	local row = UI.CreateHorizontalLayoutGroup(vert);
-
+	
 	--List the members of the current selected group.
 	GroupMembersNames = UI.CreateLabel(row).SetText(getGroupMembers());
 	
@@ -111,7 +111,7 @@ function ClientMainDialog(rootParent, setMaxSize, setScrollable, game, close)
 		.SetPreferredWidth(130)
 		.SetOnClick(ChatGroupSelected)
 		--TODO autoselect if ChatGroupSelected ~= nil
-
+		
 		--TODO chat msg time stamp?
 		ChatContainer = UI.CreateVerticalLayoutGroup(vert);
 		RefreshChat();
@@ -132,7 +132,7 @@ function ClientMainDialog(rootParent, setMaxSize, setScrollable, game, close)
 		UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor("#18d100").SetOnClick(RefreshChat)
 		--Send chat button
 		local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor; --this is prolly dumb. But let's color the send chat button in the users color
-
+		
 		UI.CreateButton(ChatButtonContainer).SetColor(color).SetText("Send chat").SetOnClick(function()
 			if (ChatGroupSelectedID == nil)then
 				UI.Alert("Pick a chat group first")
@@ -173,12 +173,12 @@ function ChatGroupSelectedButton(group)
 end
 
 function getGroupMembers()
-
+	
 	if (next(PlayerGameData) ~= nil and ChatGroupSelectedID ~= nil) then		
 		local groupMembers = PlayerGameData[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
 		local ListMsg = ""; 
-
+		
 		for j, val in pairs(PlayerGameData[ChatGroupSelectedID].Members) do
 			if (val == true) then
 				playerID = j
@@ -198,7 +198,10 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	TargetPlayerID = nil;
 	TargetGroupID = nil;
 	
-	--TODO make some options non-interactable if they have no use
+	--TODO make some options non-interactable if they have no use?
+	--TODO make it possible to select multiple players?
+	--TODO leave a group
+	--TODO delete a group
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
@@ -206,7 +209,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
 	
 	row11 = UI.CreateHorizontalLayoutGroup(vert);
-	GroupTextNameLabel = UI.CreateLabel(row11).SetText("Name a new chat group");
+	GroupTextNameLabel = UI.CreateLabel(row11).SetText("Name a new chat group: ");
 	GroupTextName = UI.CreateTextInputField(row11).SetCharacterLimit(25).SetPlaceholderText('Group Name 25 char').SetPreferredWidth(200).SetFlexibleWidth(1)
 	
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
@@ -215,7 +218,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		ChatGroupBtn = UI.CreateButton(row2).SetText("Pick an existing group").SetOnClick(ChatGroupClicked);
 	end
 	
-	
+	--Add a player to a group
 	UI.CreateButton(row2).SetText("Add Player").SetColor("#03d100").SetOnClick(function() 		
 		if (TargetPlayerID == nil) then
 			UI.Alert("Please choose a player first");
@@ -245,11 +248,11 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		payload.TargetGroupName = GroupTextName.GetText();
 		
 		ClientGame.SendGameCustomMessage("Adding group member...", payload, function(returnValue) 
-	--TODO 		close(); --Close the dialog and reopen to refresh
-	--		MainDialog = ClientGame.CreateDialog(ClientMainDialog);
+			RefreshMainDialog(close);
 		end);
 	end);
 	
+	--Remove a player from a group
 	UI.CreateButton(row2).SetText("Remove Player").SetColor("#a10000").SetOnClick(function() 
 		
 		if (TargetPlayerID == nil) then
@@ -268,15 +271,12 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		payload.TargetGroupID = TargetGroupID;
 		
 		ClientGame.SendGameCustomMessage("Removing group member...", payload, function(returnValue) 
-	--TODO		close(); --Close the dialog and reopen to refresh
-	--		ClientGame.CreateDialog(CreateEditDialog);
+			RefreshMainDialog(close);
 		end);
 	end);
-	UI.CreateEmpty(vert); --make some space
 	
 	UI.CreateButton(vert).SetText("Go Back").SetColor("#0062ff").SetOnClick(function() 		
 		RefreshMainDialog(close);
-		--TODO remove close()?;
 	end);
 end
 
@@ -295,11 +295,11 @@ end;
 --TODO this function can be made faster and better
 function RefreshChat()
 	print("RefreshChat() called")
-
+	
 	
 	--Remove old elements
 	DestroyOldUIelements(ChatMsgContainerArray)
-
+	
 	rowChatRecived = UI.CreateVerticalLayoutGroup(ChatContainer); 
 	ChatLayout = UI.CreateVerticalLayoutGroup(rowChatRecived)
 	table.insert(ChatMsgContainerArray, rowChatRecived);
