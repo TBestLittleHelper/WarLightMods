@@ -2,7 +2,7 @@ function Client_PresentSettingsUI(rootParent)
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
 	if (Mod.Settings.BombcardActive) then
-		UI.CreateLabel(vert).SetText('Bombcard reduces each city by ' .. Mod.Settings.BombcardPower);
+		UI.CreateLabel(vert).SetText('Bomb card reduces each city by ' .. Mod.Settings.BombcardPower);
 	end
 	--TODO add more settings
 	-- if (Mod.Settings.StartingCitiesActive) then

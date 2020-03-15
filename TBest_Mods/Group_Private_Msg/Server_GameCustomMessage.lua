@@ -23,20 +23,36 @@ function RemoveFromGroup (game,playerID,payload)
 	local group = {};
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
 		print("group to be removed not found " .. TargetGroupID)
-		Dump(playerGameData[playerID])
 		return; --Group can't be found. Do nothing
 		else
 		print("removing " .. TargetPlayerID .. " from  :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
-		Dump(Group.Members)
 		removeFromSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
 		Mod.PlayerGameData = playerGameData;	
+		UpdateAllGroupMembers(playerID, TargetGroupID); --TODO test
 	end
 	--If group has no members, remove group TODO or add option to delete
 end
-
+function LeaveGroup (game,playerID,payload)
+	local playerGameData = Mod.PlayerGameData;
+	local TargetGroupID = payload.TargetGroupID;
+	
+	local group = {};
+	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
+		print("group to be leave from not found " .. TargetGroupID)
+		return; --Group can't be found. Do nothing
+		else
+		print(playerID .. " left  :" .. TargetGroupID .. " ID")
+		Group = playerGameData[playerID][TargetGroupID]
+		removeFromSet(Group.Members, TargetPlayerID)
+		playerGameData[playerID][TargetGroupID] = Group;
+		
+		Mod.PlayerGameData = playerGameData;	
+		UpdateAllGroupMembers(playerID, TargetGroupID);
+	end	
+end
 
 --TODO this is a bit redundant
 function AddToGroup(game,playerID,payload)
@@ -49,7 +65,7 @@ function AddToGroup(game,playerID,payload)
 	
 	local group = {};
 	group = GetGroup(playerID, TargetGroupID,TargetPlayerID,TargetGroupName)	
-	
+	UpdateAllGroupMembers(playerID, TargetGroupID);
 end
 
 
@@ -98,39 +114,39 @@ end
 function DeliverChat(game,PlayerID,payload)
 	local playerGameData = Mod.PlayerGameData
 	local data = playerGameData[PlayerID];
-	
+	local TargetGroupID = payload.TargetGroupID
 	
 	local ChatInfo = {};
 	ChatInfo.Sender = PlayerID;
-	ChatInfo.GroupID = payload.TargetGroupID; --TODO move this outside chatInfo. We don't need to store it here
 	ChatInfo.Chat = payload.Chat;			--TODO maybe add support for the time a msg was sent
 	
 	local ChatArrayIndex;
-	if (data[ChatInfo.GroupID] == nil) then 
+	if (data[TargetGroupID] == nil) then 
 		ChatArrayIndex = 1;
-		else ChatArrayIndex = #data[ChatInfo.GroupID] +1
+		else ChatArrayIndex = #data[TargetGroupID] +1
 	end;
 	
+	print("Chat recived " .. ChatInfo.Chat .. " to " .. TargetGroupID .. " from " .. ChatInfo.Sender .. " total group chat's : " .. ChatArrayIndex)
 	
-	print("Chat recived " .. ChatInfo.Chat .. " to " .. ChatInfo.GroupID .. " from " .. ChatInfo.Sender .. " total group chat's : " .. ChatArrayIndex)
-	if (game.Settings.SinglePlayer) then
-		--In single-player, just write the chat msg back to the player for testing.
-		--We don't need to store data for the PlayerGameData[AI]
-		
-		--use the ChatArrayIndex. We want the chat msg to be stored in an array	
-		if data[ChatInfo.GroupID][ChatArrayIndex] == nil then data[ChatInfo.GroupID][ChatArrayIndex] = {} end
-		data[ChatInfo.GroupID].NumChat = ChatArrayIndex;
-		data[ChatInfo.GroupID][ChatArrayIndex] = {};
-		data[ChatInfo.GroupID][ChatArrayIndex] = ChatInfo;
-		playerGameData[PlayerID] = data;
+	--use the ChatArrayIndex. We want the chat msg to be stored in an array	
+	if data[TargetGroupID][ChatArrayIndex] == nil then data[TargetGroupID][ChatArrayIndex] = {} end
+	data[TargetGroupID].NumChat = ChatArrayIndex;
+	data[TargetGroupID][ChatArrayIndex] = {};
+	data[TargetGroupID][ChatArrayIndex] = ChatInfo;
+	playerGameData[PlayerID] = data;
+	
+	Mod.PlayerGameData = playerGameData;	
+	print(Mod.PlayerGameData[PlayerID][TargetGroupID][ChatArrayIndex].Chat .. " was stored in Mod.PlayerGameData")
+	
+	--For SP We don't need to store data for the PlayerGameData[AI]
+	--Multiplayer update other group members
+	if not(game.Settings.SinglePlayer) then
+		UpdateAllGroupMembers(playerID, TargetGroupID);
+	end;
+end
 
-		Mod.PlayerGameData = playerGameData;	
-		print(Mod.PlayerGameData[PlayerID][ChatInfo.GroupID][ChatArrayIndex].Chat .. " was stored in Mod.PlayerGameData")
 
-		--Multiplayer
-		else
-		--Write it into the player-specific data
-		--TODO for each member in TargetGroupID
-		
-	end
+function UpdateAllGroupMembers(PlayerID, groupID)
+	
+	
 end
