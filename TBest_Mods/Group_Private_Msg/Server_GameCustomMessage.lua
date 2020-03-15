@@ -1,6 +1,8 @@
 require('Utilities');
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
+	Game = game; --Global var. needed for test TODO remove
+
 	if (payload.Message == "AddGroupMember") then
 		--Add to group
 		AddToGroup(game,playerID,payload);
@@ -39,8 +41,7 @@ function RemoveFromGroup (game,playerID,payload)
 		removeFromSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
-		Mod.PlayerGameData = playerGameData;	
-		UpdateAllGroupMembers(playerID, TargetGroupID); --TODO test
+		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData); --TODO test
 	end
 	--If group has no members, remove group TODO or add option to delete
 end
@@ -64,8 +65,7 @@ function LeaveGroup (game,playerID,payload)
 		removeFromSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
-		Mod.PlayerGameData = playerGameData;	
-		UpdateAllGroupMembers(playerID, TargetGroupID);
+		UpdateAllGroupMembers(playerID, TargetGroupID, playerGameData);
 	end	
 end
 
@@ -80,7 +80,6 @@ function AddToGroup(game,playerID,payload)
 	
 	local group = {};
 	group = GetGroup(playerID, TargetGroupID,TargetPlayerID,TargetGroupName)	
-	UpdateAllGroupMembers(playerID, TargetGroupID);
 end
 
 
@@ -111,8 +110,8 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 		--Save to mod storage
 		playerGameData[playerID][TargetGroupID] = Group; 
 		
-		Mod.PlayerGameData = playerGameData;
-		
+			UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
+
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
@@ -120,12 +119,13 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 		addToSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
-		Mod.PlayerGameData = playerGameData;
+		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
 	end
 	
 	return Group;
 end
 
+--todo change PlayerID to playerID for consistency
 function DeliverChat(game,PlayerID,payload)
 	local playerGameData = Mod.PlayerGameData
 	local data = playerGameData[PlayerID];
@@ -150,31 +150,45 @@ function DeliverChat(game,PlayerID,payload)
 	data[TargetGroupID][ChatArrayIndex] = ChatInfo;
 	playerGameData[PlayerID] = data;
 	
-	Mod.PlayerGameData = playerGameData;	
-	print(Mod.PlayerGameData[PlayerID][TargetGroupID][ChatArrayIndex].Chat .. " was stored in Mod.PlayerGameData")
 	
-	--For SP We don't need to store data for the PlayerGameData[AI]
-	--Multiplayer update other group members
-	if not(game.Settings.SinglePlayer) then
-		UpdateAllGroupMembers(playerID, TargetGroupID);
-	end;
+	UpdateAllGroupMembers(PlayerID, TargetGroupID,playerGameData);
+	
 end
 
 
-function UpdateAllGroupMembers(PlayerID, groupID)
-	local playerGameData = Mod.PlayerGameData;
-	local ReffrencePlayerData = playerGameData[PlayerID]; --We already updated the info for this player. Now we need to sync that to the other playerGameData[group.Members]
-	local outdatedPlayerData;
-	Dump(playerGameData)
-	Dump(ReffrencePlayerData)
-	local Group = ReffrencePlayerData[groupID]
+function UpdateAllGroupMembers(playerID, groupID , playerGameData)
+	local playerGameData = playerGameData;
+	local ReffrencePlayerData = playerGameData[playerID]; --We already updated the info for this player. Now we need to sync that to the other players
 
+
+	local GroupMembers = ReffrencePlayerData[groupID] --todo error nil
+	local outdatedPlayerData;
+	
+	
 	--Update playerGameData for each member
-	for Members, playerID in pairs (Group.Members) do 
+	for Members in pairs (GroupMembers.Members) do 
+		--Make sure we don't add AI's. This code is useful for testing in SP.
+		if (Game.Game.Players[Members].IsAI)then
+			break;
+		end
+		
+		if (Members ~= playerID)then
 		outdatedPlayerData = playerGameData[Members];
-		outdatedPlayerData[groupID] = ReffrencePlayerData[groupID];
+		
+		--if nil, make an empty table where we can place GroupID
+		if (outdatedPlayerData == nil) then 
+			outdatedPlayerData = {};
+		print("outdatedPlayerData= {} ")
+		else
+		print("dump outdatedPlayerData")
+		Dump(outdatedPlayerData)
+		end
+		
+		outdatedPlayerData[groupID] = ReffrencePlayerData[Members];
 		playerGameData[Members] = outdatedPlayerData;
+		end;
 	end;
 	--Finaly write back to Mod.PlayerGameData
 	Mod.PlayerGameData = playerGameData;
 end
+

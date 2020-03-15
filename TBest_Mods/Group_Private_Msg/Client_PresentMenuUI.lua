@@ -277,15 +277,15 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
 	--Go back to MainDialog button
-	UI.CreateButton(buttonRow).SetText("Go Back").SetPreferredWidth(0.4)SetColor("#0062ff").SetOnClick(function() 		
+	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0062ff").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);	
 	
 	--If owner, show delete else show leave? TODO
-	UI.CreateButton(buttonRow).SetText("Leave group").SetFlexibleWidth(0.3).SetColor("#a10000").SetOnClick(function() 		
+	UI.CreateButton(buttonRow).SetText("Leave group").SetColor("#a10000").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);	
-	UI.CreateButton(buttonRow).SetText("Delete group").SetFlexibleWidth(0.3).SetColor("#a10000").SetOnClick(function() 		
+	UI.CreateButton(buttonRow).SetText("Delete group").SetColor("#a10000").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);
 	
