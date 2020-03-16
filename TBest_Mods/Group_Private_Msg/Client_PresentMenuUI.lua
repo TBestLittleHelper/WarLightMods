@@ -245,7 +245,11 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 				temp = temp +1;				
 			end
 			temp = ClientGame.Us.ID .. '000' .. temp			
-			TargetGroupID = tonumber(temp) --NOTE! This gives us XXX.0 and not XXX in some cases. We can't index an array as XXX.0 , so this can give an error
+			--TargetGroupID = tonumber(temp) --NOTE! This gives us XXX.0 and not XXX in some cases. We can't index an array as XXX.0 , so this can give an error
+			TargetGroupID = tonumber(string.format("%." .. (0) .. "f", temp))
+			print(tonumber(string.format("%." .. (0) .. "f", temp)))
+			print("XXxxxxxxxxxxxXXXXXXXXXXx")
+
 			TargetGroupID = math.floor(TargetGroupID); -- Therfore, we also take the math.floor
 			print("made new groupID: " .. TargetGroupID)		
 			else
