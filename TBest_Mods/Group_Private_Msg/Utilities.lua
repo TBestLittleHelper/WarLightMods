@@ -107,3 +107,13 @@ end
 function removeFromSet(set, key)
     set[key] = nil
 end
+
+function toint(n)
+    local s = tostring(n)
+    local i, j = s:find('%.')
+    if i then
+        return tonumber(s:sub(1, i-1))
+    else
+        return n
+    end
+end
