@@ -32,11 +32,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end);
 		
 		
-		
-		
-		
-		
-		--Make a scaleable chat, where user can use setMaxSize in parant dialog
+		--Make a scalable chat, where user can use setMaxSize in parent dialog
 		UI.CreateLabel(horz).SetText("Change X size")
 		
 		SizeXInput = UI.CreateNumberInputField(horz).SetSliderMinValue(300).SetSliderMaxValue(1000).SetValue(SizeX)
@@ -54,7 +50,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			RefreshMainDialog(close)
 		end);
 			RefreshMainDialog(close)
-
 	end;
 end;
 
@@ -263,6 +258,9 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		payload.TargetGroupName = GroupTextName.GetText();
 		
 		ClientGame.SendGameCustomMessage("Adding group member...", payload, function(returnValue) 
+		--TODO remove Alert
+					UI.Alert(payload.Message .. " " .. payload.TargetPlayerID .. " " .. payload.TargetGroupID .. " " .. payload.TargetGroupName);
+
 			RefreshMainDialog(close);
 		end);
 	end);

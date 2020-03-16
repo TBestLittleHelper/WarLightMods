@@ -83,7 +83,7 @@ end
 function AddToGroup(game,playerID,payload)
 	local TargetGroupID = payload.TargetGroupID;
 	local TargetPlayerID = payload.TargetPlayerID;
-	local TargetGroupName = payload.TargetGroupName
+	local TargetGroupName = payload.TargetGroupName;
 	
 	print(TargetPlayerID .. " targetplayer")
 	print(TargetGroupID .. " TargetGroupID")
@@ -120,7 +120,7 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 		--Save to mod storage
 		playerGameData[playerID][TargetGroupID] = Group; 
 		
-			UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
+		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
 
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
@@ -198,11 +198,11 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 		playerGameData[Members] = outdatedPlayerData;
 		end;
 	end;
-	--Finaly write back to Mod.PlayerGameData
+	--Finally write back to Mod.PlayerGameData
 	Mod.PlayerGameData = playerGameData;
 end
 
---Admin option, to resuse the same game as a test
+--Admin option, to reuse the same game as a test
 function ClearData(game,playerID);
 	local playerGameData = Mod.PlayerGameData;
 
