@@ -20,7 +20,21 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		ChatMsgContainerArray = {};
 		
 		setMaxSize(300,300); --This dialog's size
-		local horz = UI.CreateVerticalLayoutGroup(rootParent);
+		local horz = UI.CreateVerticalLayoutGroup(rootParent); --TODO rename to vert
+		
+
+		--TODO remove or make Admin/Me only
+		ClearChatBtn = UI.CreateButton(horz).SetText("Remove all playerdata").SetOnClick(function()
+			local payload = {};
+			payload.Message = "ClearData";
+			
+			ClientGame.SendGameCustomMessage("ClearData" , payload, function(returnValue)end);
+		end);
+		
+		
+		
+		
+		
 		
 		--Make a scaleable chat, where user can use setMaxSize in parant dialog
 		UI.CreateLabel(horz).SetText("Change X size")
@@ -39,10 +53,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			
 			RefreshMainDialog(close)
 		end);
-		RefreshMainDialog(close)
-	end
-end
+			RefreshMainDialog(close)
 
+	end;
+end;
 
 function RefreshMainDialog(close)
 	if close ~= nil then close() end;
@@ -129,15 +143,16 @@ function ClientMainDialog(rootParent, setMaxSize, setScrollable, game, close)
 		
 		ChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert);
 		--RefreshChat button
-		UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor("#18d100").SetOnClick(RefreshChat)
+		UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor("#00ff05").SetOnClick(RefreshChat)
 		--Send chat button
 		local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor; --this is prolly dumb. But let's color the send chat button in the users color
-		
-		UI.CreateButton(ChatButtonContainer).SetColor(color).SetText("Send chat").SetOnClick(function()
+		print (color)
+		print ("color")
+		UI.CreateButton(ChatButtonContainer).SetColor("#880085").SetText("Send chat").SetOnClick(function()
 			if (ChatGroupSelectedID == nil)then
 				UI.Alert("Pick a chat group first")
 				return;
-			end
+			end	
 			if (string.len(ChatMessageText.GetText()) < 2 or ChatMessageText.GetText() == ChatMessageText.GetPlaceholderText()) then
 				UI.Alert("A chat msg must be more then 1 characters")
 				return;
@@ -440,4 +455,4 @@ function ChatGroupButton(group)
 		GroupTextNameLabel.SetText("Selected group ")
 	end
 	return ret;
-end															
+end																	

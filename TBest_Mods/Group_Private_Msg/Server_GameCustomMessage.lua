@@ -6,15 +6,25 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	if (payload.Message == "AddGroupMember") then
 		--Add to group
 		AddToGroup(game,playerID,payload);
+		
 		elseif (payload.Message == "RemoveGroupMember") then
 		--RemoveFromGroup
 		RemoveFromGroup(game,playerID,payload);
+		
 		elseif (payload.Message == "SendChat") then
+				--DeliverChat
 		DeliverChat(game,playerID,payload)
-		--DeliverChat
-		else
-		--Delete group
+	
+	elseif (payload.Message == "DeleteGroup") then
+				--Delete group
+
+		elseif (payload.Message == "LeaveGroup") then
 		--Leave group
+		
+		elseif (payload.Message == "ClearData") then
+		ClearData(game,playerID);
+		
+		else
 		
 		error("Payload message not understood (" .. payload.Message .. ")");
 	end
@@ -192,3 +202,13 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	Mod.PlayerGameData = playerGameData;
 end
 
+--Admin option, to resuse the same game as a test
+function ClearData(game,playerID);
+	local playerGameData = Mod.PlayerGameData;
+
+	for Players in pairs (playerGameData) do
+		print("Deleted playerGameData for " .. Players)
+		playerGameData[Players] = {};
+	end
+	Mod.PlayerGameData = playerGameData;
+end
