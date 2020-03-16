@@ -66,6 +66,7 @@ end
 
 
 --Called by Client_GameRefresh
+--TODO we want to get this to be called after adding a player to a group
 function RefreshGame(gameRefresh)
 	--We don't want to refresh if the PresentMenuUi has not been opned.
 	if (ClientGame == nil or ChatContainer == nil)then

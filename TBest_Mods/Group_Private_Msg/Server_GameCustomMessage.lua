@@ -2,7 +2,7 @@ require('Utilities');
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	Game = game; --Global var. needed for test TODO remove
-
+	
 	if (payload.Message == "AddGroupMember") then
 		--Add to group
 		AddToGroup(game,playerID,payload);
@@ -12,12 +12,12 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		RemoveFromGroup(game,playerID,payload);
 		
 		elseif (payload.Message == "SendChat") then
-				--DeliverChat
+		--DeliverChat
 		DeliverChat(game,playerID,payload)
-	
-	elseif (payload.Message == "DeleteGroup") then
-				--Delete group
-
+		
+		elseif (payload.Message == "DeleteGroup") then
+		--Delete group
+		
 		elseif (payload.Message == "LeaveGroup") then
 		--Leave group
 		
@@ -39,13 +39,13 @@ function RemoveFromGroup (game,playerID,payload)
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
 		print("group to be removed not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
-	
+		
 		--Check if the TargetPlayerID is the owner 
 		elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
 		print("Can't remove the owner of a group")
 		return;
 		
-	else
+		else
 		print("removing " .. TargetPlayerID .. " from  :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
 		removeFromSet(Group.Members, TargetPlayerID)
@@ -63,13 +63,13 @@ function LeaveGroup (game,playerID,payload)
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
 		print("group to leave from not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
-	
-	--Check if the TargetPlayerID is the owner 
-	elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
+		
+		--Check if the TargetPlayerID is the owner 
+		elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
 		print("The owner of a group can't leave")
 		return;
 		
-	else
+		else
 		print(playerID .. " left  :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
 		removeFromSet(Group.Members, TargetPlayerID)
@@ -121,7 +121,7 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 		playerGameData[playerID][TargetGroupID] = Group; 
 		
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
-
+		
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
@@ -169,34 +169,38 @@ end
 function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	local playerGameData = playerGameData;
 	local ReffrencePlayerData = playerGameData[playerID]; --We already updated the info for this player. Now we need to sync that to the other players
-
-
+	
+	
 	local GroupMembers = ReffrencePlayerData[groupID] --todo error nil
 	local outdatedPlayerData;
 	
 	
 	--Update playerGameData for each member
 	for Members in pairs (GroupMembers.Members) do 
-		--Make sure we don't add AI's. This code is useful for testing in SP.
-		if (Game.Game.Players[Members].IsAI)then
-			break;
+		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
+		if not(Game.Game.Players[Members].IsAI)then
+		print(playerID)
+		print("~~~~~~~~")
+
+		--	if (Members ~= playerID)then
+				outdatedPlayerData = playerGameData[Members];				
+				--if nil, make an empty table where we can place GroupID
+				if (outdatedPlayerData == nil) then 
+					outdatedPlayerData = {};
+					print("outdatedPlayerData= {} ")
+					else
+					print("dump outdatedPlayerData")
+					Dump(outdatedPlayerData)
+				end
+				
+				outdatedPlayerData[groupID] = GroupMembers;
+				playerGameData[Members] = outdatedPlayerData;
+		--	end;
+			
+			
 		end
 		
-		if (Members ~= playerID)then
-		outdatedPlayerData = playerGameData[Members];
 		
-		--if nil, make an empty table where we can place GroupID
-		if (outdatedPlayerData == nil) then 
-			outdatedPlayerData = {};
-		print("outdatedPlayerData= {} ")
-		else
-		print("dump outdatedPlayerData")
-		Dump(outdatedPlayerData)
-		end
-		
-		outdatedPlayerData[groupID] = ReffrencePlayerData[Members];
-		playerGameData[Members] = outdatedPlayerData;
-		end;
 	end;
 	--Finally write back to Mod.PlayerGameData
 	Mod.PlayerGameData = playerGameData;
@@ -205,7 +209,7 @@ end
 --Admin option, to reuse the same game as a test
 function ClearData(game,playerID);
 	local playerGameData = Mod.PlayerGameData;
-
+	
 	for Players in pairs (playerGameData) do
 		print("Deleted playerGameData for " .. Players)
 		playerGameData[Players] = {};
