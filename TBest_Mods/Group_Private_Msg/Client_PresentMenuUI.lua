@@ -245,7 +245,8 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 				temp = temp +1;				
 			end
 			temp = ClientGame.Us.ID .. '000' .. temp			
-			TargetGroupID = tonumber(temp)			
+			TargetGroupID = tonumber(temp) --NOTE! This gives us XXX.0 and not XXX in some cases. We can't index an array as XXX.0 , so this can give an error
+			TargetGroupID = math.floor(TargetGroupID); -- Therfore, we also take the math.floor
 			print("made new groupID: " .. TargetGroupID)		
 			else
 			print("found old group ID " .. TargetPlayerID)
@@ -260,6 +261,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		ClientGame.SendGameCustomMessage("Adding group member...", payload, function(returnValue) 
 		--TODO remove Alert
 					UI.Alert(payload.Message .. " " .. payload.TargetPlayerID .. " " .. payload.TargetGroupID .. " " .. payload.TargetGroupName);
+					--AddGroupMember 69603 5100520000.0 Aaaaaa
 
 			RefreshMainDialog(close);
 		end);
