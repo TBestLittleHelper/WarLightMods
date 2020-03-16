@@ -266,6 +266,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		
 		ClientGame.SendGameCustomMessage("Adding group member...", payload, function(returnValue) 
 		--TODO remove Alert
+					UI.Alert(payload.TargetGroupID)
 					UI.Alert(payload.Message .. " " .. payload.TargetPlayerID .. " " .. payload.TargetGroupID .. " " .. payload.TargetGroupName);
 					--AddGroupMember 69603 5100520000.0 Aaaaaa
 
