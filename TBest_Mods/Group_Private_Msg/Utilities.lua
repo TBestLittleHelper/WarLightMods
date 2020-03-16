@@ -1,39 +1,39 @@
 function Dump(obj)
 	if obj.proxyType ~= nil then
 		DumpProxy(obj);
-	elseif type(obj) == 'table' then
+		elseif type(obj) == 'table' then
 		DumpTable(obj);
-	else
+		else
 		print('Dump ' .. type(obj));
 	end
 end
 function DumpTable(tbl)
     for k,v in pairs(tbl) do
         print('k = ' .. tostring(k) .. ' (' .. type(k) .. ') ' .. ' v = ' .. tostring(v) .. ' (' .. type(v) .. ')');
-    end
+	end
 end
 function DumpProxy(obj)
-
-print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
+	
+	print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
 
 function split(str, pat)
-   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
-   local fpat = "(.-)" .. pat
-   local last_end = 1
-   local s, e, cap = str:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-         table.insert(t,cap)
-      end
-      last_end = e+1
-      s, e, cap = str:find(fpat, last_end)
-   end
-   if last_end <= #str then
-      cap = str:sub(last_end)
-      table.insert(t, cap)
-   end
-   return t
+	local t = {}  -- NOTE: use {n = 0} in Lua-5.0
+	local fpat = "(.-)" .. pat
+	local last_end = 1
+	local s, e, cap = str:find(fpat, 1)
+	while s do
+		if s ~= 1 or cap ~= "" then
+			table.insert(t,cap)
+		end
+		last_end = e+1
+		s, e, cap = str:find(fpat, last_end)
+	end
+	if last_end <= #str then
+		cap = str:sub(last_end)
+		table.insert(t, cap)
+	end
+	return t
 end
 
 --TODO can we make this be able to handle color of a button as well?
@@ -85,19 +85,19 @@ local function has_value (tab, val)
     for index, value in ipairs(tab) do
         if value == val then
             return true
-        end
-    end
-
+		end
+	end
+	
     return false
 end
 
 
 function tablelength(T)
-  local count = 0
+	local count = 0
 	for _ in pairs(T) do 
-	print(count)
+		print(count)
 	count = count + 1 end
-  return count
+	return count
 end
 
 function addToSet(set, key)
@@ -109,11 +109,11 @@ function removeFromSet(set, key)
 end
 
 function toint(n)
-    local s = tostring(n)
-    local i, j = s:find('%.')
-    if i then
-        return tonumber(s:sub(1, i-1))
-    else
-        return n
-    end
+	local s = tostring(n)
+	local i, j = s:find('%.')
+	if i then
+		return tonumber(s:sub(1, i-1))
+		else
+		return n
+	end
 end
