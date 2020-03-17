@@ -82,11 +82,12 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[33] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
 	
-	buildCitiesToggle= UI.CreateCheckBox(horzlist[40]).SetText('Use cards to build a city').SetIsChecked(initialBuildCityActive).SetOnValueChanged(ShowBlockSettings);
+	buildCitiesToggle= UI.CreateCheckBox(horzlist[40]).SetText('Use cards to build a city').SetIsChecked(initialBlockCityActive).SetOnValueChanged(ShowBlockSettings);
 	horzlist[41] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[42] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
 	wastelandsToggle= UI.CreateCheckBox(horzlist[50]).SetText('Wastlands starts with a neutral city').SetIsChecked(initialWastlandCities);
+	
 	startingCitiesToggle= UI.CreateCheckBox(horzlist[60]).SetText("Distributed territories start with a city")
 		.SetIsChecked(initialCitiesActive)
 		.SetOnValueChanged(ShowStartingCitiesSettings);
@@ -116,6 +117,10 @@ function Client_PresentConfigureUI(rootParent)
 	
 	if (initialBlockCityActive == true) then
 		ShowBlockSettings();
+	end
+	
+	if (initialCitiesActive == true) then
+		ShowStartingCitiesSettings();
 	end
 end
 
