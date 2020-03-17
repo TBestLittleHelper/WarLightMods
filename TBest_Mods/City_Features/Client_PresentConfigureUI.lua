@@ -2,7 +2,9 @@ function Client_PresentConfigureUI(rootParent)
 	showInstructions = false;
 	--City def%
 	initialCityWalls = Mod.Settings.CityWallsActive;
-	initialDefPower = Mod.Settings.DefPower * 100; --This number is stored as a decimal. So *100 to show a %
+	if (Mod.Settings.DefPower ~= nil)then
+		initialDefPower = Mod.Settings.DefPower * 100; --This number is stored as a decimal. So *100 to show a %
+	else initialDefPower = 25; end
 	--Bomb card
 	initialBombcardActive = Mod.Settings.BombcardActive;	
 	initialBombcardPower = Mod.Settings.BombcardPower;
