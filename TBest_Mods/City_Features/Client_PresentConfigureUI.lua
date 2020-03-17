@@ -80,7 +80,8 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[31] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[32] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[33] = UI.CreateHorizontalLayoutGroup(rootParent);
-	
+	horzlist[34] = UI.CreateHorizontalLayoutGroup(rootParent);
+
 	
 	buildCitiesToggle= UI.CreateCheckBox(horzlist[40]).SetText('Use cards to build a city').SetIsChecked(initialBlockCityActive).SetOnValueChanged(ShowBlockSettings);
 	horzlist[41] = UI.CreateHorizontalLayoutGroup(rootParent);
