@@ -20,8 +20,8 @@ function Client_SaveConfigureUI(alert)
 	if (startingCitiesToggle.GetIsChecked()) then
 		Mod.Settings.StartingCitiesActive = true;
 		Mod.Settings.NumberOfStartingCities = sliderStartingCities.GetValue();
-		if (Mod.Settings.BlockadePower < 1) then Mod.Settings.BlockadePower = 1; end
-		if (Mod.Settings.BlockadePower > 10) then Mod.Settings.BlockadePower = 10; end
+		if (Mod.Settings.NumberOfStartingCities < 1) then Mod.Settings.NumberOfStartingCities = 1; end
+		if (Mod.Settings.NumberOfStartingCities > 10) then Mod.Settings.NumberOfStartingCities = 10; end
 	end
 	
 	Mod.Settings.CustomSenarioCapitals = -1;
@@ -37,7 +37,7 @@ function Client_SaveConfigureUI(alert)
 	
     Mod.Settings.BlockadeBuildCityActive = false;
 	if (buildCitiesToggle.GetIsChecked()) then
-		Mod.Settings.BlockadeBuildCityActive = capitalsToggle.GetIsChecked();	
+		Mod.Settings.BlockadeBuildCityActive = true;
 		Mod.Settings.BlockadePower = sliderBlockCard.GetValue();
 		if (Mod.Settings.BlockadePower < 1) then Mod.Settings.BlockadePower = 1; end
 		if (Mod.Settings.BlockadePower > 10) then Mod.Settings.BlockadePower = 10; end

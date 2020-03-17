@@ -173,6 +173,7 @@ function ShowCapitalsSettings()
 	if(textCapitals ~= nil) then
 		UI.Destroy(textCapitals);
 		UI.Destroy(sliderCapitals);
+		UI.Destroy(textExtraCities);
 		UI.Destroy(sliderExtraCityCapitals);
 		
 		textCapitals = nil;
@@ -180,7 +181,8 @@ function ShowCapitalsSettings()
 		
 		textCapitals= UI.CreateLabel(horzlist[31]).SetText('Capitals starts with this many arimes');
 		sliderCapitals = UI.CreateNumberInputField(horzlist[32]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(initialCustomSenarioCapitals);
-		sliderExtraCityCapitals = UI.CreateNumberInputField(horzlist[33]).SetSliderMinValue(0).SetSliderMaxValue(10).SetValue(initialCapitalExtraCities);
+		textExtraCities = UI.CreateLabel(horzlist[33]).SetText('Capitals starts with this many cities');
+		sliderExtraCityCapitals = UI.CreateNumberInputField(horzlist[34]).SetSliderMinValue(0).SetSliderMaxValue(10).SetValue(initialCapitalExtraCities);
 	end
 end	
 
