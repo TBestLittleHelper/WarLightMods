@@ -2,13 +2,10 @@ function Client_SaveConfigureUI(alert)
 	
 	Mod.Settings.CityWallsActive = false;
 	if (cityWallsToggle.GetIsChecked()) then 
-		if (cityWallsToggle.GetIsChecked()) then
-			Mod.Settings.CityWallsActive = true;
-			Mod.Settings.DefPower = sliderDefBonus.GetValue() * 0.01; -- Convert to decimals from percentage
-			if (Mod.Settings.DefPower < 0) then Mod.Settings.DefPower = 0; end
-			if (Mod.Settings.DefPower > 100) then Mod.Settings.DefPower = 100; end
-			
-		end
+		Mod.Settings.CityWallsActive = true;
+		Mod.Settings.DefPower = sliderDefBonus.GetValue() * 0.01; -- Convert to decimals from percentage
+		if (Mod.Settings.DefPower < 0) then Mod.Settings.DefPower = 0; end
+		if (Mod.Settings.DefPower > 100) then Mod.Settings.DefPower = 100; end			
 	end;
 	
 	Mod.Settings.BombcardActive = false;

@@ -175,7 +175,7 @@ function ShowCapitalsSettings()
 		
 		textCapitals= UI.CreateLabel(horzlist[31]).SetText('Capitals starts with this many arimes');
 		sliderCapitals = UI.CreateNumberInputField(horzlist[32]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(initialCustomSenarioCapitals);
-		sliderExtraCityCapitals =  = UI.CreateNumberInputField(horzlist[33]).SetSliderMinValue(0).SetSliderMaxValue(10).SetValue(initialCapitalExtraCities);
+		sliderExtraCityCapitals = UI.CreateNumberInputField(horzlist[33]).SetSliderMinValue(0).SetSliderMaxValue(10).SetValue(initialCapitalExtraCities);
 	end
 end	
 
