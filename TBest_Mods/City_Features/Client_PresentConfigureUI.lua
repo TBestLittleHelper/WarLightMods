@@ -201,7 +201,7 @@ end
 
 function ShowStartingCitiesSettings()
 	if(textStartingCities ~= nil) then	
-		UI.Destroy(textBombCard);
+		UI.Destroy(textStartingCities);
 		UI.Destroy(sliderStartingCities);
 		
 		textStartingCities = nil;
