@@ -16,7 +16,9 @@ function Server_StartGame(game, standing)
 			
 			elseif (territory.NumArmies.NumArmies == game.Settings.WastelandSize and Mod.Settings.WastlandCities == true) then
 			--Wastelands starts with a city.
-			territory.Structures  = structure	
+			structure[Cities] = 1;
+			territory.Structures  = structure
+			structure[Cities] = Mod.Settings.NumberOfStartingCities;	
 		end
 		
 		--Capitals results in bigger city (fixed value for now)
