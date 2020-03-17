@@ -1,33 +1,47 @@
 function Client_PresentConfigureUI(rootParent)
 	showInstructions = false;
-	
+	--City def%
 	initialCityWalls = Mod.Settings.CityWallsActive;
 	initialDefPower = Mod.Settings.DefPower;
-	
+	--Bomb card
 	initialBombcardActive = Mod.Settings.BombcardActive;	
 	initialBombcardPower = Mod.Settings.BombcardPower;
-	
+	--Capitals
 	initialCustomSenarioCapitals = Mod.Settings.CustomSenarioCapitals;
-	
+	initialCapitalExtraCities = Mod.Settings.CapitalExtraStartingCities;
+	--Distributed starting cities
 	initialCitiesActive = Mod.Settings.StartingCitiesActive;
+	initialNumberOfStartingCities = Mod.Settings.NumberOfStartingCities;
 	initialWastlandCities = Mod.Settings.WastlandsCities;
+	--Commerce city deployment
 	initialCommerceFree = Mod.Settings.CommerceFreeCityDeploy;
-
-	
+	initialArmyDeployment = Mod.Settings.CityDeployOnly;
+	--Block and EMB card
 	initialBuildCityActive = Mod.Settings.CapitalsActive;		
 	initialBlockCityActive = Mod.Settings.BlockadeBuildCityActive;
-	
-	if initialDefPower == nil then initialDefPower = 25; end
-    if initialBombcardPower == nil then initialBombcardPower = 2; end
-	if initialCustomSenarioCapitals == nil then initialCustomSenarioCapitals = 10; end
-	
+	initialBlockadePower = Mod.Settings.BlockadePower;
+
+
 	if initialCityWalls == nil then initialCityWalls = true; end
-	if initialCitiesActive == nil then initialCitiesActive = true; end
+	if initialDefPower == nil then initialDefPower = 25; end
+	
 	if initialBombcardActive == nil then initialBombcardActive = true; end
-	if initialBuildCityActive == nil then initialBuildCityActive = true; end
+	if initialBombcardPower == nil then initialBombcardPower = 2; end
+	
+	if initialCustomSenarioCapitals == nil then initialCustomSenarioCapitals = 10; end
+	if initialCapitalExtraCities == nil then initialCapitalExtraCities = 5; end
+	
+	if initialCitiesActive == nil then initialCitiesActive = true; end
+	if initialNumberOfStartingCities == nil then initialNumberOfStartingCities = 1; end
 	if initialWastlandCities == nil then initialWastlandCities = true; end
-	if initialBlockCityActive == nil then initialBlockCityActive = true; end
+
 	if initialCommerceFree == nil then initialCommerceFree = true; end
+	if initialArmyDeployment == nil then initialArmyDeployment = false; end
+
+	if initialBuildCityActive == nil then initialBuildCityActive = true; end
+	if initialBlockCityActive == nil then initialBlockCityActive = true; end
+	if initialBlockadePower == nil then initialBlockadePower = 1; end
+
 	
 	
 	horzlist = {};
@@ -49,6 +63,7 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[50] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[60] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[70] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[80] = UI.CreateHorizontalLayoutGroup(rootParent);
 
 	--TODO reorder the settings?
 	
@@ -64,15 +79,24 @@ function Client_PresentConfigureUI(rootParent)
 	capitalsToggle= UI.CreateCheckBox(horzlist[30]).SetText('Capitals').SetIsChecked(initialBuildCityActive).SetOnValueChanged(ShowCapitalsSettings);
 	horzlist[31] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[32] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[33] = UI.CreateHorizontalLayoutGroup(rootParent);
+	
 	
 	buildCitiesToggle= UI.CreateCheckBox(horzlist[40]).SetText('Use cards to build a city').SetIsChecked(initialBuildCityActive).SetOnValueChanged(ShowBlockSettings);
 	horzlist[41] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[42] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
 	wastelandsToggle= UI.CreateCheckBox(horzlist[50]).SetText('Wastlands starts with a neutral city').SetIsChecked(initialWastlandCities);
-	startingCitiesToggle= UI.CreateCheckBox(horzlist[60]).SetText("Distributed territories start with a city").SetIsChecked(initialCitiesActive);
-	commerceFreeDeployCityToggle= UI.CreateCheckBox(horzlist[70]).SetText("In commerce game, deploying in a city will refund your gold for the next turn").SetIsChecked(initialCommerceFree);
+	startingCitiesToggle= UI.CreateCheckBox(horzlist[60]).SetText("Distributed territories start with a city")
+		.SetIsChecked(initialCitiesActive)
+		.SetOnValueChanged(ShowStartingCitiesSettings);
+	horzlist[61] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[62] = UI.CreateHorizontalLayoutGroup(rootParent);
+
 	
+	commerceFreeDeployCityToggle= UI.CreateCheckBox(horzlist[70]).SetText("In commerce game, deploying in a city will refund your gold for the next turn. But the city level is reduced by 1").SetIsChecked(initialCommerceFree);
+	CityDeployOnlyToggle= UI.CreateCheckBox(horzlist[80]).SetText("All army deployments not made in a city of 1 or greater are skipped. Make sure to not create games that can get stuck!").SetIsChecked(initialArmyDeployment);
+
 	
 	if (showInstructions == true) then
 		ShowAdvancedInstructions();
@@ -144,12 +168,14 @@ function ShowCapitalsSettings()
 	if(textCapitals ~= nil) then
 		UI.Destroy(textCapitals);
 		UI.Destroy(sliderCapitals);
+		UI.Destroy(sliderExtraCityCapitals);
 		
 		textCapitals = nil;
 		else
 		
 		textCapitals= UI.CreateLabel(horzlist[31]).SetText('Capitals starts with this many arimes');
 		sliderCapitals = UI.CreateNumberInputField(horzlist[32]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(initialCustomSenarioCapitals);
+		sliderExtraCityCapitals =  = UI.CreateNumberInputField(horzlist[33]).SetSliderMinValue(0).SetSliderMaxValue(10).SetValue(initialCapitalExtraCities);
 	end
 end	
 
@@ -161,6 +187,18 @@ function ShowBlockSettings()
 		textBlockCard = nil;
 		else
 		textBlockCard= UI.CreateLabel(horzlist[41]).SetText('Blockade and EMB card builds a city by');
-		sliderBlockCard = UI.CreateNumberInputField(horzlist[42]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialBombcardPower);
+		sliderBlockCard = UI.CreateNumberInputField(horzlist[42]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(initialBlockadePower);
+	end
+end	
+
+function ShowStartingCitiesSettings()
+	if(textStartingCities ~= nil) then	
+		UI.Destroy(textBombCard);
+		UI.Destroy(sliderStartingCities);
+		
+		textStartingCities = nil;
+		else
+		textStartingCities= UI.CreateLabel(horzlist[61]).SetText('Number of starting cities for distributed territories');
+		sliderStartingCities = UI.CreateNumberInputField(horzlist[62]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialNumberOfStartingCities);
 	end
 end	

@@ -135,15 +135,16 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 	return Group;
 end
 
---todo change PlayerID to playerID for consistency
-function DeliverChat(game,PlayerID,payload)
+function DeliverChat(game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData
-	local data = playerGameData[PlayerID];
+	local data = playerGameData[playerID];
 	local TargetGroupID = payload.TargetGroupID
+	local TimeStamp = payload.Time;
 	
 	local ChatInfo = {};
-	ChatInfo.Sender = PlayerID;
+	ChatInfo.Sender = playerID;
 	ChatInfo.Chat = payload.Chat;			--TODO maybe add support for the time a msg was sent
+	ChatInfo.Time = TimeStamp;
 	
 	local ChatArrayIndex;
 	if (data[TargetGroupID] == nil) then 
@@ -158,13 +159,12 @@ function DeliverChat(game,PlayerID,payload)
 	data[TargetGroupID].NumChat = ChatArrayIndex;
 	data[TargetGroupID][ChatArrayIndex] = {};
 	data[TargetGroupID][ChatArrayIndex] = ChatInfo;
-	playerGameData[PlayerID] = data;
+	playerGameData[playerID] = data;
 	
 	
-	UpdateAllGroupMembers(PlayerID, TargetGroupID,playerGameData);
+	UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
 	
 end
-
 
 function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	local playerGameData = playerGameData;
@@ -206,8 +206,10 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	Mod.PlayerGameData = playerGameData;
 end
 
---Admin option, to reuse the same game as a test
+--Admin option, to reuse the same game as a test by removing all playerdata
 function ClearData(game,playerID);
+	if (playerID == 69603)then
+
 	local playerGameData = Mod.PlayerGameData;
 	
 	for Players in pairs (playerGameData) do
@@ -215,4 +217,5 @@ function ClearData(game,playerID);
 		playerGameData[Players] = {};
 	end
 	Mod.PlayerGameData = playerGameData;
+	end;
 end

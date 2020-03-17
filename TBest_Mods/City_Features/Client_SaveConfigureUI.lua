@@ -17,22 +17,25 @@ function Client_SaveConfigureUI(alert)
 		Mod.Settings.BombcardPower = sliderBombCard.GetValue();
 		if (Mod.Settings.BombcardPower < 1) then Mod.Settings.BombcardPower = 1; end
 		if (Mod.Settings.BombcardPower > 10) then Mod.Settings.BombcardPower = 10; end
-
 	end
 	
 	Mod.Settings.StartingCitiesActive = false;
 	if (startingCitiesToggle.GetIsChecked()) then
 		Mod.Settings.StartingCitiesActive = true;
-		--Mod.Settings.NumberOfStartingCities TODO
+		Mod.Settings.NumberOfStartingCities = sliderStartingCities.GetValue();
+		if (Mod.Settings.BlockadePower < 1) then Mod.Settings.BlockadePower = 1; end
+		if (Mod.Settings.BlockadePower > 10) then Mod.Settings.BlockadePower = 10; end
 	end
 	
 	Mod.Settings.CustomSenarioCapitals = -1;
 	if (capitalsToggle.GetIsChecked()) then
 		Mod.Settings.CustomSenarioCapitals = sliderCapitals.GetValue();	
-				if (Mod.Settings.CustomSenarioCapitals < 0) then Mod.Settings.CustomSenarioCapitals = 0; end
+		if (Mod.Settings.CustomSenarioCapitals < 0) then Mod.Settings.CustomSenarioCapitals = 0; end
 		if (Mod.Settings.CustomSenarioCapitals > 1000) then Mod.Settings.CustomSenarioCapitals = 1000; end
 
-		--TODO Mod.Settings.CapitalExtraStartingCities
+		Mod.Settings.CapitalExtraStartingCities = sliderExtraCityCapitals.GetValue();
+		if (Mod.Settings.CapitalExtraStartingCities < 0) then Mod.Settings.CustomSenarioCapitals = 0; end
+		if (Mod.Settings.CapitalExtraStartingCities > 100) then Mod.Settings.CustomSenarioCapitals = 100; end
 	end
 	
     Mod.Settings.BlockadeBuildCityActive = false;
@@ -53,5 +56,9 @@ function Client_SaveConfigureUI(alert)
 	if (commerceFreeDeployCityToggle.GetIsChecked()) then
 		Mod.Settings.CommerceFreeCityDeploy = commerceFreeDeployCityToggle.GetIsChecked();
 	end;
-
+	Mod.Settings.CityDeployOnly = false;
+	
+	if (CityDeployOnlyToggle.GetIsChecked())then
+		Mod.Settings.CityDeployOnly = true;
+	end;
 end	

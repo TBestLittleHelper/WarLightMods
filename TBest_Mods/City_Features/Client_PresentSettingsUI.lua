@@ -5,15 +5,15 @@ function Client_PresentSettingsUI(rootParent)
 		UI.CreateLabel(vert).SetText('Bomb card reduces each city by ' .. Mod.Settings.BombcardPower);
 	end
 	--TODO add more settings
-	-- if (Mod.Settings.StartingCitiesActive) then
-	-- UI.CreateLabel(vert).SetText('Number of cities in distributed territories ' .. Mod.Settings.NumberOfStartingCities);
-	-- end
+	if (Mod.Settings.StartingCitiesActive) then
+		UI.CreateLabel(vert).SetText('Number of cities in distributed territories ' .. Mod.Settings.NumberOfStartingCities);
+	end
 	if(Mod.Settings.CityWallsActive) then
 		UI.CreateLabel(vert).SetText('Percantage bonus for each city on a territory is ' .. Mod.Settings.DefPower*100 .. '%');
 	end
 	if (Mod.Settings.CustomSenarioCapitals) then
 		UI.CreateLabel(vert).SetText('Capitals had this many armies in the custom senario distribution ' .. Mod.Settings.CustomSenarioCapitals);
-		--UI.CreateLabel(vert).SetText('Capitals started with ' .. Mod.Settings.CapitalExtraStartingCities .. 'cities');
+		UI.CreateLabel(vert).SetText('Capitals started with ' .. Mod.Settings.CapitalExtraStartingCities .. 'cities');
 	end
 	if (Mod.Settings.BlockadeBuildCityActive) then
 		UI.CreateLabel(vert).SetText('Blocade and Emergency Blocade card increase a city by  ' .. Mod.Settings.BlockadePower);
