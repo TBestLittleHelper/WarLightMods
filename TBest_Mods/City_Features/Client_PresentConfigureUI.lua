@@ -22,6 +22,9 @@ function Client_PresentConfigureUI(rootParent)
 	initialBuildCityActive = Mod.Settings.CapitalsActive;		
 	initialBlockCityActive = Mod.Settings.BlockadeBuildCityActive;
 	initialBlockadePower = Mod.Settings.BlockadePower;
+	initialEMBActive = Mod.Settings.EMBActive;
+	initialEMBPower = Mod.Settings.EMBPower;
+
 
 
 	if initialCityWalls == nil then initialCityWalls = true; end
@@ -43,51 +46,47 @@ function Client_PresentConfigureUI(rootParent)
 	if initialBuildCityActive == nil then initialBuildCityActive = true; end
 	if initialBlockCityActive == nil then initialBlockCityActive = true; end
 	if initialBlockadePower == nil then initialBlockadePower = 1; end
-
+	if initialEMBActive == nil then initialEMBActive = true; end
+	if initialEMBPower == nil then initialEMBPower = 1; end
 	
 	
 	horzlist = {};
 	horzlist[0] = UI.CreateHorizontalLayoutGroup(rootParent);
-	
+	--Instructions text
 	showWallOfTextToggle= UI.CreateCheckBox(horzlist[0]).SetText('Show Advanced Instructions').SetIsChecked(showInstructions).SetOnValueChanged(ShowAdvancedInstructions);	
 	horzlist[1] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[2] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[3] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[4] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[5] = UI.CreateHorizontalLayoutGroup(rootParent);
-
 	
-	
+	--Options
 	horzlist[10] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[20] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[30] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[40] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[45] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[50] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[60] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[70] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[80] = UI.CreateHorizontalLayoutGroup(rootParent);
-
-	--TODO reorder the settings?
-	
 	
 	cityWallsToggle= UI.CreateCheckBox(horzlist[10]).SetText('City Walls').SetIsChecked(initialCityWalls).SetOnValueChanged(ShowCitySettings);
 	horzlist[11] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[12] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
 	bombCardToggle= UI.CreateCheckBox(horzlist[20]).SetText('Bomb card attack on cities').SetIsChecked(initialBombcardActive).SetOnValueChanged(ShowBombSettings);
 	horzlist[21] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[22] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
 	capitalsToggle= UI.CreateCheckBox(horzlist[30]).SetText('Capitals').SetIsChecked(initialBuildCityActive).SetOnValueChanged(ShowCapitalsSettings);
 	horzlist[31] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[32] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[33] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[34] = UI.CreateHorizontalLayoutGroup(rootParent);
 
 	
-	buildCitiesToggle= UI.CreateCheckBox(horzlist[40]).SetText('Use cards to build a city').SetIsChecked(initialBlockCityActive).SetOnValueChanged(ShowBlockSettings);
+	buildCitiesToggle= UI.CreateCheckBox(horzlist[40]).SetText('Use Block and EMB cards to improve a city').SetIsChecked(initialBlockCityActive).SetOnValueChanged(ShowBlockSettings);
 	horzlist[41] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[42] = UI.CreateHorizontalLayoutGroup(rootParent);
+	
+	foundNewCitiesToggle= UI.CreateCheckBox(horzlist[45]).SetText('Use EMB to found a new city').SetIsChecked(initialEMBActive).SetOnValueChanged(ShowEMBSettings);
+	horzlist[46] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
 	wastelandsToggle= UI.CreateCheckBox(horzlist[50]).SetText('Wastlands starts with a neutral city').SetIsChecked(initialWastlandCities);
 	
@@ -95,10 +94,9 @@ function Client_PresentConfigureUI(rootParent)
 		.SetIsChecked(initialCitiesActive)
 		.SetOnValueChanged(ShowStartingCitiesSettings);
 	horzlist[61] = UI.CreateHorizontalLayoutGroup(rootParent);
-	horzlist[62] = UI.CreateHorizontalLayoutGroup(rootParent);
 
 	
-	commerceFreeDeployCityToggle= UI.CreateCheckBox(horzlist[70]).SetText("In commerce game, deploying in a city will refund your gold for the next turn. But the city level is reduced by 1").SetIsChecked(initialCommerceFree);
+	commerceFreeDeployCityToggle= UI.CreateCheckBox(horzlist[70]).SetText("Deploying in a city will give you twice as many armies. But the city level is reduced by 1").SetIsChecked(initialCommerceFree);
 	CityDeployOnlyToggle= UI.CreateCheckBox(horzlist[80]).SetText("All army deployments not made in a city of 1 or greater are skipped. Make sure to not create games that can get stuck!").SetIsChecked(initialArmyDeployment);
 
 	
@@ -122,6 +120,10 @@ function Client_PresentConfigureUI(rootParent)
 		ShowBlockSettings();
 	end
 	
+	if (initialEMBActive == true) then
+		ShowEMBSettings();
+	end
+	
 	if (initialCitiesActive == true) then
 		ShowStartingCitiesSettings();
 	end
@@ -139,10 +141,10 @@ function ShowAdvancedInstructions()
 		text1 = nil;
 		else
 		text1 = UI.CreateLabel(horzlist[1]).SetText('City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, so for example 1 city gives 50% extra defence and 2 cities gives 100%');
-		text2 = UI.CreateLabel(horzlist[2]).SetText('Bomb card can reduce the number of cities on a territory. You can custimize the strength. A city of any size will protect the armies in that city from the bomb card! If enabled you can use blockade and EMB cards to build on an exsisting city');	
+		text2 = UI.CreateLabel(horzlist[2]).SetText('Bomb card can reduce the number of cities on a territory. You can customize the strength. A city of any size will protect the armies in that city from the bomb card! If enabled you can use blockade and EMB cards to build on an exsisting city. EMB can also be used to create a new city! Also a city of size 0, is still a city and can be rebuilt using the either card.');	
 		text3 = UI.CreateLabel(horzlist[3]).SetText('If a starting territory has a set number of armies at the begining of a game, they will start with a large city. This is intended to be used in combination with Custom Senario, so that a game creator can make some key territories start with cities.');
 		text4 = UI.CreateLabel(horzlist[4]).SetText("Hope you enjoy and don't hesitate to make suggestions for imporovments to me");
-		text5 = UI.CreateLabel(horzlist[5]).SetText('If you run into any issues please contact me, TBest. [Click Mod Info, open my profle and send me a mail');
+		text5 = UI.CreateLabel(horzlist[5]).SetText('If you run into any issues please contact me, TBest. [Click Mod Info, open my profle and send me a mail]');
 
 	end
 end	
@@ -155,8 +157,8 @@ function ShowCitySettings()
 		
 		textDefBonus = nil;
 		else
-		textDefBonus = UI.CreateLabel(horzlist[11]).SetText('Percantage bonus for each city');
-		sliderDefBonus = UI.CreateNumberInputField(horzlist[12]).SetSliderMinValue(10).SetSliderMaxValue(50).SetValue(initialDefPower);
+		textDefBonus = UI.CreateLabel(horzlist[11]).SetText('Percantage bonus for each city:');
+		sliderDefBonus = UI.CreateNumberInputField(horzlist[11]).SetSliderMinValue(10).SetSliderMaxValue(50).SetValue(initialDefPower);
 	end
 end	
 
@@ -167,8 +169,8 @@ function ShowBombSettings()
 		
 		textBombCard = nil;
 		else
-		textBombCard= UI.CreateLabel(horzlist[21]).SetText('Bomb card reduces a city by');
-		sliderBombCard = UI.CreateNumberInputField(horzlist[22]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialBombcardPower);
+		textBombCard= UI.CreateLabel(horzlist[21]).SetText('Bomb card reduces a city by:');
+		sliderBombCard = UI.CreateNumberInputField(horzlist[21]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialBombcardPower);
 	end
 end	
 
@@ -182,10 +184,10 @@ function ShowCapitalsSettings()
 		textCapitals = nil;
 		else
 		
-		textCapitals= UI.CreateLabel(horzlist[31]).SetText('Capitals starts with this many arimes');
-		sliderCapitals = UI.CreateNumberInputField(horzlist[32]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(initialCustomSenarioCapitals);
-		textExtraCities = UI.CreateLabel(horzlist[33]).SetText('Capitals starts with this many cities');
-		sliderExtraCityCapitals = UI.CreateNumberInputField(horzlist[34]).SetSliderMinValue(0).SetSliderMaxValue(10).SetValue(initialCapitalExtraCities);
+		textCapitals= UI.CreateLabel(horzlist[31]).SetText('Capitals starts with this many arimes:');
+		sliderCapitals = UI.CreateNumberInputField(horzlist[31]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(initialCustomSenarioCapitals);
+		textExtraCities = UI.CreateLabel(horzlist[32]).SetText('Capitals starts with this many cities:');
+		sliderExtraCityCapitals = UI.CreateNumberInputField(horzlist[32]).SetSliderMinValue(0).SetSliderMaxValue(10).SetValue(initialCapitalExtraCities);
 	end
 end	
 
@@ -196,10 +198,23 @@ function ShowBlockSettings()
 		
 		textBlockCard = nil;
 		else
-		textBlockCard= UI.CreateLabel(horzlist[41]).SetText('Blockade and EMB card builds a city by');
-		sliderBlockCard = UI.CreateNumberInputField(horzlist[42]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(initialBlockadePower);
+		textBlockCard= UI.CreateLabel(horzlist[41]).SetText('Blockade and EMB card builds a city by:');
+		sliderBlockCard = UI.CreateNumberInputField(horzlist[41]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(initialBlockadePower);
 	end
 end	
+
+function ShowEMBSettings()
+	if(textEMBCard ~= nil) then	
+		UI.Destroy(textEMBCard);
+		UI.Destroy(sliderEMBCard);
+		
+		textEMBCard = nil;
+		else
+		textEMBCard= UI.CreateLabel(horzlist[46]).SetText('Emergency Blockade Card can found a new city:');
+		sliderEMBCard = UI.CreateNumberInputField(horzlist[46]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(initialEMBPower);
+	end
+end	
+
 
 function ShowStartingCitiesSettings()
 	if(textStartingCities ~= nil) then	
@@ -208,7 +223,7 @@ function ShowStartingCitiesSettings()
 		
 		textStartingCities = nil;
 		else
-		textStartingCities= UI.CreateLabel(horzlist[61]).SetText('Number of starting cities for distributed territories');
-		sliderStartingCities = UI.CreateNumberInputField(horzlist[62]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialNumberOfStartingCities);
+		textStartingCities= UI.CreateLabel(horzlist[61]).SetText('Number of starting cities for distributed territories:');
+		sliderStartingCities = UI.CreateNumberInputField(horzlist[61]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialNumberOfStartingCities);
 	end
 end	

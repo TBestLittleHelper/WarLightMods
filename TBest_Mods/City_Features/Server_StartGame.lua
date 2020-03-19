@@ -21,7 +21,7 @@ function Server_StartGame(game, standing)
 			structure[Cities] = Mod.Settings.NumberOfStartingCities;	
 		end
 		
-		--Capitals results in bigger city (fixed value for now)
+		--Capitals results in bigger city
 		--Useful for Custom scenario, where players can start with a lot of territories
 		if (territory.NumArmies.NumArmies == Mod.Settings.CustomSenarioCapitals) then
 			structure[Cities] = Mod.Settings.CapitalExtraStartingCities;

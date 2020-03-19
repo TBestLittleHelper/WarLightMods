@@ -44,6 +44,15 @@ function Client_SaveConfigureUI(alert)
 
 	end
 	
+	Mod.Settings.EMBActive = false;
+	if (foundNewCitiesToggle.GetIsChecked()) then
+		Mod.Settings.EMBActive = true;
+		Mod.Settings.EMBPower = sliderEMBCard.GetValue();
+		if (Mod.Settings.EMBPower < 1) then Mod.Settings.EMBPower = 1; end
+		if (Mod.Settings.EMBPower > 10) then Mod.Settings.EMBPower = 10; end
+
+	end
+	
     Mod.Settings.WastlandCities = false;
 	if (wastelandsToggle.GetIsChecked()) then
 		Mod.Settings.WastlandCities = wastelandsToggle.GetIsChecked();

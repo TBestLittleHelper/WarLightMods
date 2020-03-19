@@ -1,8 +1,6 @@
 function Client_PresentSettingsUI(rootParent)
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
-
-	--TODO add more settings
 	if (Mod.Settings.StartingCitiesActive) then
 		UI.CreateLabel(vert).SetText('Number of cities in distributed territories ' .. Mod.Settings.NumberOfStartingCities);
 	end
@@ -19,11 +17,14 @@ function Client_PresentSettingsUI(rootParent)
 	if (Mod.Settings.BlockadeBuildCityActive) then
 		UI.CreateLabel(vert).SetText('Blocade and Emergency Blocade card increase a city by  ' .. Mod.Settings.BlockadePower);
 	end
+	if (Mod.Settings.EMBActive) then
+		UI.CreateLabel(vert).SetText('Emergency Blocade card can found a new city of size  ' .. Mod.Settings.EMBPower);
+	end
 	if (Mod.Settings.WastlandCities) then
 		UI.CreateLabel(vert).SetText('Wastlands starts with a city');
 	end
 	if (Mod.Settings.CommerceFreeCityDeploy) then
-		UI.CreateLabel(vert).SetText('Deploying armies on a city will give you the gold back for the next turn. BUT will reduce your city by 1.');
+		UI.CreateLabel(vert).SetText('Deploying armies on a city will give you twice as many armies. BUT will reduce your city by 1.');
 	end
 	if (Mod.Settings.CityDeployOnly) then
 		UI.CreateLabel(vert).SetText('You can only deploy in cities');
