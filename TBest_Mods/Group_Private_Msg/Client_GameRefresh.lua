@@ -30,6 +30,7 @@ function CheckUnreadChat(game)
 	
 	for i, v in pairs(PlayerGameData) do
 		groups[i] = PlayerGameData[i]
+		Dump(groups[i])
 		if (groups[i].UnreadChat == true) then
 			print(unreadChat .. " unread chat for group " .. group[i].GroupName)
 			print(group[i][group[i].NumChat])
