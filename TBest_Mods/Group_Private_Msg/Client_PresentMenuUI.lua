@@ -72,9 +72,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		RefreshChat();
 		
 		ChatMessageText = UI.CreateTextInputField(vert)
-		.SetPlaceholderText(" Chat max 100 char")
+		.SetPlaceholderText(" Max 300 characters in one messages")
 		.SetFlexibleWidth(0.9)
-		.SetCharacterLimit(100)
+		.SetCharacterLimit(300)
 		.SetPreferredWidth(500)
 		.SetPreferredHeight(40)
 		
@@ -179,7 +179,6 @@ end
 
 function ChatGroupSelectedButton(group)	
 	local name = group.GroupName;
-	Dump(group)
 	local ret = {};
 	ret["text"] = name;
 	ret['color']= randomColor(); --TODO does this work?
@@ -396,22 +395,23 @@ function RefreshChat()
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
 		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
-		.SetFlexibleWidth(0.3)
-		.SetPreferredHeight(30)
+		.SetPreferredWidth(150)
+		.SetPreferredHeight(8)
 		.SetText("Mod Info")
 		.SetColor('#880085')	
 		ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
-		.SetFlexibleWidth(0.7)
+		.SetFlexibleWidth(1)
+		.SetFlexibleHeight(1)
 		.SetText("No group selected. This is an example chat msg 😀")
 		local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
-		.SetFlexibleWidth(0.3)
 		.SetPreferredWidth(150)
-		.SetPreferredHeight(30)
+		.SetPreferredHeight(8)
 		.SetText("Mod Info")
 		.SetColor('#880085')	
 		ChatMessageTextRecived2 = UI.CreateLabel(ExampleChatLayout2)
-		.SetFlexibleWidth(0.7)
+		.SetFlexibleWidth(1)
+		.SetFlexibleHeight(1)
 		.SetText("Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therfore, do not spam chat: it won't work!")
 		return;
 	end;
@@ -423,13 +423,14 @@ function RefreshChat()
 		local horz = UI.CreateHorizontalLayoutGroup(horzMain);
 		
 		UI.CreateButton(horz)
-		.SetFlexibleWidth(0.3)
-		.SetPreferredHeight(30)
+		.SetPreferredWidth(150)
+		.SetPreferredHeight(8)
 		.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
 		.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
 	
 		UI.CreateLabel(horz)
-		.SetFlexibleWidth(0.7)
+		.SetFlexibleWidth(1)
+		.SetFlexibleHeight(1)
 		.SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
 	end
 end

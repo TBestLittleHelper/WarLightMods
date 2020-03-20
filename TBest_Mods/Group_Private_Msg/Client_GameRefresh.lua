@@ -30,7 +30,10 @@ function CheckUnreadChat(game)
 	
 	for i, v in pairs(PlayerGameData) do
 		groups[i] = PlayerGameData[i]
-		
+		Dump(groups[i])
+		print(game.Us.ID)
+		print(groups[i][groups[i].NumChat].Sender)
+		print(game.Us.ID ~= groups[i][groups[i].NumChat].Sender or game.Settings.SinglePlayer == true)
 		if (groups[i].UnreadChat == true) then
 			Mod.PlayerGameData[i].UnreadChat = false; --Mark the chat as read so we only show 1 alert. Maybe make this a prompt and continue with alerts upon action
 			--Only show an alert if we are not the sender or if it is SinglePlayer (for testing)
