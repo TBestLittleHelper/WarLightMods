@@ -17,11 +17,14 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		
 		elseif (payload.Message == "DeleteGroup") then
 		--Delete group
+		DeleteGroup(game,playerID,payload)
 		
 		elseif (payload.Message == "LeaveGroup") then
 		--Leave group
+		LeaveGroup(game,playerID,payload)
 		
 		elseif (payload.Message == "ClearData") then
+		--Remove all playerGameData. Useful for testing (works only for admin)
 		ClearData(game,playerID);
 		
 		else
@@ -53,11 +56,11 @@ function RemoveFromGroup (game,playerID,payload)
 		
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData); --TODO test
 	end
-	--If group has no members, remove group TODO or add option to delete
 end
 function LeaveGroup (game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData;
 	local TargetGroupID = payload.TargetGroupID;
+	local TargetPlayerID = playerID;
 	
 	local group = {};
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
@@ -66,11 +69,10 @@ function LeaveGroup (game,playerID,payload)
 		
 		--Check if the TargetPlayerID is the owner 
 		elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
-		print("The owner of a group can't leave")
-		return;
-		
+			print("The owner of a group can't leave. They must use delete group")
+			return;
 		else
-		print(playerID .. " left  :" .. TargetGroupID .. " ID")
+		print(playerID .. " left  :" .. TargetGroupID .. " groupID")
 		Group = playerGameData[playerID][TargetGroupID]
 		removeFromSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
@@ -113,6 +115,8 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 			Owner = playerID,
 			GroupName = TargetGroupName,
 			GroupID = TargetGroupID,
+			Color = randomColor(),
+			UnreadChat = false,
 		}
 		--addToSet(set, key)
 		addToSet(Group.Members, playerID)
@@ -143,8 +147,7 @@ function DeliverChat(game,playerID,payload)
 	
 	local ChatInfo = {};
 	ChatInfo.Sender = playerID;
-	ChatInfo.Chat = payload.Chat;			--TODO maybe add support for the time a msg was sent
-	ChatInfo.Time = TimeStamp;
+	ChatInfo.Chat = payload.Chat;			
 	
 	local ChatArrayIndex;
 	if (data[TargetGroupID] == nil) then 
@@ -154,24 +157,23 @@ function DeliverChat(game,playerID,payload)
 	
 	print("Chat received " .. ChatInfo.Chat .. " to " .. TargetGroupID .. " from " .. ChatInfo.Sender .. " total group chat's : " .. ChatArrayIndex)
 	
-	--use the ChatArrayIndex. We want the chat msg to be stored in an array	
+	--use the ChatArrayIndex. We want the chat msg to be stored in an array	format
 	if data[TargetGroupID][ChatArrayIndex] == nil then data[TargetGroupID][ChatArrayIndex] = {} end
 	data[TargetGroupID].NumChat = ChatArrayIndex;
 	data[TargetGroupID][ChatArrayIndex] = {};
 	data[TargetGroupID][ChatArrayIndex] = ChatInfo;
+	--Mark the chat as unread. We will mark the sender as read later in UpdateAllGroupMembers
+	data[TargetGroupID].UnreadChat = true;
 	playerGameData[playerID] = data;
-	
-	
+		
 	UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
-	
 end
 
 function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	local playerGameData = playerGameData;
 	local ReffrencePlayerData = playerGameData[playerID]; --We already updated the info for this player. Now we need to sync that to the other players
 	
-	
-	local GroupMembers = ReffrencePlayerData[groupID] --todo error nil
+	local GroupMembers = ReffrencePlayerData[groupID]
 	local outdatedPlayerData;
 	
 	
@@ -179,37 +181,49 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	for Members in pairs (GroupMembers.Members) do 
 		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
 		if not(Game.Game.Players[Members].IsAI)then
-		print(playerID)
-		print("~~~~~~~~")
-
-		--	if (Members ~= playerID)then
-				outdatedPlayerData = playerGameData[Members];				
+			outdatedPlayerData = playerGameData[Members];				
+			--We want to mark the chat as read for the sender. We don't need to change anything else for them
+			if (Members == playerID)then 
+				playerGameData[Members][groupID].UnreadChat = false;
+			else
 				--if nil, make an empty table where we can place GroupID
 				if (outdatedPlayerData == nil) then 
-					outdatedPlayerData = {};
-					print("outdatedPlayerData= {} ")
-					else
-					print("dump outdatedPlayerData")
-					Dump(outdatedPlayerData)
+					outdatedPlayerData = {};				
 				end
-				
-				outdatedPlayerData[groupID] = GroupMembers;
-				playerGameData[Members] = outdatedPlayerData;
-		--	end;
-			
-			
-		end
-		
-		
+			outdatedPlayerData[groupID] = GroupMembers;
+			playerGameData[Members] = outdatedPlayerData;
+			end;
+		end		
 	end;
 	--Finally write back to Mod.PlayerGameData
 	Mod.PlayerGameData = playerGameData;
 end
 
+function DeleteGroup(game,playerID,payload)
+	local playerGameData = Mod.PlayerGameData;
+	local data = playerGameData[playerID];
+	
+	local TargetGroupID = payload.TargetGroupID;
+	local Group = data[TargetGroupID]
+	
+	--Make sure only the creator/owner of a group can delete it
+	if (playerID ~= data[TargetGroupID].Owner)then
+		return;
+	end;
+	--Set groupID data to nil for each player
+	for Members in pairs (Group.Members) do
+		--Make sure we skip AI's. This code is useful for testing in SP and as a safety as AI's can't have playerGameData
+		if not(Game.Game.Players[Members].IsAI)then			
+			playerGameData[Members][TargetGroupID] = nil;	
+		end
+	end
+	Mod.PlayerGameData = playerGameData;
+	print("Deleted Group " .. TargetGroupID)	
+end
+
 --Admin option, to reuse the same game as a test by removing all playerdata
 function ClearData(game,playerID);
-	if (playerID == 69603)then
-
+	if (playerID == 69603)then --My playerID
 	local playerGameData = Mod.PlayerGameData;
 	
 	for Players in pairs (playerGameData) do

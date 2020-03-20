@@ -1,20 +1,21 @@
 #Mod Ideas
 MirrorPicker
 RandomTemplate
-We respect your privacy : leeks random info about players
+We respect your privacy : shows random info about players
+Manual Dist : What territories can be picked
 
 #Testing/WIP
 Group Chat Mod
 
 #Public
-no-self-sanc
+no-self-sanc [Demo mod, not going to ask for approved]
 ZombieHorde
 LocalDeployment Helper
-City_Features 
+
 
 
 #Public + Approved
 Lotto Mod
 BonusValue QuickOverrider
-
+City_Features 
 
