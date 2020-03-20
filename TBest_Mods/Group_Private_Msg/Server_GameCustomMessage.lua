@@ -54,9 +54,13 @@ function RemoveFromGroup (game,playerID,payload)
 		removeFromSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
+		--Remove the group from the playerGameData of the removed player
+		Mod.PlayerGameData[TargetPlayerID][TargetGroupID]=nil;
+		--Update all other group members
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData); --TODO test
 	end
 end
+
 function LeaveGroup (game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData;
 	local TargetGroupID = payload.TargetGroupID;
@@ -93,7 +97,6 @@ function AddToGroup(game,playerID,payload)
 	local group = {};
 	group = GetGroup(playerID, TargetGroupID,TargetPlayerID,TargetGroupName)	
 end
-
 
 function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 	local playerGameData = Mod.PlayerGameData;
@@ -173,12 +176,12 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	local playerGameData = playerGameData;
 	local ReffrencePlayerData = playerGameData[playerID]; --We already updated the info for this player. Now we need to sync that to the other players
 	
-	local GroupMembers = ReffrencePlayerData[groupID]
+	local Group = ReffrencePlayerData[groupID]
 	local outdatedPlayerData;
 	
 	
 	--Update playerGameData for each member
-	for Members in pairs (GroupMembers.Members) do 
+	for Members in pairs (Group.Members) do 
 		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
 		if not(Game.Game.Players[Members].IsAI)then
 			outdatedPlayerData = playerGameData[Members];				
@@ -186,7 +189,7 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 			if (outdatedPlayerData == nil) then 
 				outdatedPlayerData = {};				
 			end
-			outdatedPlayerData[groupID] = GroupMembers;
+			outdatedPlayerData[groupID] = Group;
 			playerGameData[Members] = outdatedPlayerData;
 		end		
 	end;
@@ -194,6 +197,7 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	Mod.PlayerGameData = playerGameData;
 end
 
+--TODO BUG : only deletes for creator/owner
 function DeleteGroup(game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData;
 	local data = playerGameData[playerID];
@@ -208,12 +212,14 @@ function DeleteGroup(game,playerID,payload)
 	--Set groupID data to nil for each player
 	for Members in pairs (Group.Members) do
 		--Make sure we skip AI's. This code is useful for testing in SP and as a safety as AI's can't have playerGameData
-		if not(Game.Game.Players[Members].IsAI)then			
-			playerGameData[Members][TargetGroupID] = nil;	
+		if not(game.Game.Players[Members].IsAI)then			
+			LeaveGroup(game,Members,payload)
+
+	-- maybe we can do this in a better way		playerGameData[Members][TargetGroupID] = nil;	
 		end
 	end
 	Mod.PlayerGameData = playerGameData;
-	print("Deleted Group " .. TargetGroupID)	
+	print("Deleted Group " .. TargetGroupID)		
 end
 
 --Admin option, to reuse the same game as a test by removing all playerdata

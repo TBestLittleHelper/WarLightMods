@@ -165,7 +165,6 @@ function RefreshGame(gameRefresh)
 		return;
 	end;	
 	ClientGame = gameRefresh;
-	--RefreshChat(); -- todo TEST breaks atm when a new game starts
 end;
 
 function ChatGroupSelected()
