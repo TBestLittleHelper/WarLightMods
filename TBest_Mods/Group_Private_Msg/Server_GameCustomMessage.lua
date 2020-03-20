@@ -69,8 +69,8 @@ function LeaveGroup (game,playerID,payload)
 		
 		--Check if the TargetPlayerID is the owner 
 		elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
-			print("The owner of a group can't leave. They must use delete group")
-			return;
+		print("The owner of a group can't leave. They must use delete group")
+		return;
 		else
 		print(playerID .. " left  :" .. TargetGroupID .. " groupID")
 		Group = playerGameData[playerID][TargetGroupID]
@@ -162,10 +162,10 @@ function DeliverChat(game,playerID,payload)
 	data[TargetGroupID].NumChat = ChatArrayIndex;
 	data[TargetGroupID][ChatArrayIndex] = {};
 	data[TargetGroupID][ChatArrayIndex] = ChatInfo;
-	--Mark the chat as unread. We will mark the sender as read later in UpdateAllGroupMembers
+	--Mark the chat as unread for everyone in the group.
 	data[TargetGroupID].UnreadChat = true;
 	playerGameData[playerID] = data;
-		
+	
 	UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
 end
 
@@ -182,18 +182,12 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
 		if not(Game.Game.Players[Members].IsAI)then
 			outdatedPlayerData = playerGameData[Members];				
-			--We want to mark the chat as read for the sender. We don't need to change anything else for them
-			
-			if (Members == playerID)then 
-				playerGameData[Members][groupID].UnreadChat = false;
-			else
-				--if nil, make an empty table where we can place GroupID
-				if (outdatedPlayerData == nil) then 
-					outdatedPlayerData = {};				
-				end
+			--if nil, make an empty table where we can place GroupID
+			if (outdatedPlayerData == nil) then 
+				outdatedPlayerData = {};				
+			end
 			outdatedPlayerData[groupID] = GroupMembers;
 			playerGameData[Members] = outdatedPlayerData;
-			end;
 		end		
 	end;
 	--Finally write back to Mod.PlayerGameData
@@ -225,12 +219,12 @@ end
 --Admin option, to reuse the same game as a test by removing all playerdata
 function ClearData(game,playerID);
 	if (playerID == 69603)then --My playerID
-	local playerGameData = Mod.PlayerGameData;
-	
-	for Players in pairs (playerGameData) do
-		print("Deleted playerGameData for " .. Players)
-		playerGameData[Players] = {};
-	end
-	Mod.PlayerGameData = playerGameData;
+		local playerGameData = Mod.PlayerGameData;
+		
+		for Players in pairs (playerGameData) do
+			print("Deleted playerGameData for " .. Players)
+			playerGameData[Players] = {};
+		end
+		Mod.PlayerGameData = playerGameData;
 	end;
 end

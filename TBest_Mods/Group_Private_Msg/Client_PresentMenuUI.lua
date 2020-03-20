@@ -396,23 +396,22 @@ function RefreshChat()
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
 		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
-		.SetFlexibleWidth(0.2)
-		.SetPreferredWidth(100)
-		.SetPreferredHeight(40)
+		.SetFlexibleWidth(0.3)
+		.SetPreferredHeight(30)
 		.SetText("Mod Info")
 		.SetColor('#880085')	
 		ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
-		.SetFlexibleWidth(0.8)
+		.SetFlexibleWidth(0.7)
 		.SetText("No group selected. This is an example chat msg 😀")
 		local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
-		.SetFlexibleWidth(0.2)
-		.SetPreferredWidth(100)
-		.SetPreferredHeight(40)
+		.SetFlexibleWidth(0.3)
+		.SetPreferredWidth(150)
+		.SetPreferredHeight(30)
 		.SetText("Mod Info")
 		.SetColor('#880085')	
 		ChatMessageTextRecived2 = UI.CreateLabel(ExampleChatLayout2)
-		.SetFlexibleWidth(0.8)
+		.SetFlexibleWidth(0.7)
 		.SetText("Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therfore, do not spam chat: it won't work!")
 		return;
 	end;
@@ -424,14 +423,13 @@ function RefreshChat()
 		local horz = UI.CreateHorizontalLayoutGroup(horzMain);
 		
 		UI.CreateButton(horz)
-		.SetFlexibleWidth(0.2)
-		.SetPreferredWidth(100)
-		.SetPreferredHeight(40)
+		.SetFlexibleWidth(0.3)
+		.SetPreferredHeight(30)
 		.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
 		.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
 	
 		UI.CreateLabel(horz)
-		.SetFlexibleWidth(0.8)
+		.SetFlexibleWidth(0.7)
 		.SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
 	end
 end
