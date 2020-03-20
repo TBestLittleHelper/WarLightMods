@@ -34,7 +34,7 @@ function CheckUnreadChat(game)
 			--Only show an alert if we are not the sender or if it is SinglePlayer (for testing)
 			if (game.Us.ID ~= groups[i][groups[i].NumChat].Sender or game.Settings.SinglePlayer == true) then
 				local sender = game.Game.Players[groups[i][groups[i].NumChat].Sender].DisplayName(nil, false);
-				UI.Alert(groups[i].GroupName .. " has unread chat. Last message was " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender)
+				UI.Alert(groups[i].GroupName .. " has unread chat. The last chat message is: \n " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender)
 			return;
 			end;
 		end

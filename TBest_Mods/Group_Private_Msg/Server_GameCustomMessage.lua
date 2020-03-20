@@ -1,5 +1,5 @@
 require('Utilities');
-
+--TODO Mod Info chat msg when a group action is done (remove, create etc.)
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	Game = game; --Global var. needed for test TODO remove
 	
@@ -54,10 +54,17 @@ function RemoveFromGroup (game,playerID,payload)
 		removeFromSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
-		--Remove the group from the playerGameData of the removed player
-		Mod.PlayerGameData[TargetPlayerID][TargetGroupID]=nil;
+		--Remove the group from the playerGameData of the removed player, if it's not an AI 
+		if not(Game.Game.Players[TargetPlayerID].IsAI)then
+			Mod.PlayerGameData[TargetPlayerID][TargetGroupID]=nil;
+		end;
 		--Update all other group members
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData); --TODO test
+
+		--TODO better chat msg
+		payload.Chat = TargetPlayerID .. " Player was removed from the group"
+		DeliverChat(game,playerID,payload)
+
 	end
 end
 
@@ -83,23 +90,23 @@ function LeaveGroup (game,playerID,payload)
 		
 		UpdateAllGroupMembers(playerID, TargetGroupID, playerGameData);
 	end	
+	--TODO better chat msg
+	payload.Chat = TargetPlayerID .. " Player left the group"
+	DeliverChat(game,playerID,payload)
 end
 
---TODO this is a bit redundant
+--TODO check if the player is already a member of the group
 function AddToGroup(game,playerID,payload)
+	local playerGameData = Mod.PlayerGameData;
+
 	local TargetGroupID = payload.TargetGroupID;
 	local TargetPlayerID = payload.TargetPlayerID;
 	local TargetGroupName = payload.TargetGroupName;
-	
+
+
 	print(TargetPlayerID .. " targetplayer")
 	print(TargetGroupID .. " TargetGroupID")
-	
-	local group = {};
-	group = GetGroup(playerID, TargetGroupID,TargetPlayerID,TargetGroupName)	
-end
 
-function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
-	local playerGameData = Mod.PlayerGameData;
 	
 	if (playerGameData[playerID] == nil) then 
 		--if nill, make an empty table where we can place GroupID
@@ -138,15 +145,15 @@ function GetGroup(playerID,TargetGroupID,TargetPlayerID,TargetGroupName)
 		
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
 	end
-	
-	return Group;
+	--TODO better chat msg
+	payload.Chat = TargetPlayerID .. " Player was added to the group"
+	DeliverChat(game,playerID,payload)
 end
 
 function DeliverChat(game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData
 	local data = playerGameData[playerID];
 	local TargetGroupID = payload.TargetGroupID
-	local TimeStamp = payload.Time;
 	
 	local ChatInfo = {};
 	ChatInfo.Sender = playerID;
@@ -190,6 +197,8 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 				outdatedPlayerData = {};				
 			end
 			outdatedPlayerData[groupID] = Group;
+			print("-------")
+			Dump(outdatedPlayerData[groupID])
 			playerGameData[Members] = outdatedPlayerData;
 		end		
 	end;
@@ -207,15 +216,14 @@ function DeleteGroup(game,playerID,payload)
 	
 	--Make sure only the creator/owner of a group can delete it
 	if (playerID ~= data[TargetGroupID].Owner)then
+		print("You can't delete since you are not the owner of the group")
 		return;
 	end;
 	--Set groupID data to nil for each player
 	for Members in pairs (Group.Members) do
 		--Make sure we skip AI's. This code is useful for testing in SP and as a safety as AI's can't have playerGameData
 		if not(game.Game.Players[Members].IsAI)then			
-			LeaveGroup(game,Members,payload)
-
-	-- maybe we can do this in a better way		playerGameData[Members][TargetGroupID] = nil;	
+			playerGameData[Members][TargetGroupID] = nil;
 		end
 	end
 	Mod.PlayerGameData = playerGameData;

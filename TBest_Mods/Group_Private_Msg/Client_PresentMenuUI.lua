@@ -284,6 +284,12 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 			UI.Alert("Please choose a group from the list");
 			return;
 		end
+		--We can't remove the owner of a group
+		if (TargetPlayerID == Mod.PlayerGameData[TargetGroupID].Owner)then
+			UI.Alert("You can't remove the owner of a group")
+			return;
+		end;
+		
 		
 		local payload = {};
 		payload.Message = "RemoveGroupMember";
@@ -327,6 +333,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	
 	--Delete a group : only possible as a group owner
+	--TODO confirmation prompt would be smart
 	UI.CreateButton(buttonRow).SetText("Delete group").SetColor("#FF0000").SetOnClick(function() 		
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
 		if (GroupTextName.GetInteractable() == true) then
@@ -392,16 +399,16 @@ function RefreshChat()
 	end
 	
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
-		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
-		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
-		.SetPreferredWidth(150)
-		.SetPreferredHeight(8)
-		.SetText("Mod Info")
-		.SetColor('#880085')	
-		ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
-		.SetFlexibleWidth(1)
-		.SetFlexibleHeight(1)
-		.SetText("No group selected. This is an example chat msg 😀")
+		-- local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
+		-- ChatExample1 =	UI.CreateButton(ExampleChatLayout)
+		-- .SetPreferredWidth(150)
+		-- .SetPreferredHeight(8)
+		-- .SetText("Mod Info")
+		-- .SetColor('#880085')	
+		-- ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
+		-- .SetFlexibleWidth(1)
+		-- .SetFlexibleHeight(1)
+		-- .SetText("No group selected. This is an example chat msg 😀")
 		local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
 		.SetPreferredWidth(150)
