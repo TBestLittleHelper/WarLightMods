@@ -184,16 +184,16 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 			outdatedPlayerData = playerGameData[Members];				
 			--We want to mark the chat as read for the sender. We don't need to change anything else for them
 			
-			-- if (Members == playerID)then 
-				-- playerGameData[Members][groupID].UnreadChat = false;
-			-- else
+			if (Members == playerID)then 
+				playerGameData[Members][groupID].UnreadChat = false;
+			else
 				--if nil, make an empty table where we can place GroupID
 				if (outdatedPlayerData == nil) then 
 					outdatedPlayerData = {};				
 				end
 			outdatedPlayerData[groupID] = GroupMembers;
 			playerGameData[Members] = outdatedPlayerData;
-			--end;
+			end;
 		end		
 	end;
 	--Finally write back to Mod.PlayerGameData

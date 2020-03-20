@@ -30,26 +30,11 @@ function CheckUnreadChat(game)
 	
 	for i, v in pairs(PlayerGameData) do
 		groups[i] = PlayerGameData[i]
-		Dump(groups[i])
+		
 		if (groups[i].UnreadChat == true) then
-			print("true unread chat for group " .. groups[i].GroupName)
-			print(groups[i][groups[i].NumChat])
-			UI.Alert(groups[i].GroupName .. " has unread chat. Las message was " .. groups[i][groups[i].NumChat])
-			Mod.PlayerGameData[i].UnreadChat = false; --Return so we only show 1 alert. Maybe make this a prompt and continue when selected
+			UI.Alert(groups[i].GroupName .. " has unread chat. Las message was " .. groups[i][groups[i].NumChat].Chat .. " from " .. groups[i][groups[i].NumChat].Sender)
+			Mod.PlayerGameData[i].UnreadChat = false; --Return so we only show 1 alert. Maybe make this a prompt and continue with alerts upon action
 			return;
 		end
 	end
-	
-	-- if (ChatGroupSelectedID ~= nil)then
-		-- if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
-			-- ChatArrayIndex = 0;
-			-- ChatMessageText.SetInteractable(true)
-			-- else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
-		-- end;
-	-- end	
 end
-
-
-
--- Sorry, the mod "Better Chat" has failed.  Error: 
--- pcall failure in function Client_GameRefresh ret=2 [string "require('Utilities');..."]:35: attempt to concatenate a nil value (global 'unreadChat')
