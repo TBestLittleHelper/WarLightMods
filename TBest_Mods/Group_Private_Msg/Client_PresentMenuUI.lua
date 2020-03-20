@@ -11,6 +11,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	ClientGame = game;
 	PlayerGameData = Mod.PlayerGameData;
 	
+	
 	MainDialog = nil;
 	if (SizeX == nil or SizeY == nil) then
 		SizeX = 500; --Chat window
@@ -180,7 +181,6 @@ function ChatGroupSelectedButton(group)
 	local name = group.GroupName;
 	local ret = {};
 	ret["text"] = name;
-	ret['color']= randomColor(); --TODO does this work?
 	ret["selected"] = function() 
 		ChatGroupSelectedText.SetText(name).SetColor(group.Color)
 		ChatGroupSelectedID = group.GroupID;

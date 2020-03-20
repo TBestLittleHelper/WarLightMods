@@ -1,5 +1,5 @@
 require('Utilities');
---TODO Mod Info chat msg when a group action is done (remove, create etc.)
+
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	Game = game; --Global var. needed for test TODO remove
 	
@@ -60,11 +60,10 @@ function RemoveFromGroup (game,playerID,payload)
 		end;
 		--Update all other group members
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData); --TODO test
-
-		--TODO better chat msg
-		payload.Chat = TargetPlayerID .. " Player was removed from the group"
+		
+		--Send a chat msg to the group chat
+		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. "  was removed from " .. Group.GroupName;
 		DeliverChat(game,playerID,payload)
-
 	end
 end
 
@@ -77,36 +76,38 @@ function LeaveGroup (game,playerID,payload)
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
 		print("group to leave from not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
-		
-		--Check if the TargetPlayerID is the owner 
-		elseif(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
+	end	
+	--Check if the TargetPlayerID is the owner 
+	if(TargetPlayerID == playerGameData[playerID][TargetGroupID].Owner) then
 		print("The owner of a group can't leave. They must use delete group")
 		return;
-		else
-		print(playerID .. " left  :" .. TargetGroupID .. " groupID")
-		Group = playerGameData[playerID][TargetGroupID]
-		removeFromSet(Group.Members, TargetPlayerID)
-		playerGameData[playerID][TargetGroupID] = Group;
-		
-		UpdateAllGroupMembers(playerID, TargetGroupID, playerGameData);
-	end	
-	--TODO better chat msg
-	payload.Chat = TargetPlayerID .. " Player left the group"
+	end
+	
+	print(playerID .. " left  :" .. TargetGroupID .. " groupID")
+	--Remove the player
+	Group = playerGameData[playerID][TargetGroupID]
+	removeFromSet(Group.Members, TargetPlayerID)
+	--Update the players data
+	for (Members in Group.Members) do
+		playerGameData[Members][TargetGroupID] = Group;
+	end
+	Mod.PlayerGameData = playerGameData;
+	--Add a msg to the chat
+	payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " left " .. group.GroupName;
 	DeliverChat(game,playerID,payload)
 end
 
---TODO check if the player is already a member of the group
 function AddToGroup(game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData;
-
+	
 	local TargetGroupID = payload.TargetGroupID;
 	local TargetPlayerID = payload.TargetPlayerID;
 	local TargetGroupName = payload.TargetGroupName;
-
-
+	
+	
 	print(TargetPlayerID .. " targetplayer")
 	print(TargetGroupID .. " TargetGroupID")
-
+	
 	
 	if (playerGameData[playerID] == nil) then 
 		--if nill, make an empty table where we can place GroupID
@@ -135,19 +136,26 @@ function AddToGroup(game,playerID,payload)
 		playerGameData[playerID][TargetGroupID] = Group; 
 		
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
-		
+		--Send a msg to the chat of the group
+		payload.Chat = game.Game.Players[Group.Owner].DisplayName(nil,false) .. "  created " .. Group.GroupName;
+		DeliverChat(game,playerID,payload)
+		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " was added to " .. Group.GroupName;
+	
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
+		--Check if the player is already in the group.
+		if (setContaints(Group.Members, TargetPlayerID)then return end;
+		
 		Group = playerGameData[playerID][TargetGroupID]
 		Dump(Group.Members)
 		addToSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
+		--Send a msg to the chat of the group
+		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. "  was added to " .. Group.GroupName;
+		DeliverChat(game,playerID,payload)
 	end
-	--TODO better chat msg
-	payload.Chat = TargetPlayerID .. " Player was added to the group"
-	DeliverChat(game,playerID,payload)
 end
 
 function DeliverChat(game,playerID,payload)
@@ -206,7 +214,6 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	Mod.PlayerGameData = playerGameData;
 end
 
---TODO BUG : only deletes for creator/owner
 function DeleteGroup(game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData;
 	local data = playerGameData[playerID];
@@ -233,8 +240,7 @@ end
 --Admin option, to reuse the same game as a test by removing all playerdata
 function ClearData(game,playerID);
 	if (playerID == 69603)then --My playerID
-		local playerGameData = Mod.PlayerGameData;
-		
+		local playerGameData = Mod.PlayerGameData;		
 		for Players in pairs (playerGameData) do
 			print("Deleted playerGameData for " .. Players)
 			playerGameData[Players] = {};
