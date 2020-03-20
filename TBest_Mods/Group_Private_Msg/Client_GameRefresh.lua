@@ -32,9 +32,9 @@ function CheckUnreadChat(game)
 		groups[i] = PlayerGameData[i]
 		Dump(groups[i])
 		if (groups[i].UnreadChat == true) then
-			print(unreadChat .. " unread chat for group " .. group[i].GroupName)
-			print(group[i][group[i].NumChat])
-			UI.Alert(group[i].GroupName .. " has unread chat. Las message was " .. group[i][group[i].NumChat])
+			print(unreadChat .. " unread chat for group " .. groups[i].GroupName)
+			print(groups[i][groups[i].NumChat])
+			UI.Alert(groups[i].GroupName .. " has unread chat. Las message was " .. groups[i][groups[i].NumChat])
 			Mod.PlayerGameData[i].UnreadChat = false; --Return so we only show 1 alert. Maybe make this a prompt and continue when selected
 			return;
 		end
