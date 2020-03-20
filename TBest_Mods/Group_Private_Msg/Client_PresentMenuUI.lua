@@ -240,7 +240,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	end
 	
 	--Add a player to a group
-	UI.CreateButton(row2).SetText("Add Player").SetColor("#03d100").SetOnClick(function() 		
+	UI.CreateButton(row2).SetText("Add Player").SetColor("#00ff05").SetOnClick(function() 		
 		if (TargetPlayerID == nil) then
 			UI.Alert("Please choose a player first");
 			return;
@@ -277,7 +277,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	end);
 	
 	--Remove a player from a group
-	UI.CreateButton(row2).SetText("Remove Player").SetColor("#a10000").SetOnClick(function() 
+	UI.CreateButton(row2).SetText("Remove Player").SetColor("#FF0000").SetOnClick(function() 
 		
 		if (TargetPlayerID == nil) then
 			UI.Alert("Please choose a player first");
@@ -302,14 +302,14 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
 	--Go back to MainDialog button
-	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0062ff").SetOnClick(function() 		
+	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);	
 	
 	--If owner, show delete else show leave? TODO
 	
 	--Leave a group option
-	UI.CreateButton(buttonRow).SetText("Leave group").SetColor("#a10000").SetOnClick(function() 
+	UI.CreateButton(buttonRow).SetText("Leave group").SetColor("#FF0000").SetOnClick(function() 
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
 		if (GroupTextName.GetInteractable() == true) then
 			UI.Alert("Please choose a group from the list");
@@ -331,7 +331,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	
 	--Delete a group : only possible as a group owner
-	UI.CreateButton(buttonRow).SetText("Delete group").SetColor("#a10000").SetOnClick(function() 		
+	UI.CreateButton(buttonRow).SetText("Delete group").SetColor("#FF0000").SetOnClick(function() 		
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
 		if (GroupTextName.GetInteractable() == true) then
 			UI.Alert("Please choose a group from the list");

@@ -9,10 +9,11 @@ function Client_GameRefresh(game)
 	end
 	
 	print("Client_GameRefresh called RefreshGame")
-	--Refresh the Game info
-	RefreshGame(game);
 	--Check for unread chat
 	CheckUnreadChat(game);
+	--Refresh the Game info
+	--RefreshGame(game); --Do we need to call this?
+	
 end
 
 
