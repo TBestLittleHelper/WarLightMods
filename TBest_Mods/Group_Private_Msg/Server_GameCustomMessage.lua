@@ -2,7 +2,7 @@ require('Utilities');
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	Game = game; --Global var. needed for test TODO remove
-	
+	--TODO reorder according to what is used most
 	if (payload.Message == "AddGroupMember") then
 		--Add to group
 		AddToGroup(game,playerID,payload);
@@ -14,6 +14,10 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		elseif (payload.Message == "SendChat") then
 		--DeliverChat
 		DeliverChat(game,playerID,payload)
+		
+		elseif (payload.Message == "ReadChat") then
+		--Mark as read
+		ReadChat(playerID,payload)
 		
 		elseif (payload.Message == "DeleteGroup") then
 		--Delete group
@@ -72,7 +76,6 @@ function LeaveGroup (game,playerID,payload)
 	local TargetGroupID = payload.TargetGroupID;
 	local TargetPlayerID = playerID;
 	
-	local group = {};
 	if (playerGameData[playerID] == nil or playerGameData[playerID][TargetGroupID] == nil)then
 		print("group to leave from not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
@@ -85,7 +88,7 @@ function LeaveGroup (game,playerID,payload)
 	
 	print(playerID .. " left  :" .. TargetGroupID .. " groupID")
 	--Remove the player
-	Group = playerGameData[playerID][TargetGroupID]
+	local Group = playerGameData[playerID][TargetGroupID]
 	removeFromSet(Group.Members, TargetPlayerID)
 	--Update the players data
 	for Members, v in pairs (Group.Members) do
@@ -93,7 +96,7 @@ function LeaveGroup (game,playerID,payload)
 	end
 	Mod.PlayerGameData = playerGameData;
 	--Add a msg to the chat
-	payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " left " .. group.GroupName;
+	payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " left " .. Group.GroupName;
 	DeliverChat(game,playerID,payload)
 end
 
@@ -144,14 +147,17 @@ function AddToGroup(game,playerID,payload)
 	
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
-		--Check if the player is already in the group.
-		if (setContaints(Group.Members, TargetPlayerID))then return end;
-		
 		Group = playerGameData[playerID][TargetGroupID]
-		Dump(Group.Members)
+		
+		--Check if the player is already in the group. If so, return
+		if (Group.Members[TargetPlayerID] ~= nil) then
+			print(TargetPlayerID .. " is alredy in the group");
+			return;
+		end;
+		--Add the player
 		addToSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
-		
+		--Update Storage
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
 		--Send a msg to the chat of the group
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. "  was added to " .. Group.GroupName;
@@ -186,6 +192,12 @@ function DeliverChat(game,playerID,payload)
 	playerGameData[playerID] = data;
 	
 	UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
+end
+
+function ReadChat(playerID, payload)
+	local playerGameData = Mod.PlayerGameData;
+	playerGameData[playerID][payload.TargetGroupID].UnreadChat = false;
+	Mod.PlayerGameData = playerGameData;
 end
 
 function UpdateAllGroupMembers(playerID, groupID , playerGameData)

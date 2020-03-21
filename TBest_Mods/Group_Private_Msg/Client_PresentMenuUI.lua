@@ -510,6 +510,7 @@ end
 
 function ChatGroupClicked()
 	local groups = {}
+	--TODO update PlayerGameData here? if we delete a group it will still show up in the list
 	for i, v in pairs(PlayerGameData) do
 		print(i)
 		groups[i] = PlayerGameData[i]
