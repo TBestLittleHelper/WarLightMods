@@ -116,9 +116,14 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 			payload.Message = "ClearData";			
 			ClientGame.SendGameCustomMessage("ClearData" , payload, function(returnValue)end);
 		end);
-	end;
+	end;	
 	
-	--Make a scalable chat, where user can use setMaxSize in parent dialog
+	--TODO hook this up
+	ShowAllChatCheckBox = UI.CreateCheckBox(vert).SetText('Show all past chat').SetIsChecked(false).SetOnValueChanged(function()
+		print('Check box is now ' .. ShowAllChatCheckBox.GetValue())
+		end)
+		
+	--Make a scalable chat, where user can use setMaxSize for the main dialog
 	UI.CreateLabel(vert).SetText("Change X size")
 	
 	SizeXInput = UI.CreateNumberInputField(vert).SetSliderMinValue(300).SetSliderMaxValue(1000).SetValue(SizeX)
@@ -227,7 +232,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	row11 = UI.CreateHorizontalLayoutGroup(vert);
 	GroupTextNameLabel = UI.CreateLabel(row11).SetText("Name a new chat group: ");
-	GroupTextName = UI.CreateTextInputField(row11).SetCharacterLimit(25).SetPlaceholderText('Group Name 25 char').SetPreferredWidth(200).SetFlexibleWidth(1)
+	GroupTextName = UI.CreateTextInputField(row11).SetCharacterLimit(25).SetPlaceholderText(" Group Name max 25 characters").SetPreferredWidth(200).SetFlexibleWidth(1)
 	
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
 	
@@ -311,7 +316,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	--If owner, show delete else show leave? TODO
 	
 	--Leave a group option
-	UI.CreateButton(buttonRow).SetText("Leave group").SetColor("#FF0000").SetOnClick(function() 
+	LeaveGroupBtn = UI.CreateButton(buttonRow).SetText("Leave group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
 		if (GroupTextName.GetInteractable() == true) then
 			UI.Alert("Please choose a group from the list");
@@ -334,7 +339,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	--Delete a group : only possible as a group owner
 	--TODO confirmation prompt would be smart
-	UI.CreateButton(buttonRow).SetText("Delete group").SetColor("#FF0000").SetOnClick(function() 		
+	deleteGroupBtn = UI.CreateButton(buttonRow).SetText("Delete group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 		
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
 		if (GroupTextName.GetInteractable() == true) then
 			UI.Alert("Please choose a group from the list");
@@ -520,6 +525,16 @@ function ChatGroupButton(group)
 		GroupTextName.SetText(name).SetInteractable(false)
 		TargetGroupID = group.GroupID;
 		GroupTextNameLabel.SetText("Selected group ")
+		--Check if we are owner or member
+		if (ClientGame.Us.ID == Mod.PlayerGameData[TargetGroupID].Owner) then
+			--If we are the owner, we can delete the group
+			deleteGroupBtn.SetInteractable(true);
+			LeaveGroupBtn.SetInteractable(false); --TODO hide the buttons instead?
+		else
+			--If we are not the owner we can leave the group
+			deleteGroupBtn.SetInteractable(false);
+			LeaveGroupBtn.SetInteractable(true); --TODO hide the buttons instead?
+		end
 	end
 	return ret;
 end																			

@@ -62,7 +62,7 @@ function RemoveFromGroup (game,playerID,payload)
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData); --TODO test
 		
 		--Send a chat msg to the group chat
-		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. "  was removed from " .. Group.GroupName;
+		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " was removed from " .. Group.GroupName;
 		DeliverChat(game,playerID,payload)
 	end
 end
@@ -88,7 +88,7 @@ function LeaveGroup (game,playerID,payload)
 	Group = playerGameData[playerID][TargetGroupID]
 	removeFromSet(Group.Members, TargetPlayerID)
 	--Update the players data
-	for (Members in Group.Members) do
+	for Members, v in pairs (Group.Members) do
 		playerGameData[Members][TargetGroupID] = Group;
 	end
 	Mod.PlayerGameData = playerGameData;
@@ -137,14 +137,15 @@ function AddToGroup(game,playerID,payload)
 		
 		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
 		--Send a msg to the chat of the group
-		payload.Chat = game.Game.Players[Group.Owner].DisplayName(nil,false) .. "  created " .. Group.GroupName;
+		payload.Chat = game.Game.Players[Group.Owner].DisplayName(nil,false) .. " created " .. Group.GroupName;
 		DeliverChat(game,playerID,payload)
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " was added to " .. Group.GroupName;
+		DeliverChat(game,playerID,payload)
 	
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
 		--Check if the player is already in the group.
-		if (setContaints(Group.Members, TargetPlayerID)then return end;
+		if (setContaints(Group.Members, TargetPlayerID))then return end;
 		
 		Group = playerGameData[playerID][TargetGroupID]
 		Dump(Group.Members)
@@ -196,7 +197,7 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	
 	
 	--Update playerGameData for each member
-	for Members in pairs (Group.Members) do 
+	for Members, v in pairs (Group.Members) do 
 		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
 		if not(Game.Game.Players[Members].IsAI)then
 			outdatedPlayerData = playerGameData[Members];				
@@ -227,7 +228,7 @@ function DeleteGroup(game,playerID,payload)
 		return;
 	end;
 	--Set groupID data to nil for each player
-	for Members in pairs (Group.Members) do
+	for Members, v in pairs (Group.Members) do
 		--Make sure we skip AI's. This code is useful for testing in SP and as a safety as AI's can't have playerGameData
 		if not(game.Game.Players[Members].IsAI)then			
 			playerGameData[Members][TargetGroupID] = nil;
