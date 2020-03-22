@@ -10,13 +10,17 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Make some global var's
 	ClientGame = game;
 	PlayerGameData = Mod.PlayerGameData;
+	skipRefresh = false; --This is set to true if we go to Edit or Settings Dialog
 	
+	if (EachGroupButton == nil) then EachGroupButton = false end; --If each group has a button in PresentMenuUi
+	if (NumPastChat == nil) then
+		NumPastChat = 10; --Max amount of past chat shown
+	end;
 	
-	MainDialog = nil;
 	if (SizeX == nil or SizeY == nil) then
 		SizeX = 500; --Chat window
 		SizeY = 500; --Chat window
-	end;
+	end;	
 	setMaxSize(SizeX, SizeY);
 	setScrollable(false,true);
 	
@@ -26,49 +30,62 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	ChatContainer = nil;
 	ChatMsgContainerArray = {};
 	
-	--Set up the main Dialog window
-
+	--Setting up the main Dialog window
+	
 	--List the members of the current selected group.
-	--TODO this doesn't update when refresh chat is called. We should fix that.
 	GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers());
-
-	--TODO rework layout
+	
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert);
 	
-	--Edit group button
+	--Manage group button
 	UI.CreateButton(horizontalLayout)
 	.SetText("Manage groups")
 	.SetFlexibleWidth(0.2)
 	.SetOnClick(function()
 		DestroyOldUIelements(ChatMsgContainerArray) --TODO maybe we can just set the Array = {} : For now, this works
+		skipRefresh = true;
 		ClientGame.CreateDialog(CreateEditDialog);
 		close();--Close this dialog. 
 	end);
 	
 	UI.CreateButton(rootParent).SetText("Settings").SetColor("#00ff05").SetOnClick(function()
 		DestroyOldUIelements(ChatMsgContainerArray) --TODO maybe we can just set the Array = {} : For now, this works
+		skipRefresh = true;
 		ClientGame.CreateDialog(SettingsDialog);
 		close();--Close this dialog. 
 	end);
 	
 	--If we are in a group, show the chat options
 	if (next(PlayerGameData) ~= nil) then
-		--For the last X chat msg?
-		--A text field for the group selected
-		ChatGroupSelectedText = UI.CreateButton(horizontalLayout)
-		.SetText("Chat Group")
-		.SetFlexibleWidth(0.6)
-		.SetColor(randomColor()) --TODO maybe not randomColor. But for now raiwnbow!
-		
-		
-		--Make a button for to select chat group
-		UI.CreateButton(horizontalLayout)
-		.SetText("Select chat group") --TODO keep selection over refresh
-		.SetFlexibleWidth(0.2)
-		.SetOnClick(ChatGroupSelected)
 		--TODO autoselect if ChatGroupSelected ~= nil
-		
+		if not(EachGroupButton) then --todo add to settings
+			--A text field for the group selected
+			ChatGroupSelectedText = UI.CreateButton(horizontalLayout)
+			.SetText("Chat Group")
+			.SetFlexibleWidth(0.6)
+			.SetColor(randomColor());
+			--Make a button for to select chat group
+			UI.CreateButton(horizontalLayout)
+			.SetText("Select chat group") --TODO keep selection over refresh
+			.SetFlexibleWidth(0.2)
+			.SetOnClick(ChatGroupSelected)
+			else
+			print("000000000000");
+			--For all groups, show a button
+			for GroupID, group in pairs (PlayerGameData) do
+				UI.CreateButton(horizontalLayout)
+				.SetText(PlayerGameData[GroupID].GroupName)
+				.SetColor(PlayerGameData[GroupID].Color)
+				.SetOnClick(function() 
+					ChatMessageText.SetInteractable(true)
+					ChatGroupSelectedID = GroupID;
+					
+					GroupMembersNames.SetText(getGroupMembers());
+					RefreshChat();
+				end)
+			end
+		end
 		ChatContainer = UI.CreateVerticalLayoutGroup(vert);
 		RefreshChat();
 		
@@ -108,7 +125,6 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 	setMaxSize(350,350); --This dialog's size
 	local vert = UI.CreateVerticalLayoutGroup(rootParent); --TODO rename to vert
 	
-	
 	--This only shows for Admin/Me only (this is checked server side too)
 	if (ClientGame.Us.ID == 69603) then 
 		ClearChatBtn = UI.CreateButton(vert).SetText("Remove all playerdata").SetOnClick(function()
@@ -118,36 +134,44 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		end);
 	end;	
 	
-	--TODO hook this up
-	ShowAllChatCheckBox = UI.CreateCheckBox(vert).SetText('Show all past chat').SetIsChecked(false).SetOnValueChanged(function()
-		print('Check box is now ' .. ShowAllChatCheckBox.GetValue())
-		end)
-		
+	--Num of max past chat shown
+	UI.CreateLabel(vert).SetText("Show this many past chat messages")
+	NumPastChatInput = UI.CreateNumberInputField(vert).SetSliderMinValue(3).SetSliderMaxValue(100).SetValue(NumPastChat);
+	
+	--Buttons or pick from list : MainDialog
+	EachGroupButtonCheckBox = UI.CreateCheckBox(vert).SetIsChecked(EachGroupButton).SetText("Show a button for each group");
+	
+	
 	--Make a scalable chat, where user can use setMaxSize for the main dialog
 	UI.CreateLabel(vert).SetText("Change X size")
-	
 	SizeXInput = UI.CreateNumberInputField(vert).SetSliderMinValue(300).SetSliderMaxValue(1000).SetValue(SizeX)
 	UI.CreateLabel(vert).SetText("Change Y size")
 	SizeYInput = UI.CreateNumberInputField(vert).SetSliderMinValue(300).SetSliderMaxValue(1000).SetValue(SizeY)
 	
 	
 	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
-	--Go back to MainDialog button : don't save
-	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0062ff").SetOnClick(function() 		
+	--Go back to PresentMenuUi button : don't save
+	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);
 	
 	--Save changes then go back to MainDialog
-	ResizeChatDialog = UI.CreateButton(buttonRow).SetText("Resize chat window").SetOnClick(function()
+	ResizeChatDialog = UI.CreateButton(buttonRow).SetText("Save settings").SetOnClick(function()
+		EachGroupButton = EachGroupButtonCheckBox.GetIsChecked();
+		NumPastChat = NumPastChatInput.GetValue();		
 		SizeX = SizeXInput.GetValue();
 		SizeY = SizeYInput.GetValue();
-		--Validate input for sizeX and Y
+		
+		--Validate input for NumPastChat, sizeX and sizeY 
+		if NumPastChat < 3 then NumPastChat = 3 end
+		if NumPastChat > 1000 then NumPastChat = 1000 end;
+		
 		if SizeX < 200 then SizeX = 200 end
 		if SizeX > 2000 then SizeX = 2000 end
 		if SizeY < 200 then SizeY = 200 end
 		if SizeY > 2000 then SizeY = 2000 end
 		
-		RefreshMainDialog(close)
+		RefreshMainDialog(close)		
 	end);	
 end;
 
@@ -159,18 +183,19 @@ function RefreshMainDialog(close)
 	end;
 	
 	print("Open ClientDialog")
+	skipRefresh = false;
 	MainDialog = ClientGame.CreateDialog(Client_PresentMenuUI)
 end
 
-
 --Called by Client_GameRefresh
 function RefreshGame(gameRefresh)
-	--We don't want to refresh if the PresentMenuUi has not been opned. gameRefresh is called when a game is opned
+	--We don't want to refresh if the PresentMenuUi has not been opned. gameRefresh is called immidietaly when a game is created so we need this check
 	if (ClientGame == nil or ChatContainer == nil)then
 		print("refresh suppressed.")
 		return;
 	end;	
 	ClientGame = gameRefresh;
+	RefreshChat();
 end;
 
 function ChatGroupSelected()
@@ -196,8 +221,7 @@ function ChatGroupSelectedButton(group)
 	return ret;
 end
 
-function getGroupMembers()
-	
+function getGroupMembers()	
 	if (next(PlayerGameData) ~= nil and ChatGroupSelectedID ~= nil) then		
 		local groupMembers = PlayerGameData[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
@@ -220,10 +244,8 @@ end
 function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	setMaxSize(420, 330);
 	TargetPlayerID = nil;
-	TargetGroupID = nil;
+	TargetGroupID = nil;	
 	
-	
-	--TODO make some options non-interactable if they have no use?
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
@@ -308,7 +330,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	end);
 	
 	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
-	--Go back to MainDialog button
+	--Go back to PresentMenuUi button
 	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);	
@@ -376,10 +398,10 @@ end;
 
 --TODO this function can be made faster and better
 function RefreshChat()
+	if(skipRefresh)then print('skipRefresh chat')  return end;
 	print("RefreshChat() called")
 	--Update the members of the current selected group.
-	GroupMembersNames.SetText(getGroupMembers())
-
+	GroupMembersNames.SetText(getGroupMembers());
 	--Remove old elements
 	DestroyOldUIelements(ChatMsgContainerArray)
 	
@@ -387,7 +409,6 @@ function RefreshChat()
 	ChatLayout = UI.CreateVerticalLayoutGroup(rowChatRecived)
 	table.insert(ChatMsgContainerArray, rowChatRecived);
 	table.insert(ChatMsgContainerArray, ChatLayout);
-	
 	
 	local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
 	
@@ -404,16 +425,16 @@ function RefreshChat()
 	end
 	
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
-		-- local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
-		-- ChatExample1 =	UI.CreateButton(ExampleChatLayout)
-		-- .SetPreferredWidth(150)
-		-- .SetPreferredHeight(8)
-		-- .SetText("Mod Info")
-		-- .SetColor('#880085')	
-		-- ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
-		-- .SetFlexibleWidth(1)
-		-- .SetFlexibleHeight(1)
-		-- .SetText("No group selected. This is an example chat msg 😀")
+		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
+		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
+		.SetPreferredWidth(150)
+		.SetPreferredHeight(8)
+		.SetText("Mod Info")
+		.SetColor('#880085')	
+		ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
+		.SetFlexibleWidth(1)
+		.SetFlexibleHeight(1)
+		.SetText("When a game ends all mod data will be deleted.")
 		local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
 		.SetPreferredWidth(150)
@@ -423,22 +444,29 @@ function RefreshChat()
 		ChatMessageTextRecived2 = UI.CreateLabel(ExampleChatLayout2)
 		.SetFlexibleWidth(1)
 		.SetFlexibleHeight(1)
-		.SetText("Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therfore, do not spam chat: it won't work!")
+		.SetText("Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!")
 		return;
 	end;
 	
 	
 	ChatMessageText.SetInteractable(true)
-	
-	for i=1, ChatArrayIndex do 
+	--Adjust to fit with NumPastChat. 
+	local startIndex = 1;
+	if (ChatArrayIndex > NumPastChat) then 
+		startIndex = ChatArrayIndex - NumPastChat + startIndex; 
+	end;
+	for i = startIndex, ChatArrayIndex do 
 		local horz = UI.CreateHorizontalLayoutGroup(horzMain);
 		
-		UI.CreateButton(horz)
-		.SetPreferredWidth(150)
-		.SetPreferredHeight(8)
-		.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
-		.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
-	
+		--Chat Sender
+		ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150).SetPreferredHeight(8)		
+		if (PlayerGameData[ChatGroupSelectedID][i].Sender == -1) then
+			ChatSenderbtn.SetText("Mod Info").SetColor('#880085')		
+			else
+			ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
+			.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
+		end
+		--Chat messages
 		UI.CreateLabel(horz)
 		.SetFlexibleWidth(1)
 		.SetFlexibleHeight(1)
@@ -470,17 +498,6 @@ function TargetGroupClicked()
 	end
 	local options = map(groups, GroupButton);
 	UI.PromptFromList("Select the group you'd like to add this player too", options);
-end
-
---Determines if the player is one we can interact with.
-function IsPotentialTarget(player)
-	if (ClientGame.Us.ID == player.ID) then return false end; -- we can never add ourselves.
-	
-	if (player.State ~= WL.GamePlayerState.Playing) then return false end; --skip players not alive anymore, or that declined the game.
-	
-	if (ClientGame.Settings.SinglePlayer) then return true end; --in single player, allow proposing with everyone
-	
-	return not player.IsAI; --In multi-player, never allow adding an AI.
 end
 
 function PlayerButton(player)
@@ -531,11 +548,22 @@ function ChatGroupButton(group)
 			--If we are the owner, we can delete the group
 			deleteGroupBtn.SetInteractable(true);
 			LeaveGroupBtn.SetInteractable(false); --TODO hide the buttons instead?
-		else
+			else
 			--If we are not the owner we can leave the group
 			deleteGroupBtn.SetInteractable(false);
 			LeaveGroupBtn.SetInteractable(true); --TODO hide the buttons instead?
 		end
 	end
 	return ret;
-end																			
+end																		
+
+--Determines if the player is one we can interact with.
+function IsPotentialTarget(player)
+	if (ClientGame.Us.ID == player.ID) then return false end; -- we can never add ourselves.
+	
+	if (player.State ~= WL.GamePlayerState.Playing) then return false end; --skip players not alive anymore, or that declined the game.
+	
+	if (ClientGame.Settings.SinglePlayer) then return true end; --in single player, allow proposing with everyone
+	
+	return not player.IsAI; --In multi-player, never allow adding an AI.
+end	

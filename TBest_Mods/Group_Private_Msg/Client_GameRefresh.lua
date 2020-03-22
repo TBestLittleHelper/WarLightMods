@@ -1,6 +1,4 @@
-require('Utilities');
-require('Client_PresentMenuUI')
-
+require('Client_PresentMenuUI');
 
 function Client_GameRefresh(game)	
     --Skip if we're not in the game.  We can't use game.SendGameCustomMessage as a spectator

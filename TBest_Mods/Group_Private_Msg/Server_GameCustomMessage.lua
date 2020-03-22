@@ -2,8 +2,15 @@ require('Utilities');
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	Game = game; --Global var. needed for test TODO remove
-	--TODO reorder according to what is used most
-	if (payload.Message == "AddGroupMember") then
+	--Sorted according to what is used most
+	if (payload.Message == "ReadChat") then
+		--Mark as read
+		ReadChat(playerID,payload)
+		elseif (payload.Message == "SendChat") then
+		--DeliverChat
+		DeliverChat(game,playerID,payload)
+		
+		elseif (payload.Message == "AddGroupMember") then
 		--Add to group
 		AddToGroup(game,playerID,payload);
 		
@@ -11,21 +18,13 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		--RemoveFromGroup
 		RemoveFromGroup(game,playerID,payload);
 		
-		elseif (payload.Message == "SendChat") then
-		--DeliverChat
-		DeliverChat(game,playerID,payload)
-		
-		elseif (payload.Message == "ReadChat") then
-		--Mark as read
-		ReadChat(playerID,payload)
+		elseif (payload.Message == "LeaveGroup") then
+		--Leave group
+		LeaveGroup(game,playerID,payload)
 		
 		elseif (payload.Message == "DeleteGroup") then
 		--Delete group
 		DeleteGroup(game,playerID,payload)
-		
-		elseif (payload.Message == "LeaveGroup") then
-		--Leave group
-		LeaveGroup(game,playerID,payload)
 		
 		elseif (payload.Message == "ClearData") then
 		--Remove all playerGameData. Useful for testing (works only for admin)
@@ -107,10 +106,8 @@ function AddToGroup(game,playerID,payload)
 	local TargetPlayerID = payload.TargetPlayerID;
 	local TargetGroupName = payload.TargetGroupName;
 	
-	
 	print(TargetPlayerID .. " targetplayer")
 	print(TargetGroupID .. " TargetGroupID")
-	
 	
 	if (playerGameData[playerID] == nil) then 
 		--if nill, make an empty table where we can place GroupID
@@ -144,7 +141,7 @@ function AddToGroup(game,playerID,payload)
 		DeliverChat(game,playerID,payload)
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " was added to " .. Group.GroupName;
 		DeliverChat(game,playerID,payload)
-	
+		
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
 		Group = playerGameData[playerID][TargetGroupID]
@@ -207,7 +204,6 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	local Group = ReffrencePlayerData[groupID]
 	local outdatedPlayerData;
 	
-	
 	--Update playerGameData for each member
 	for Members, v in pairs (Group.Members) do 
 		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
@@ -260,4 +256,34 @@ function ClearData(game,playerID);
 		end
 		Mod.PlayerGameData = playerGameData;
 	end;
+end
+
+function TurnDivider(turnNumber)
+	local playerGameData = Mod.PlayerGameData;
+	local ChatArrayIndex;
+	
+	local ChatInfo = {};
+	ChatInfo.Sender = -1; --The Mod is the sender
+	ChatInfo.Chat = " ------ End of turn " .. turnNumber+1 .. " ------";	
+
+	--TODO better way of doing this
+
+	--For All playerGameData
+	for playerID, player in pairs (playerGameData) do
+		--For ALL groups
+		for TargetGroupID, group in pairs (playerGameData[playerID])do
+			--ADD a turn chat
+			if (playerGameData[playerID][TargetGroupID] == nil) then 
+				ChatArrayIndex = 1;
+				else ChatArrayIndex = #playerGameData[playerID][TargetGroupID] +1
+			end;					
+			playerGameData[playerID][TargetGroupID].NumChat = ChatArrayIndex;
+			playerGameData[playerID][TargetGroupID][ChatArrayIndex] = {};
+			playerGameData[playerID][TargetGroupID][ChatArrayIndex] = ChatInfo;
+		end
+	end
+	
+	Mod.PlayerGameData = playerGameData;
+	
+	print(turnNumber .. " turn")
 end

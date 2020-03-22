@@ -13,7 +13,6 @@ function DumpTable(tbl)
 	end
 end
 function DumpProxy(obj)
-	
 	print('type=' .. obj.proxyType .. ' readOnly=' .. tostring(obj.readonly) .. ' readableKeys=' .. table.concat(obj.readableKeys, ',') .. ' writableKeys=' .. table.concat(obj.writableKeys, ','));
 end
 
@@ -89,7 +88,6 @@ local function has_value (tab, val)
 	
     return false
 end
-
 
 function tablelength(T)
 	local count = 0
