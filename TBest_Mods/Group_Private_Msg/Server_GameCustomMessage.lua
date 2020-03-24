@@ -1,7 +1,8 @@
 require('Utilities');
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
-	Game = game; --Global var. needed for test TODO remove
+	if (Mod.PublicGameData.ChatModEnabled == false)then return end;
+	
 	--Sorted according to what is used most
 	if (payload.Message == "ReadChat") then
 		--Mark as read
@@ -28,14 +29,10 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		
 		elseif (payload.Message == "ClearData") then
 		--Remove all playerGameData. Useful for testing (works only for admin)
-		ClearData(game,playerID);
-		
-		else
-		
-		error("Payload message not understood (" .. payload.Message .. ")");
+		ClearData(game,playerID);		
 	end
 end	
---TODO maybe make sure only owner can remove? The others can only leave?
+
 function RemoveFromGroup (game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData;
 	local TargetGroupID = payload.TargetGroupID;
@@ -58,11 +55,11 @@ function RemoveFromGroup (game,playerID,payload)
 		playerGameData[playerID][TargetGroupID] = Group;
 		
 		--Remove the group from the playerGameData of the removed player, if it's not an AI 
-		if not(Game.Game.Players[TargetPlayerID].IsAI)then
+		if not(game.Game.Players[TargetPlayerID].IsAI)then
 			Mod.PlayerGameData[TargetPlayerID][TargetGroupID]=nil;
 		end;
 		--Update all other group members
-		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData); --TODO test
+		UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 		
 		--Send a chat msg to the group chat
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " was removed from " .. Group.GroupName;
@@ -135,7 +132,7 @@ function AddToGroup(game,playerID,payload)
 		--Save to mod storage
 		playerGameData[playerID][TargetGroupID] = Group; 
 		
-		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
+		UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 		--Send a msg to the chat of the group
 		payload.Chat = game.Game.Players[Group.Owner].DisplayName(nil,false) .. " created " .. Group.GroupName;
 		DeliverChat(game,playerID,payload)
@@ -155,7 +152,7 @@ function AddToGroup(game,playerID,payload)
 		addToSet(Group.Members, TargetPlayerID)
 		playerGameData[playerID][TargetGroupID] = Group;
 		--Update Storage
-		UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
+		UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 		--Send a msg to the chat of the group
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. "  was added to " .. Group.GroupName;
 		DeliverChat(game,playerID,payload)
@@ -188,7 +185,7 @@ function DeliverChat(game,playerID,payload)
 	data[TargetGroupID].UnreadChat = true;
 	playerGameData[playerID] = data;
 	
-	UpdateAllGroupMembers(playerID, TargetGroupID,playerGameData);
+	UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 end
 
 function ReadChat(playerID, payload)
@@ -197,7 +194,7 @@ function ReadChat(playerID, payload)
 	Mod.PlayerGameData = playerGameData;
 end
 
-function UpdateAllGroupMembers(playerID, groupID , playerGameData)
+function UpdateAllGroupMembers(game, playerID, groupID , playerGameData)
 	local playerGameData = playerGameData;
 	local ReffrencePlayerData = playerGameData[playerID]; --We already updated the info for this player. Now we need to sync that to the other players
 	
@@ -207,7 +204,7 @@ function UpdateAllGroupMembers(playerID, groupID , playerGameData)
 	--Update playerGameData for each member
 	for Members, v in pairs (Group.Members) do 
 		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
-		if not(Game.Game.Players[Members].IsAI)then
+		if not(game.Game.Players[Members].IsAI)then
 			outdatedPlayerData = playerGameData[Members];				
 			--if nil, make an empty table where we can place GroupID
 			if (outdatedPlayerData == nil) then 
@@ -255,6 +252,10 @@ function ClearData(game,playerID);
 			playerGameData[Players] = {};
 		end
 		Mod.PlayerGameData = playerGameData;
+		--Set a bool flag to false
+		local publicGameData = Mod.PublicGameData
+		publicGameData.ChatModEnabled = false;
+		Mod.PublicGameData = publicGameData;
 	end;
 end
 
@@ -265,8 +266,6 @@ function TurnDivider(turnNumber)
 	local ChatInfo = {};
 	ChatInfo.Sender = -1; --The Mod is the sender
 	ChatInfo.Chat = " ------ End of turn " .. turnNumber+1 .. " ------";	
-
-	--TODO better way of doing this
 
 	--For All playerGameData
 	for playerID, player in pairs (playerGameData) do
@@ -282,8 +281,6 @@ function TurnDivider(turnNumber)
 			playerGameData[playerID][TargetGroupID][ChatArrayIndex] = ChatInfo;
 		end
 	end
-	
+	--Save playerGameData
 	Mod.PlayerGameData = playerGameData;
-	
-	print(turnNumber .. " turn")
 end

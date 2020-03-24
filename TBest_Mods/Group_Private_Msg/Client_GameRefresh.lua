@@ -1,8 +1,8 @@
 require('Client_PresentMenuUI');
 
 function Client_GameRefresh(game)	
-    --Skip if we're not in the game.  We can't use game.SendGameCustomMessage as a spectator
-    if (game.Us == nil) then 
+    --Skip if we're not in the game or if the game is over.
+    if (game.Us == nil or Mod.PublicGameData.ChatModEnabled == false) then 
         return;
 	end
 	
@@ -10,10 +10,8 @@ function Client_GameRefresh(game)
 	--Check for unread chat
 	CheckUnreadChat(game);
 	--Refresh the Game info
-	RefreshGame(game); --Do we need to call this?
-	
+	RefreshGame(game);
 end
-
 
 --Alert when new chat.
 function CheckUnreadChat(game)
@@ -28,7 +26,7 @@ function CheckUnreadChat(game)
 	for i, v in pairs(PlayerGameData) do
 		groups[i] = PlayerGameData[i]	
 		if (groups[i].UnreadChat == true) then
-			--Mark the chat as read so we only show 1 alert. Maybe (todo) make this a prompt and continue with alerts upon action
+			--Mark the chat as read so we only show 1 alert. 
 			local payload = {};
 			payload.Message = "ReadChat";
 			payload.TargetGroupID = i;

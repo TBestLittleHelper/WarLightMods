@@ -2,8 +2,8 @@ require('Utilities');
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	--If a spectator, just alert then return
-	if (game.Us == nil) then
-		UI.Alert("You can't do anything as a spectator");
+	if (game.Us == nil or Mod.PublicGameData.ChatModEnabled == false) then
+		UI.Alert("You can't do anything as a spectator or if the game has ended.");
 		return;
 	end;
 	
@@ -24,8 +24,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	setMaxSize(SizeX, SizeY);
 	setScrollable(false,true);
 	
-	--TODO TargetGroupID = ChatGroupSelected
 	ChatGroupSelectedID = nil;
+	if (TargetGroupID ~= nil) then 
+		ChatGroupSelectedID = TargetGroupID 
+	end;
 	ChatLayout = nil;
 	ChatContainer = nil;
 	ChatMsgContainerArray = {};
@@ -43,14 +45,14 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	.SetText("Manage groups")
 	.SetFlexibleWidth(0.2)
 	.SetOnClick(function()
-		DestroyOldUIelements(ChatMsgContainerArray) --TODO maybe we can just set the Array = {} : For now, this works
+		DestroyOldUIelements(ChatMsgContainerArray)
 		skipRefresh = true;
 		ClientGame.CreateDialog(CreateEditDialog);
 		close();--Close this dialog. 
 	end);
 	
 	UI.CreateButton(rootParent).SetText("Settings").SetColor("#00ff05").SetOnClick(function()
-		DestroyOldUIelements(ChatMsgContainerArray) --TODO maybe we can just set the Array = {} : For now, this works
+		DestroyOldUIelements(ChatMsgContainerArray)
 		skipRefresh = true;
 		ClientGame.CreateDialog(SettingsDialog);
 		close();--Close this dialog. 
@@ -58,8 +60,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	--If we are in a group, show the chat options
 	if (next(PlayerGameData) ~= nil) then
-		--TODO autoselect if ChatGroupSelected ~= nil
-		if not(EachGroupButton) then --todo add to settings
+		if not(EachGroupButton) then
 			--A text field for the group selected
 			ChatGroupSelectedText = UI.CreateButton(horizontalLayout)
 			.SetText("Chat Group")
@@ -67,11 +68,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetColor(randomColor());
 			--Make a button for to select chat group
 			UI.CreateButton(horizontalLayout)
-			.SetText("Select chat group") --TODO keep selection over refresh
+			.SetText("Select chat group")
 			.SetFlexibleWidth(0.2)
 			.SetOnClick(ChatGroupSelected)
 			else
-			print("000000000000");
 			--For all groups, show a button
 			for GroupID, group in pairs (PlayerGameData) do
 				UI.CreateButton(horizontalLayout)
@@ -86,8 +86,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 				end)
 			end
 		end
+	end;
 		ChatContainer = UI.CreateVerticalLayoutGroup(vert);
-		RefreshChat();
 		
 		ChatMessageText = UI.CreateTextInputField(vert)
 		.SetPlaceholderText(" Max 300 characters in one messages")
@@ -98,13 +98,19 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		
 		if (ChatGroupSelectedID == nil)then
 			ChatMessageText.SetInteractable(false)
+		else
+			if not (EachGroupButton)then 
+				ChatGroupSelectedText.SetText(PlayerGameData[ChatGroupSelectedID].GroupName)
+				ChatGroupSelectedText.SetColor(PlayerGameData[ChatGroupSelectedID].Color)
+				end;			
 		end
-		
+		RefreshChat();
+
 		ChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert);
 		--RefreshChat button
 		UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor("#00ff05").SetOnClick(RefreshChat)
 		--Send chat button
-		local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor; --this is prolly dumb. But let's color the send chat button in the users color
+		local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor; --Let's color the send chat button in the users color
 		UI.CreateButton(ChatButtonContainer).SetColor("#880085").SetText("Send chat").SetOnClick(function()
 			if (ChatGroupSelectedID == nil)then
 				UI.Alert("Pick a chat group first")
@@ -116,14 +122,12 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			end		
 			SendChat();
 		end);
-	end
 end;	
---TODO think about what is made global
 
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)		
 	
-	setMaxSize(350,350); --This dialog's size
-	local vert = UI.CreateVerticalLayoutGroup(rootParent); --TODO rename to vert
+	setMaxSize(380,380); --This dialog's size
+	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
 	--This only shows for Admin/Me only (this is checked server side too)
 	if (ClientGame.Us.ID == 69603) then 
@@ -156,7 +160,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 	end);
 	
 	--Save changes then go back to MainDialog
-	ResizeChatDialog = UI.CreateButton(buttonRow).SetText("Save settings").SetOnClick(function()
+	ResizeChatDialog = UI.CreateButton(buttonRow).SetText("Save settings").SetColor("#00ff05").SetOnClick(function()
 		EachGroupButton = EachGroupButtonCheckBox.GetIsChecked();
 		NumPastChat = NumPastChatInput.GetValue();		
 		SizeX = SizeXInput.GetValue();
@@ -193,7 +197,12 @@ function RefreshGame(gameRefresh)
 	if (ClientGame == nil or ChatContainer == nil)then
 		print("refresh suppressed.")
 		return;
-	end;	
+	end;
+	if(skipRefresh)then
+		print('skipRefresh chat') 
+		return;
+	end;
+	print("RefreshChat")
 	ClientGame = gameRefresh;
 	RefreshChat();
 end;
@@ -334,9 +343,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
 		RefreshMainDialog(close);
 	end);	
-	
-	--If owner, show delete else show leave? TODO
-	
+		
 	--Leave a group option
 	LeaveGroupBtn = UI.CreateButton(buttonRow).SetText("Leave group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
@@ -360,7 +367,6 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	
 	--Delete a group : only possible as a group owner
-	--TODO confirmation prompt would be smart
 	deleteGroupBtn = UI.CreateButton(buttonRow).SetText("Delete group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 		
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
 		if (GroupTextName.GetInteractable() == true) then
@@ -372,16 +378,14 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 			UI.Alert("You can only delete if you are the owner of a group")
 			return;
 		end;
+		
 		local payload = {};
 		payload.Message = "DeleteGroup";
-		payload.TargetGroupID = TargetGroupID;	
-		ClientGame.SendGameCustomMessage("Deleting group...", payload, function(returnValue) 
-			--Reset Group Selected
-			TargetGroupID = nil;
-			GroupTextName.SetText("").SetInteractable(true)
-		end);
+		payload.TargetGroupID = TargetGroupID;
+		
+		--Ask for confirmation from the player
+		UI.PromptFromList("Are you sure you want to delete " .. Mod.PlayerGameData[TargetGroupID].GroupName .. "?", { DeleteGroupConfirmed(ClientGame, payload), DeleteGroupDeclined()});
 	end);
-	
 end
 
 function SendChat()	
@@ -396,9 +400,13 @@ function SendChat()
 	ChatMessageText.SetText("");
 end;
 
---TODO this function can be made faster and better
 function RefreshChat()
-	if(skipRefresh)then print('skipRefresh chat')  return end;
+	if (Mod.PublicGameData.ChatModEnabled == false)then 
+		UI.Alert("You can't do anything if the game has ended.");
+		return;
+	end;
+	
+	if(skipRefresh)then print('skipRefresh chat') return end;
 	print("RefreshChat() called")
 	--Update the members of the current selected group.
 	GroupMembersNames.SetText(getGroupMembers());
@@ -423,7 +431,6 @@ function RefreshChat()
 			else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
 		end;
 	end
-	
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
 		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
@@ -434,7 +441,7 @@ function RefreshChat()
 		ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
 		.SetFlexibleWidth(1)
 		.SetFlexibleHeight(1)
-		.SetText("When a game ends all mod data will be deleted.")
+		.SetText("When a game ends, all saved mod data will be deleted. Also, check out settings and tweek it to your liking.")
 		local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
 		.SetPreferredWidth(150)
@@ -527,7 +534,7 @@ end
 
 function ChatGroupClicked()
 	local groups = {}
-	--TODO update PlayerGameData here? if we delete a group it will still show up in the list
+	PlayerGameData = Mod.PlayerGameData; --Make sure we have the latest PlayerGameData
 	for i, v in pairs(PlayerGameData) do
 		print(i)
 		groups[i] = PlayerGameData[i]
@@ -547,15 +554,35 @@ function ChatGroupButton(group)
 		if (ClientGame.Us.ID == Mod.PlayerGameData[TargetGroupID].Owner) then
 			--If we are the owner, we can delete the group
 			deleteGroupBtn.SetInteractable(true);
-			LeaveGroupBtn.SetInteractable(false); --TODO hide the buttons instead?
+			LeaveGroupBtn.SetInteractable(false);
 			else
 			--If we are not the owner we can leave the group
 			deleteGroupBtn.SetInteractable(false);
-			LeaveGroupBtn.SetInteractable(true); --TODO hide the buttons instead?
+			LeaveGroupBtn.SetInteractable(true);
 		end
 	end
 	return ret;
 end																		
+
+function DeleteGroupConfirmed(ClientGame,payload)
+	local ret = {};
+	ret["text"] = "Yes, delete the group";
+	ret["selected"] = function() 
+	ClientGame.SendGameCustomMessage("Deleting group...", payload, function(returnValue)end);
+	--Reset Group Selected
+	TargetGroupID = nil;
+	ChatGroupSelectedID = nil;
+	GroupTextName.SetText("").SetInteractable(true)
+	end
+	return ret;
+end
+
+function DeleteGroupDeclined()
+	local ret = {};
+	ret["text"] = "No.";
+	ret["selected"] = function() end
+	return ret;
+end
 
 --Determines if the player is one we can interact with.
 function IsPotentialTarget(player)
