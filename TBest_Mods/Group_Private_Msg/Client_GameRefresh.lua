@@ -6,11 +6,13 @@ function Client_GameRefresh(game)
         return;
 	end
 	
-	print("Client_GameRefresh called RefreshGame")
 	--Check for unread chat
 	CheckUnreadChat(game);
-	--Refresh the Game info
-	RefreshGame(game);
+	--Refresh the UI for the player info
+	if (CheckIfRefresh(game) == true)then
+		print("Client_GameRefresh called RefreshChat")
+	--TODO	RefreshChat();
+	end;
 end
 
 --Alert when new chat.
@@ -41,3 +43,18 @@ function CheckUnreadChat(game)
 		end
 	end		
 end
+
+--Called by Client_GameRefresh
+function CheckIfRefresh(gameRefresh)
+	if(skipRefresh == true or skipRefresh == nil)then
+		print('skipRefresh chat') 
+		return false;
+	end;
+	--We don't want to refresh if the PresentMenuUi has not been opned. gameRefresh is called immidietaly when a game is created so we need this check
+	if (ClientGame == nil or ChatContainer == nil or GroupMembersNames == nil)then
+		print("refresh suppressed.")
+		return false;
+	end;
+
+	return true;
+end;

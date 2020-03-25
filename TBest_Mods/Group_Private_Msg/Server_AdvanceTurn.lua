@@ -29,8 +29,7 @@ end
 --Determines if the player is alive.
 function IsAlive(playerID, ClientGame)	
 	if (ClientGame.Game.PlayingPlayers[playerID] ~= nil) then 
-			print(ClientGame.Game.PlayingPlayers[playerID].State)
-			return true;
+		return true;
 	end;
 	return false;
 end

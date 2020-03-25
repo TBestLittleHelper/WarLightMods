@@ -5,16 +5,15 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	if (game.Us == nil or Mod.PublicGameData.ChatModEnabled == false) then
 		UI.Alert("You can't do anything as a spectator or if the game has ended.");
 		return;
-	end;
-	
+	end;	
 	--Make some global var's
 	ClientGame = game;
 	PlayerGameData = Mod.PlayerGameData;
-	skipRefresh = false; --This is set to true if we go to Edit or Settings Dialog
+	skipRefresh = false; --This is set to true if we go to Edit or Settings Dialog		
 	
 	if (EachGroupButton == nil) then EachGroupButton = false end; --If each group has a button in PresentMenuUi
 	if (NumPastChat == nil) then
-		NumPastChat = 10; --Max amount of past chat shown
+		NumPastChat = 7; --Max amount of past chat shown
 	end;
 	
 	if (SizeX == nil or SizeY == nil) then
@@ -24,8 +23,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	setMaxSize(SizeX, SizeY);
 	setScrollable(false,true);
 	
-	ChatGroupSelectedID = nil;
-	if (TargetGroupID ~= nil) then 
+	if (ChatGroupSelected == nil) then
+		ChatGroupSelectedID = nil;
+	end;
+	if (TargetGroupID ~= nil and ChatGroupSelectedID ~= nil) then 
 		ChatGroupSelectedID = TargetGroupID 
 	end;
 	ChatLayout = nil;
@@ -156,7 +157,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
 	--Go back to PresentMenuUi button : don't save
 	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
-		RefreshMainDialog(close);
+		RefreshMainDialog(close, game);
 	end);
 	
 	--Save changes then go back to MainDialog
@@ -175,12 +176,14 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		if SizeY < 200 then SizeY = 200 end
 		if SizeY > 2000 then SizeY = 2000 end
 		
-		RefreshMainDialog(close)		
+		RefreshMainDialog(close, game)		
 	end);	
 end;
 
-function RefreshMainDialog(close)
-	if close ~= nil then close() end;
+function RefreshMainDialog(close, game)
+	if close ~= nil then close() else
+		return;
+	end;
 	
 	if (MainDialog ~= nil) then UI.Destroy(MainDialog)
 		print("destroyed old dialog")
@@ -190,22 +193,6 @@ function RefreshMainDialog(close)
 	skipRefresh = false;
 	MainDialog = ClientGame.CreateDialog(Client_PresentMenuUI)
 end
-
---Called by Client_GameRefresh
-function RefreshGame(gameRefresh)
-	--We don't want to refresh if the PresentMenuUi has not been opned. gameRefresh is called immidietaly when a game is created so we need this check
-	if (ClientGame == nil or ChatContainer == nil)then
-		print("refresh suppressed.")
-		return;
-	end;
-	if(skipRefresh)then
-		print('skipRefresh chat') 
-		return;
-	end;
-	print("RefreshChat")
-	ClientGame = gameRefresh;
-	RefreshChat();
-end;
 
 function ChatGroupSelected()
 	local groups = {}
@@ -341,7 +328,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
 	--Go back to PresentMenuUi button
 	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
-		RefreshMainDialog(close);
+		RefreshMainDialog(close, game);
 	end);	
 		
 	--Leave a group option
@@ -410,11 +397,13 @@ function RefreshChat()
 	print("RefreshChat() called")
 	--Update the members of the current selected group.
 	GroupMembersNames.SetText(getGroupMembers());
-	--Remove old elements
+
+	--Remove old elements todo
 	DestroyOldUIelements(ChatMsgContainerArray)
 	
 	rowChatRecived = UI.CreateVerticalLayoutGroup(ChatContainer); 
-	ChatLayout = UI.CreateVerticalLayoutGroup(rowChatRecived)
+	ChatLayout = UI.CreateVerticalLayoutGroup(rowChatRecived);
+	
 	table.insert(ChatMsgContainerArray, rowChatRecived);
 	table.insert(ChatMsgContainerArray, ChatLayout);
 	
@@ -484,7 +473,9 @@ end
 function DestroyOldUIelements(Container)
 	if (next(Container)~=nil) then
 		for count = #Container, 1, -1 do
-			UI.Destroy(Container[count]);
+			if (Container[count] ~= nil)then
+				UI.Destroy(Container[count]);
+			end;
 			table.remove(Container, count)
 		end
 	end
