@@ -8,11 +8,6 @@ function Client_GameRefresh(game)
 	
 	--Check for unread chat
 	CheckUnreadChat(game);
-	--Refresh the UI for the player info
-	if (CheckIfRefresh(game) == true)then
-		print("Client_GameRefresh called RefreshChat")
-	--TODO	RefreshChat();
-	end;
 end
 
 --Alert when new chat.
@@ -32,17 +27,55 @@ function CheckUnreadChat(game)
 			local payload = {};
 			payload.Message = "ReadChat";
 			payload.TargetGroupID = i;
-			game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) 
-				--Only show an alert if we are not the sender or if it is a SinglePlayer game (for testing)
-				if (game.Us.ID ~= groups[i][groups[i].NumChat].Sender or game.Settings.SinglePlayer == true) then
-					local sender = game.Game.Players[groups[i][groups[i].NumChat].Sender].DisplayName(nil, false);
-					UI.Alert(groups[i].GroupName .. " has unread chat. The last chat message is: \n " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender)
-					return;
-				end;
-			end)
-		end
-	end		
-end
+			game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) end)
+			
+			--Only show an alert if we are not the sender or if it is a SinglePlayer game (for testing)
+			if (game.Us.ID ~= groups[i][groups[i].NumChat].Sender or game.Settings.SinglePlayer == true) then
+				local sender = game.Game.Players[groups[i][groups[i].NumChat].Sender].DisplayName(nil, false);
+				UI.Alert(groups[i].GroupName .. " has unread chat. The last chat message is: \n " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender)
+				
+				--Check if we have the chat group selected, and if we do add the message to the chat layout
+				if (ChatGroupSelectedID ~= nil) then
+					if (ChatGroupSelectedID == i)then
+						
+						--The chat layout VerticalLayoutGroup has alredy been created in presentMenu. We stored it in ChatMsgContainerArray[2]
+						ChatLayout = ChatMsgContainerArray[2];
+						
+						local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
+						
+						local PlayerGameData = Mod.PlayerGameData;	
+						local ChatArrayIndex = nil;
+						
+						if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
+							ChatArrayIndex = 0;
+							else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
+						end;
+						
+						for i = ChatArrayIndex, ChatArrayIndex do 
+							local horz = UI.CreateHorizontalLayoutGroup(horzMain);
+							
+							--Chat Sender
+							ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150).SetPreferredHeight(8)		
+							if (PlayerGameData[ChatGroupSelectedID][i].Sender == -1) then
+								ChatSenderbtn.SetText("Mod Info").SetColor('#880085')		
+								else
+								ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
+								.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
+							end
+							--Chat messages
+							UI.CreateLabel(horz)
+							.SetFlexibleWidth(1)
+							.SetFlexibleHeight(1)
+							.SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
+						end						
+					end;
+				end
+			end
+			--Break the loop, we only want to do 1 action on each refresh
+			return;
+		end;
+	end
+end	
 
 --Called by Client_GameRefresh
 function CheckIfRefresh(gameRefresh)
@@ -55,6 +88,6 @@ function CheckIfRefresh(gameRefresh)
 		print("refresh suppressed.")
 		return false;
 	end;
-
+	
 	return true;
-end;
+end;			

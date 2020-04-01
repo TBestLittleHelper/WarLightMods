@@ -3,6 +3,8 @@ MirrorPicker
 RandomTemplate
 We respect your privacy : shows random info about players
 Manual Dist : What territories can be picked
+CityFeatures : commanders can't leave a city. 
+Order delay : only delay 1 order (each)
 
 #Testing/WIP
 Group Chat Mod

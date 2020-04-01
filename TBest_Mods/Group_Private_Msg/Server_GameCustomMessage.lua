@@ -211,8 +211,6 @@ function UpdateAllGroupMembers(game, playerID, groupID , playerGameData)
 				outdatedPlayerData = {};				
 			end
 			outdatedPlayerData[groupID] = Group;
-			print("-------")
-			Dump(outdatedPlayerData[groupID])
 			playerGameData[Members] = outdatedPlayerData;
 		end		
 	end;

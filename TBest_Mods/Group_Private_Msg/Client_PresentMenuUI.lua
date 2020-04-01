@@ -88,41 +88,41 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			end
 		end
 	end;
-		ChatContainer = UI.CreateVerticalLayoutGroup(vert);
-		
-		ChatMessageText = UI.CreateTextInputField(vert)
-		.SetPlaceholderText(" Max 300 characters in one messages")
-		.SetFlexibleWidth(0.9)
-		.SetCharacterLimit(300)
-		.SetPreferredWidth(500)
-		.SetPreferredHeight(40)
-		
-		if (ChatGroupSelectedID == nil)then
-			ChatMessageText.SetInteractable(false)
+	ChatContainer = UI.CreateVerticalLayoutGroup(vert);
+	
+	ChatMessageText = UI.CreateTextInputField(vert)
+	.SetPlaceholderText(" Max 300 characters in one messages")
+	.SetFlexibleWidth(0.9)
+	.SetCharacterLimit(300)
+	.SetPreferredWidth(500)
+	.SetPreferredHeight(40)
+	
+	if (ChatGroupSelectedID == nil)then
+		ChatMessageText.SetInteractable(false)
 		else
-			if not (EachGroupButton)then 
-				ChatGroupSelectedText.SetText(PlayerGameData[ChatGroupSelectedID].GroupName)
-				ChatGroupSelectedText.SetColor(PlayerGameData[ChatGroupSelectedID].Color)
-				end;			
-		end
-		RefreshChat();
-
-		ChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert);
-		--RefreshChat button
-		UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor("#00ff05").SetOnClick(RefreshChat)
-		--Send chat button
-		local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor; --Let's color the send chat button in the users color
-		UI.CreateButton(ChatButtonContainer).SetColor("#880085").SetText("Send chat").SetOnClick(function()
-			if (ChatGroupSelectedID == nil)then
-				UI.Alert("Pick a chat group first")
-				return;
-			end	
-			if (string.len(ChatMessageText.GetText()) < 2 or ChatMessageText.GetText() == ChatMessageText.GetPlaceholderText()) then
-				UI.Alert("A chat msg must be more then 1 characters")
-				return;
-			end		
-			SendChat();
-		end);
+		if not (EachGroupButton)then 
+			ChatGroupSelectedText.SetText(PlayerGameData[ChatGroupSelectedID].GroupName)
+			ChatGroupSelectedText.SetColor(PlayerGameData[ChatGroupSelectedID].Color)
+		end;			
+	end
+	RefreshChat();
+	
+	ChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert);
+	--RefreshChat button
+	UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor("#00ff05").SetOnClick(RefreshChat)
+	--Send chat button
+	local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor; --Let's color the send chat button in the users color
+	UI.CreateButton(ChatButtonContainer).SetColor("#880085").SetText("Send chat").SetOnClick(function()
+		if (ChatGroupSelectedID == nil)then
+			UI.Alert("Pick a chat group first")
+			return;
+		end	
+		if (string.len(ChatMessageText.GetText()) < 2 or ChatMessageText.GetText() == ChatMessageText.GetPlaceholderText()) then
+			UI.Alert("A chat msg must be more then 1 characters")
+			return;
+		end		
+		SendChat();
+	end);
 end;	
 
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)		
@@ -330,7 +330,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
 		RefreshMainDialog(close, game);
 	end);	
-		
+	
 	--Leave a group option
 	LeaveGroupBtn = UI.CreateButton(buttonRow).SetText("Leave group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 
 		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
@@ -397,7 +397,7 @@ function RefreshChat()
 	print("RefreshChat() called")
 	--Update the members of the current selected group.
 	GroupMembersNames.SetText(getGroupMembers());
-
+	
 	--Remove old elements todo
 	DestroyOldUIelements(ChatMsgContainerArray)
 	
@@ -444,7 +444,6 @@ function RefreshChat()
 		return;
 	end;
 	
-	
 	ChatMessageText.SetInteractable(true)
 	--Adjust to fit with NumPastChat. 
 	local startIndex = 1;
@@ -472,9 +471,9 @@ end
 
 function DestroyOldUIelements(Container)
 	if (next(Container)~=nil) then
-		for count = #Container, 1, -1 do
+		for count = #Container, 1, -1 do		
 			if (Container[count] ~= nil)then
-				UI.Destroy(Container[count]);
+				UI.Destroy(Container[count])
 			end;
 			table.remove(Container, count)
 		end
@@ -504,8 +503,8 @@ function PlayerButton(player)
 	local ret = {};
 	ret["text"] = name;
 	ret["selected"] = function() 
-		TargetPlayerBtn.SetText(name).SetColor(player.Color.HtmlColor);
-		TargetPlayerID = player.ID;
+	TargetPlayerBtn.SetText(name).SetColor(player.Color.HtmlColor);
+	TargetPlayerID = player.ID;
 	end
 	return ret;
 end
@@ -559,11 +558,11 @@ function DeleteGroupConfirmed(ClientGame,payload)
 	local ret = {};
 	ret["text"] = "Yes, delete the group";
 	ret["selected"] = function() 
-	ClientGame.SendGameCustomMessage("Deleting group...", payload, function(returnValue)end);
-	--Reset Group Selected
-	TargetGroupID = nil;
-	ChatGroupSelectedID = nil;
-	GroupTextName.SetText("").SetInteractable(true)
+		ClientGame.SendGameCustomMessage("Deleting group...", payload, function(returnValue)end);
+		--Reset Group Selected
+		TargetGroupID = nil;
+		ChatGroupSelectedID = nil;
+		GroupTextName.SetText("").SetInteractable(true)
 	end
 	return ret;
 end
