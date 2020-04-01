@@ -7,6 +7,7 @@ function Client_GameRefresh(game)
 	end
 	
 	--Check for unread chat
+	print("Checking unread chat")
 	CheckUnreadChat(game);
 end
 
@@ -21,7 +22,7 @@ function CheckUnreadChat(game)
 	end;
 	
 	for i, v in pairs(PlayerGameData) do
-		groups[i] = PlayerGameData[i]	
+		groups[i] = PlayerGameData[i]
 		if (groups[i].UnreadChat == true) then
 			--Mark the chat as read so we only show 1 alert. 
 			local payload = {};
