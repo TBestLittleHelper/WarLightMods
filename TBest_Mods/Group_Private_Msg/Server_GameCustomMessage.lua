@@ -27,6 +27,10 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		--Delete group
 		DeleteGroup(game,playerID,payload)
 		
+		elseif (payload.Message == "SaveSettings") then
+		--Save settings
+		SaveSettings(game, playerID, payload)
+		
 		elseif (payload.Message == "ClearData") then
 		--Remove all playerGameData. Useful for testing (works only for admin)
 		ClearData(game,playerID);		
@@ -241,17 +245,37 @@ function DeleteGroup(game,playerID,payload)
 	print("Deleted Group " .. TargetGroupID)		
 end
 
+function SaveSettings(game,playerID, payload)
+		Dump(payload)
+
+		PublicGameData = Mod.PublicGameData;
+		if (PublicGameData == nil)then PublicGameData = {} end;
+		if (PublicGameData[playerID] == nil)then PublicGameData[playerID] = {} end;
+		
+		PublicGameData[playerID].AlertUnreadChat = payload.AlertUnreadChat;
+		PublicGameData[playerID].EachGroupButton = payload.EachGroupButton;
+		PublicGameData[playerID].NumPastChat = payload.NumPastChat;
+		PublicGameData[playerID].SizeX = payload.SizeX;
+		PublicGameData[playerID].SizeY = payload.SizeY;
+		
+		Mod.PublicGameData = PublicGameData;
+end;
+
 --Admin option, to reuse the same game as a test by removing all playerdata
 function ClearData(game,playerID);
 	if (playerID == 69603)then --My playerID
+		--Remove all playerGameData
 		local playerGameData = Mod.PlayerGameData;		
 		for Players in pairs (playerGameData) do
 			print("Deleted playerGameData for " .. Players)
 			playerGameData[Players] = {};
 		end
+	
 		Mod.PlayerGameData = playerGameData;
-		--Set a bool flag to false
+		
+		--Remove all publicGameData and set a bool flag to false
 		local publicGameData = Mod.PublicGameData
+		publicGameData = {};
 		publicGameData.ChatModEnabled = false;
 		Mod.PublicGameData = publicGameData;
 	end;

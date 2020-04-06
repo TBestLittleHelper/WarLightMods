@@ -1,4 +1,4 @@
-#Mod Ideas
+#Mod Ideas/Improvments
 MirrorPicker
 RandomTemplate
 We respect your privacy : shows random info about players
