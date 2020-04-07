@@ -79,31 +79,12 @@ function CheckUnreadChat(game)
 				end;
 			end
 		end;
-	end;
-	print('+++++++++++++++++++++++++++')
-	print(alertMsg)
-	
-	if (Alerts)then UI.Alert(alertMsg) end;
+	end;	
+	if (Alerts == true and alertMsg ~= "")then UI.Alert(alertMsg) end;
 	--Mark the chat as read, if we had any unread chat, server side, so we only show 1 alert per group 
 	if (markChatAsRead)then
 		local payload = {};
 		payload.Message = "ReadChat";			
 		game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) end)
 	end;
-end	
-
---TODO remove?
---Called by Client_GameRefresh
-function CheckIfRefresh(gameRefresh)
-	if(skipRefresh == true or skipRefresh == nil)then
-		print('skipRefresh chat') 
-		return false;
-	end;
-	--We don't want to refresh if the PresentMenuUi has not been opned. gameRefresh is called immidietaly when a game is created so we need this check
-	if (ClientGame == nil or ChatContainer == nil or GroupMembersNames == nil)then
-		print("refresh suppressed.")
-		return false;
-	end;
-	
-	return true;
-end;						
+end;
