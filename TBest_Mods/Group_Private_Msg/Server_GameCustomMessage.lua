@@ -6,7 +6,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	--Sorted according to what is used most
 	if (payload.Message == "ReadChat") then
 		--Mark as read
-		ReadChat(playerID,payload)
+		ReadChat(playerID)
 		elseif (payload.Message == "SendChat") then
 		--DeliverChat
 		DeliverChat(game,playerID,payload)
@@ -192,9 +192,12 @@ function DeliverChat(game,playerID,payload)
 	UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 end
 
-function ReadChat(playerID, payload)
+function ReadChat(playerID)
 	local playerGameData = Mod.PlayerGameData;
-	playerGameData[playerID][payload.TargetGroupID].UnreadChat = false;
+	--Mark chat as read
+	for i, v in pairs(playerGameData[playerID]) do
+		playerGameData[playerID][i].UnreadChat = false;
+	end;
 	Mod.PlayerGameData = playerGameData;
 end
 

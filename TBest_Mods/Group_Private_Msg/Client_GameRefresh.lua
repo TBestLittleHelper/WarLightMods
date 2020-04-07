@@ -16,6 +16,7 @@ function CheckUnreadChat(game)
 	
 	local PlayerGameData = Mod.PlayerGameData;
 	local groups = {}
+	local markChatAsRead = false; --We only mark chat as read, if we had any unread chat
 	
 	if (PlayerGameData == nil)then 
 		print("PlayerGameData is nil. No unread chat")
@@ -25,6 +26,7 @@ function CheckUnreadChat(game)
 	for i, v in pairs(PlayerGameData) do
 		groups[i] = PlayerGameData[i]
 		if (groups[i].UnreadChat == true) then
+			markChatAsRead = true;
 			--Only show an alert if we are not the sender or if it is a SinglePlayer game (for testing)
 			if (game.Us.ID ~= groups[i][groups[i].NumChat].Sender or game.Settings.SinglePlayer == true) then
 				local Alerts = true;
@@ -38,14 +40,8 @@ function CheckUnreadChat(game)
 				if (Alerts)then
 					local sender = game.Game.Players[groups[i][groups[i].NumChat].Sender].DisplayName(nil, false);
 					UI.Alert(groups[i].GroupName .. " has unread chat. The last chat message is: \n " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender)
-					--Mark the chat as read so we only show 1 alert. 
-					local payload = {};
-					payload.Message = "ReadChat";
-					payload.TargetGroupID = i;
-					game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) end)
 				end
-			end;
-			
+			end;			
 			--Check if we have the chat group selected, and if we do add the message to the chat layout
 			if (ChatGroupSelectedID ~= nil) then
 				if (ChatGroupSelectedID == i)then
@@ -82,10 +78,14 @@ function CheckUnreadChat(game)
 					end						
 				end;
 			end
-			--Break the loop, we only want to do 1 action on each refresh
-			return;
 		end;
 	end
+	--Mark the chat as read, server side, so we only show 1 alert per group 
+	if (markChatAsRead)then
+		local payload = {};
+		payload.Message = "ReadChat";			
+		game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) end)
+	end;
 end	
 
 --Called by Client_GameRefresh
