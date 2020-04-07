@@ -143,14 +143,15 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 	setMaxSize(410,380); --This dialog's size
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	
-	--This only shows for Admin/Me only (this is checked server side too)
-	if (ClientGame.Us.ID == 69603) then 
-		ClearChatBtn = UI.CreateButton(vert).SetText("Remove all playerdata").SetOnClick(function()
-			local payload = {};
-			payload.Message = "ClearData";			
-			ClientGame.SendGameCustomMessage("ClearData" , payload, function(returnValue)end);
-		end);
-	end;	
+	--Removed this block of code -> We don't need it anymore. Just in case, we keep it here in case we want to use it for future dev.
+	-- --This only shows for Admin/Me only (this is checked server side too)
+	-- if (ClientGame.Us.ID == 69603) then 
+		-- ClearChatBtn = UI.CreateButton(vert).SetText("Remove all playerdata").SetOnClick(function()
+			-- local payload = {};
+			-- payload.Message = "ClearData";			
+			-- ClientGame.SendGameCustomMessage("ClearData" , payload, function(returnValue)end);
+		-- end);
+	-- end;	
 	
 	--Alert user of unread chat
 	AlertUnreadChatCheckBox = UI.CreateCheckBox(vert).SetIsChecked(AlertUnreadChat).SetText("Show an alert when there is unread chat");
@@ -192,7 +193,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		if SizeY > 2000 then SizeY = 2000 end
 		
 		--Save settings serverside
-	
+		
 		local payload = {};
 		payload.Message = "SaveSettings"
 		payload.AlertUnreadChat = AlertUnreadChat;
@@ -200,7 +201,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		payload.NumPastChat = NumPastChat;
 		payload.SizeX = SizeX;
 		payload.SizeY = SizeY;
-
+		
 		ClientGame.SendGameCustomMessage("Saving settings...", payload, function(returnValue) end);
 		
 		RefreshMainDialog(close, game)		
@@ -272,7 +273,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(row1).SetText("Select a player to add or remove from a group: ");
-	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
+	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetColor(randomColor()).SetOnClick(TargetPlayerClicked);
 	
 	row11 = UI.CreateHorizontalLayoutGroup(vert);
 	GroupTextNameLabel = UI.CreateLabel(row11).SetText("Name a new chat group: ");
@@ -319,294 +320,294 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 			TargetPlayerID = nil; --Reset
 			GroupTextName.SetInteractable(false); --We store the GroupID, so don't let the user change the name
 		end);
-		end);
-		
-		--Remove a player from a group
-		UI.CreateButton(row2).SetText("Remove Player").SetColor("#FF0000").SetOnClick(function() 
-			
-			if (TargetPlayerID == nil) then
-				UI.Alert("Please choose a player first");
-				return;
-			end
-			--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
-			if (GroupTextName.GetInteractable() == true) then
-				UI.Alert("Please choose a group from the list");
-				return;
-			end
-			--We can't remove the owner of a group
-			if (TargetPlayerID == Mod.PlayerGameData[TargetGroupID].Owner)then
-				UI.Alert("You can't remove the owner of a group")
-				return;
-			end;
-			
-			
-			local payload = {};
-			payload.Message = "RemoveGroupMember";
-			payload.TargetPlayerID = TargetPlayerID;
-			payload.TargetGroupID = TargetGroupID;
-			
-			ClientGame.SendGameCustomMessage("Removing group member...", payload, function(returnValue) 
-				TargetPlayerBtn.SetText("Select player...").SetColor(randomColor())	
-				TargetPlayerID = nil; --Reset	
-			end);
-		end);
-		
-		buttonRow = UI.CreateHorizontalLayoutGroup(vert);
-		--Go back to PresentMenuUi button
-		UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
-			RefreshMainDialog(close, game);
-		end);	
-		
-		--Leave a group option
-		LeaveGroupBtn = UI.CreateButton(buttonRow).SetText("Leave group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 
-			--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
-			if (GroupTextName.GetInteractable() == true) then
-				UI.Alert("Please choose a group from the list");
-				return;
-			end
-			if (Mod.PlayerGameData[TargetGroupID].Owner == ClientGame.Us.ID) then
-				UI.Alert("You can't leave a group you created. You can, however delete the group.")
-				return;
-			end;
-			local payload = {};
-			payload.Message = "LeaveGroup";
-			payload.TargetGroupID = TargetGroupID;
-			ClientGame.SendGameCustomMessage("Leaving the group...", payload, function(returnValue) 
-				--Reset Group Selected
-				TargetGroupID = nil;
-				GroupTextName.SetText("").SetInteractable(true)
-			end);	
-		end);
-		
-		
-		--Delete a group : only possible as a group owner
-		deleteGroupBtn = UI.CreateButton(buttonRow).SetText("Delete group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 		
-			--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
-			if (GroupTextName.GetInteractable() == true) then
-				UI.Alert("Please choose a group from the list");
-				return;
-			end
-			
-			if (Mod.PlayerGameData[TargetGroupID].Owner ~= ClientGame.Us.ID) then
-				UI.Alert("You can only delete if you are the owner of a group")
-				return;
-			end;
-			
-			local payload = {};
-			payload.Message = "DeleteGroup";
-			payload.TargetGroupID = TargetGroupID;
-			
-			--Ask for confirmation from the player
-			UI.PromptFromList("Are you sure you want to delete " .. Mod.PlayerGameData[TargetGroupID].GroupName .. "?", { DeleteGroupConfirmed(ClientGame, payload), DeleteGroupDeclined()});
-		end);
-	end
+	end);
 	
-	function SendChat()	
+	--Remove a player from a group
+	UI.CreateButton(row2).SetText("Remove Player").SetColor("#FF0000").SetOnClick(function() 
+		
+		if (TargetPlayerID == nil) then
+			UI.Alert("Please choose a player first");
+			return;
+		end
+		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
+		if (GroupTextName.GetInteractable() == true) then
+			UI.Alert("Please choose a group from the list");
+			return;
+		end
+		--We can't remove the owner of a group
+		if (TargetPlayerID == Mod.PlayerGameData[TargetGroupID].Owner)then
+			UI.Alert("You can't remove the owner of a group")
+			return;
+		end;
+		
+		
 		local payload = {};
-		payload.Message = "SendChat";
-		payload.TargetGroupID = ChatGroupSelectedID;
-		payload.Chat = ChatMessageText.GetText();
-		print("Chat sent " .. payload.Chat .. " to " .. payload.TargetGroupID .. " from " .. ClientGame.Us.ID)
-		ClientGame.SendGameCustomMessage("Sending chat...", payload, function(returnValue) 
-			RefreshChat();
+		payload.Message = "RemoveGroupMember";
+		payload.TargetPlayerID = TargetPlayerID;
+		payload.TargetGroupID = TargetGroupID;
+		
+		ClientGame.SendGameCustomMessage("Removing group member...", payload, function(returnValue) 
+			TargetPlayerBtn.SetText("Select player...").SetColor(randomColor())	
+			TargetPlayerID = nil; --Reset	
 		end);
-		ChatMessageText.SetText("");
-	end;
+	end);
 	
-	function RefreshChat()
-		if (Mod.PublicGameData.ChatModEnabled == false)then 
-			UI.Alert("You can't do anything if the game has ended.");
+	buttonRow = UI.CreateHorizontalLayoutGroup(vert);
+	--Go back to PresentMenuUi button
+	UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
+		RefreshMainDialog(close, game);
+	end);	
+	
+	--Leave a group option
+	LeaveGroupBtn = UI.CreateButton(buttonRow).SetText("Leave group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 
+		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
+		if (GroupTextName.GetInteractable() == true) then
+			UI.Alert("Please choose a group from the list");
+			return;
+		end
+		if (Mod.PlayerGameData[TargetGroupID].Owner == ClientGame.Us.ID) then
+			UI.Alert("You can't leave a group you created. You can, however delete the group.")
 			return;
 		end;
-		
-		if(skipRefresh)then print('skipRefresh chat') return end;
-		print("RefreshChat() called")
-		--Update the members of the current selected group.
-		GroupMembersNames.SetText(getGroupMembers());
-		
-		--Remove old elements todo
-		DestroyOldUIelements(ChatMsgContainerArray)
-		
-		rowChatRecived = UI.CreateVerticalLayoutGroup(ChatContainer); 
-		ChatLayout = UI.CreateVerticalLayoutGroup(rowChatRecived);
-		
-		table.insert(ChatMsgContainerArray, rowChatRecived);
-		table.insert(ChatMsgContainerArray, ChatLayout);
-		
-		local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
-		
-		local PlayerGameData = Mod.PlayerGameData;	
-		local ChatArrayIndex = nil;
-		
-		--If there are no past chat or no group selected display the example
-		if (ChatGroupSelectedID ~= nil)then
-			if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
-				ChatArrayIndex = 0;
-				ChatMessageText.SetInteractable(true)
-				else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
-			end;
-		end
-		if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
-			local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
-			ChatExample1 =	UI.CreateButton(ExampleChatLayout)
-			.SetPreferredWidth(150)
-			.SetPreferredHeight(8)
-			.SetText("Mod Info")
-			.SetColor('#880085')	
-			ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
-			.SetFlexibleWidth(1)
-			.SetFlexibleHeight(1)
-			.SetText("When a game ends, all saved mod data will be deleted. Also, check out settings and tweek it to your liking.")
-			local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
-			ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
-			.SetPreferredWidth(150)
-			.SetPreferredHeight(8)
-			.SetText("Mod Info")
-			.SetColor('#880085')	
-			ChatMessageTextRecived2 = UI.CreateLabel(ExampleChatLayout2)
-			.SetFlexibleWidth(1)
-			.SetFlexibleHeight(1)
-			.SetText("Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!")
-			return;
-		end;
-		
-		ChatMessageText.SetInteractable(true)
-		--Adjust to fit with NumPastChat. 
-		local startIndex = 1;
-		if (ChatArrayIndex > NumPastChat) then 
-			startIndex = ChatArrayIndex - NumPastChat + startIndex; 
-		end;
-		for i = startIndex, ChatArrayIndex do 
-			local horz = UI.CreateHorizontalLayoutGroup(horzMain);
-			
-			--Chat Sender
-			ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150).SetPreferredHeight(8)		
-			if (PlayerGameData[ChatGroupSelectedID][i].Sender == -1) then
-				ChatSenderbtn.SetText("Mod Info").SetColor('#880085')		
-				else
-				ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
-				.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
-			end
-			--Chat messages
-			UI.CreateLabel(horz)
-			.SetFlexibleWidth(1)
-			.SetFlexibleHeight(1)
-			.SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
-		end
-	end
-	
-	function DestroyOldUIelements(Container)
-		if (next(Container)~=nil) then
-			for count = #Container, 1, -1 do		
-				if (Container[count] ~= nil)then
-					UI.Destroy(Container[count])
-				end;
-				table.remove(Container, count)
-			end
-		end
-	end
-	
-	function TargetPlayerClicked()
-		local options = map(filter(ClientGame.Game.Players, IsPotentialTarget), PlayerButton);
-		UI.PromptFromList("Select the player you'd like to add or remove from a group", options);
-	end
-	
-	function TargetGroupClicked()
-		print("TargetGroupClicked")
-		
-		local groups = {}
-		for i, v in pairs(PlayerGameData) do
-			print(i)
-			groups[i] = PlayerGameData[i]
-		end
-		local options = map(groups, GroupButton);
-		UI.PromptFromList("Select the group you'd like to add this player too", options);
-	end
-	
-	function PlayerButton(player)
-		local name = player.DisplayName(nil, false);
-		
-		local ret = {};
-		ret["text"] = name;
-		ret["selected"] = function() 
-			TargetPlayerBtn.SetText(name).SetColor(player.Color.HtmlColor);
-			TargetPlayerID = player.ID;
-		end
-		return ret;
-	end
-	
-	function GroupButton(group)
-		
-		local name = group.GroupName;
-		
-		local ret = {};
-		ret["text"] = name;
-		ret["selected"] = function() 
-			GroupTextName.SetText(name).SetInteractable(false)
-			TargetGroupID = group.Owner;
-		end
-		return ret;
-	end
-	
-	function ChatGroupClicked()
-		local groups = {}
-		PlayerGameData = Mod.PlayerGameData; --Make sure we have the latest PlayerGameData
-		for i, v in pairs(PlayerGameData) do
-			print(i)
-			groups[i] = PlayerGameData[i]
-		end
-		local options = map(groups, ChatGroupButton);
-		UI.PromptFromList("Select a chat group", options);
-	end
-	function ChatGroupButton(group)	
-		local name = group.GroupName;
-		local ret = {};
-		ret["text"] = name;
-		ret["selected"] = function() 
-			GroupTextName.SetText(name).SetInteractable(false)
-			TargetGroupID = group.GroupID;
-			GroupTextNameLabel.SetText("Selected group ")
-			--Check if we are owner or member
-			if (ClientGame.Us.ID == Mod.PlayerGameData[TargetGroupID].Owner) then
-				--If we are the owner, we can delete the group
-				deleteGroupBtn.SetInteractable(true);
-				LeaveGroupBtn.SetInteractable(false);
-				else
-				--If we are not the owner we can leave the group
-				deleteGroupBtn.SetInteractable(false);
-				LeaveGroupBtn.SetInteractable(true);
-			end
-		end
-		return ret;
-	end																		
-	
-	function DeleteGroupConfirmed(ClientGame,payload)
-		local ret = {};
-		ret["text"] = "Yes, delete the group";
-		ret["selected"] = function() 
-			ClientGame.SendGameCustomMessage("Deleting group...", payload, function(returnValue)end);
+		local payload = {};
+		payload.Message = "LeaveGroup";
+		payload.TargetGroupID = TargetGroupID;
+		ClientGame.SendGameCustomMessage("Leaving the group...", payload, function(returnValue) 
 			--Reset Group Selected
 			TargetGroupID = nil;
-			ChatGroupSelectedID = nil;
 			GroupTextName.SetText("").SetInteractable(true)
+		end);	
+	end);
+	
+	
+	--Delete a group : only possible as a group owner
+	deleteGroupBtn = UI.CreateButton(buttonRow).SetText("Delete group").SetInteractable(false).SetColor("#FF0000").SetOnClick(function() 		
+		--If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
+		if (GroupTextName.GetInteractable() == true) then
+			UI.Alert("Please choose a group from the list");
+			return;
 		end
-		return ret;
-	end
+		
+		if (Mod.PlayerGameData[TargetGroupID].Owner ~= ClientGame.Us.ID) then
+			UI.Alert("You can only delete if you are the owner of a group")
+			return;
+		end;
+		
+		local payload = {};
+		payload.Message = "DeleteGroup";
+		payload.TargetGroupID = TargetGroupID;
+		
+		--Ask for confirmation from the player
+		UI.PromptFromList("Are you sure you want to delete " .. Mod.PlayerGameData[TargetGroupID].GroupName .. "?", { DeleteGroupConfirmed(ClientGame, payload), DeleteGroupDeclined()});
+	end);
+end
+
+function SendChat()	
+	local payload = {};
+	payload.Message = "SendChat";
+	payload.TargetGroupID = ChatGroupSelectedID;
+	payload.Chat = ChatMessageText.GetText();
+	print("Chat sent " .. payload.Chat .. " to " .. payload.TargetGroupID .. " from " .. ClientGame.Us.ID)
+	ClientGame.SendGameCustomMessage("Sending chat...", payload, function(returnValue) 
+		RefreshChat();
+	end);
+	ChatMessageText.SetText("");
+end;
+
+function RefreshChat()
+	if (Mod.PublicGameData.ChatModEnabled == false)then 
+		UI.Alert("You can't do anything if the game has ended.");
+		return;
+	end;
 	
-	function DeleteGroupDeclined()
-		local ret = {};
-		ret["text"] = "No.";
-		ret["selected"] = function() end
-		return ret;
-	end
+	if(skipRefresh)then print('skipRefresh chat') return end;
+	print("RefreshChat() called")
+	--Update the members of the current selected group.
+	GroupMembersNames.SetText(getGroupMembers());
 	
-	--Determines if the player is one we can interact with.
-	function IsPotentialTarget(player)
-		if (ClientGame.Us.ID == player.ID) then return false end; -- we can never add ourselves.
+	--Remove old elements todo
+	DestroyOldUIelements(ChatMsgContainerArray)
+	
+	rowChatRecived = UI.CreateVerticalLayoutGroup(ChatContainer); 
+	ChatLayout = UI.CreateVerticalLayoutGroup(rowChatRecived);
+	
+	table.insert(ChatMsgContainerArray, rowChatRecived);
+	table.insert(ChatMsgContainerArray, ChatLayout);
+	
+	local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
+	
+	local PlayerGameData = Mod.PlayerGameData;	
+	local ChatArrayIndex = nil;
+	
+	--If there are no past chat or no group selected display the example
+	if (ChatGroupSelectedID ~= nil)then
+		if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
+			ChatArrayIndex = 0;
+			ChatMessageText.SetInteractable(true)
+			else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
+		end;
+	end
+	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
+		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
+		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
+		.SetPreferredWidth(150)
+		.SetPreferredHeight(8)
+		.SetText("Mod Info")
+		.SetColor('#880085')	
+		ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
+		.SetFlexibleWidth(1)
+		.SetFlexibleHeight(1)
+		.SetText("When a game ends, all saved mod data will be deleted. Also, check out settings and tweek it to your liking.")
+		local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
+		ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
+		.SetPreferredWidth(150)
+		.SetPreferredHeight(8)
+		.SetText("Mod Info")
+		.SetColor('#880085')	
+		ChatMessageTextRecived2 = UI.CreateLabel(ExampleChatLayout2)
+		.SetFlexibleWidth(1)
+		.SetFlexibleHeight(1)
+		.SetText("Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!")
+		return;
+	end;
+	
+	ChatMessageText.SetInteractable(true)
+	--Adjust to fit with NumPastChat. 
+	local startIndex = 1;
+	if (ChatArrayIndex > NumPastChat) then 
+		startIndex = ChatArrayIndex - NumPastChat + startIndex; 
+	end;
+	for i = startIndex, ChatArrayIndex do 
+		local horz = UI.CreateHorizontalLayoutGroup(horzMain);
 		
-		if (player.State ~= WL.GamePlayerState.Playing) then return false end; --skip players not alive anymore, or that declined the game.
-		
-		if (ClientGame.Settings.SinglePlayer) then return true end; --in single player, allow proposing with everyone
-		
-		return not player.IsAI; --In multi-player, never allow adding an AI.
-	end					
+		--Chat Sender
+		ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150).SetPreferredHeight(8)		
+		if (PlayerGameData[ChatGroupSelectedID][i].Sender == -1) then
+			ChatSenderbtn.SetText("Mod Info").SetColor('#880085')		
+			else
+			ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
+			.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
+		end
+		--Chat messages
+		UI.CreateLabel(horz)
+		.SetFlexibleWidth(1)
+		.SetFlexibleHeight(1)
+		.SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
+	end
+end
+
+function DestroyOldUIelements(Container)
+	if (next(Container)~=nil) then
+		for count = #Container, 1, -1 do		
+			if (Container[count] ~= nil)then
+				UI.Destroy(Container[count])
+			end;
+			table.remove(Container, count)
+		end
+	end
+end
+
+function TargetPlayerClicked()
+	local options = map(filter(ClientGame.Game.Players, IsPotentialTarget), PlayerButton);
+	UI.PromptFromList("Select the player you'd like to add or remove from a group", options);
+end
+
+function TargetGroupClicked()
+	print("TargetGroupClicked")
+	
+	local groups = {}
+	for i, v in pairs(PlayerGameData) do
+		print(i)
+		groups[i] = PlayerGameData[i]
+	end
+	local options = map(groups, GroupButton);
+	UI.PromptFromList("Select the group you'd like to add this player too", options);
+end
+
+function PlayerButton(player)
+	local name = player.DisplayName(nil, false);
+	
+	local ret = {};
+	ret["text"] = name;
+	ret["selected"] = function() 
+		TargetPlayerBtn.SetText(name).SetColor(player.Color.HtmlColor);
+		TargetPlayerID = player.ID;
+	end
+	return ret;
+end
+
+function GroupButton(group)
+	
+	local name = group.GroupName;
+	
+	local ret = {};
+	ret["text"] = name;
+	ret["selected"] = function() 
+		GroupTextName.SetText(name).SetInteractable(false)
+		TargetGroupID = group.Owner;
+	end
+	return ret;
+end
+
+function ChatGroupClicked()
+	local groups = {}
+	PlayerGameData = Mod.PlayerGameData; --Make sure we have the latest PlayerGameData
+	for i, v in pairs(PlayerGameData) do
+		print(i)
+		groups[i] = PlayerGameData[i]
+	end
+	local options = map(groups, ChatGroupButton);
+	UI.PromptFromList("Select a chat group", options);
+end
+function ChatGroupButton(group)	
+	local name = group.GroupName;
+	local ret = {};
+	ret["text"] = name;
+	ret["selected"] = function() 
+		GroupTextName.SetText(name).SetInteractable(false)
+		TargetGroupID = group.GroupID;
+		GroupTextNameLabel.SetText("Selected group ")
+		--Check if we are owner or member
+		if (ClientGame.Us.ID == Mod.PlayerGameData[TargetGroupID].Owner) then
+			--If we are the owner, we can delete the group
+			deleteGroupBtn.SetInteractable(true);
+			LeaveGroupBtn.SetInteractable(false);
+			else
+			--If we are not the owner we can leave the group
+			deleteGroupBtn.SetInteractable(false);
+			LeaveGroupBtn.SetInteractable(true);
+		end
+	end
+	return ret;
+end																		
+
+function DeleteGroupConfirmed(ClientGame,payload)
+	local ret = {};
+	ret["text"] = "Yes, delete the group";
+	ret["selected"] = function() 
+		ClientGame.SendGameCustomMessage("Deleting group...", payload, function(returnValue)end);
+		--Reset Group Selected
+		TargetGroupID = nil;
+		ChatGroupSelectedID = nil;
+		GroupTextName.SetText("").SetInteractable(true)
+	end
+	return ret;
+end
+
+function DeleteGroupDeclined()
+	local ret = {};
+	ret["text"] = "No.";
+	ret["selected"] = function() end
+	return ret;
+end
+
+--Determines if the player is one we can interact with.
+function IsPotentialTarget(player)
+	if (ClientGame.Us.ID == player.ID) then return false end; -- we can never add ourselves.
+	
+	if (player.State ~= WL.GamePlayerState.Playing) then return false end; --skip players not alive anymore, or that declined the game.
+	
+	if (ClientGame.Settings.SinglePlayer) then return true end; --in single player, allow proposing with everyone
+	
+	return not player.IsAI; --In multi-player, never allow adding an AI.
+end					

@@ -13,6 +13,7 @@ end
 
 --Alert when new chat.
 function CheckUnreadChat(game)
+	
 	local PlayerGameData = Mod.PlayerGameData;
 	local groups = {}
 	
@@ -32,8 +33,18 @@ function CheckUnreadChat(game)
 			
 			--Only show an alert if we are not the sender or if it is a SinglePlayer game (for testing)
 			if (game.Us.ID ~= groups[i][groups[i].NumChat].Sender or game.Settings.SinglePlayer == true) then
-				local sender = game.Game.Players[groups[i][groups[i].NumChat].Sender].DisplayName(nil, false);
-				UI.Alert(groups[i].GroupName .. " has unread chat. The last chat message is: \n " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender)
+				local Alerts = true;
+				--Check if alerts are true
+				local PublicGameData = Mod.PublicGameData;
+				if (PublicGameData ~= nil)then
+					if (PublicGameData[game.Us.ID] ~= nil) then
+						Alerts = PublicGameData[game.Us.ID].AlertUnreadChat;
+					end;
+				end;
+				if (Alerts)then
+					local sender = game.Game.Players[groups[i][groups[i].NumChat].Sender].DisplayName(nil, false);
+					UI.Alert(groups[i].GroupName .. " has unread chat. The last chat message is: \n " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender)
+				end
 			end;
 			
 			--Check if we have the chat group selected, and if we do add the message to the chat layout
@@ -91,4 +102,4 @@ function CheckIfRefresh(gameRefresh)
 	end;
 	
 	return true;
-end;			
+end;						
