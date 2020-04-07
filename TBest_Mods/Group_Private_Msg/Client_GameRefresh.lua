@@ -49,11 +49,9 @@ function CheckUnreadChat(game)
 				if (ChatGroupSelectedID == i)then
 					
 					--The chat layout VerticalLayoutGroup has alredy been created in presentMenu. We stored it in ChatMsgContainerArray[2]
-					ChatLayout = ChatMsgContainerArray[2];
-					
+					ChatLayout = ChatMsgContainerArray[2];		
 					local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
 					
-					local PlayerGameData = Mod.PlayerGameData;	
 					local ChatArrayIndex = nil;
 					
 					if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
@@ -81,7 +79,10 @@ function CheckUnreadChat(game)
 				end;
 			end
 		end;
-	end
+	end;
+	print('+++++++++++++++++++++++++++')
+	print(alertMsg)
+	
 	if (Alerts)then UI.Alert(alertMsg) end;
 	--Mark the chat as read, if we had any unread chat, server side, so we only show 1 alert per group 
 	if (markChatAsRead)then
