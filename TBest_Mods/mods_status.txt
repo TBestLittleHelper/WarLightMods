@@ -6,6 +6,7 @@ Manual Dist : What territories can be picked
 CityFeatures : commanders can't leave a city.  
 CityFeatures : Armies far away from a city suffers from 'low moral' 
 Order delay : only delay 1 order (each)
+Mafia Mod : Play Mafia in WZ
 
 #Testing/WIP
 Group Chat Mod
