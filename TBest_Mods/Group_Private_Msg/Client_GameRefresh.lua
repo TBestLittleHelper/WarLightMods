@@ -5,6 +5,9 @@ function Client_GameRefresh(game)
     if (game.Us == nil or Mod.PublicGameData.ChatModEnabled == false) then 
         return;
 	end
+	--Check if the game has ended.
+	--We need to check here and not in ServerAdvanceTurn. Since VTE is not detectable in any other hook
+	CheckGameEnded(game);
 	
 	--Check for unread chat
 	print("Checking unread chat")
@@ -88,3 +91,38 @@ function CheckUnreadChat(game)
 		game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) end)
 	end;
 end;
+
+function CheckGameEnded(game)
+	--Check if there are any players still playing. If there is not, delete all playerGameData
+	local numAlive = 0; --If we have 2 or more alive game is ongoing.
+	local Teams = {};
+	local numTeamAlive = 0; --If we have teams, num teams alive 
+
+	for playerID, player in pairs (game.Game.Players)do
+		if (IsAlive(playerID, game)) then
+			numAlive = numAlive+1;
+			if (Teams[game.Game.Players[playerID].Team] == nil) then
+				Teams[game.Game.Players[playerID].Team] = true;
+				numTeamAlive = numTeamAlive +1;
+			end
+		end
+	end
+	if (numTeamAlive > 1)then return end; --More then 1 team alive
+	if (Teams[-1] == true)then 	--If there are no teams (-1 is a special value for no teams)
+		if (numAlive > 1)then return end; --And there are more then 1 alive, return
+	end;
+	--ClearData. We send a msg to the server, then do a server check as well. TODO
+	local payload = {};
+
+	print(gameEnded)
+	payload.Message = "ClearData";	
+	game.SendGameCustomMessage("Clearing mod data...", payload, function(returnValue) end);
+end;
+
+--Determines if the player is alive.
+function IsAlive(playerID, ClientGame)	
+	if (ClientGame.Game.PlayingPlayers[playerID] ~= nil) then 
+		return true;
+	end;
+	return false;
+end

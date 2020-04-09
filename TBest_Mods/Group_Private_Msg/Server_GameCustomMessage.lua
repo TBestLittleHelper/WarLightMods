@@ -249,22 +249,22 @@ function DeleteGroup(game,playerID,payload)
 end
 
 function SaveSettings(game,playerID, payload)
-		Dump(payload)
-
-		PublicGameData = Mod.PublicGameData;
-		if (PublicGameData == nil)then PublicGameData = {} end;
-		if (PublicGameData[playerID] == nil)then PublicGameData[playerID] = {} end;
-		
-		PublicGameData[playerID].AlertUnreadChat = payload.AlertUnreadChat;
-		PublicGameData[playerID].EachGroupButton = payload.EachGroupButton;
-		PublicGameData[playerID].NumPastChat = payload.NumPastChat;
-		PublicGameData[playerID].SizeX = payload.SizeX;
-		PublicGameData[playerID].SizeY = payload.SizeY;
-		
-		Mod.PublicGameData = PublicGameData;
+	Dump(payload)
+	
+	PublicGameData = Mod.PublicGameData;
+	if (PublicGameData == nil)then PublicGameData = {} end;
+	if (PublicGameData[playerID] == nil)then PublicGameData[playerID] = {} end;
+	
+	PublicGameData[playerID].AlertUnreadChat = payload.AlertUnreadChat;
+	PublicGameData[playerID].EachGroupButton = payload.EachGroupButton;
+	PublicGameData[playerID].NumPastChat = payload.NumPastChat;
+	PublicGameData[playerID].SizeX = payload.SizeX;
+	PublicGameData[playerID].SizeY = payload.SizeY;
+	
+	Mod.PublicGameData = PublicGameData;
 end;
 
---Admin option, to reuse the same game as a test by removing all playerdata
+--Removing all Mod data when a game is over (also useful during development.)
 function ClearData(game,playerID);
 	if (playerID == 69603)then --My playerID
 		--Remove all playerGameData
@@ -273,7 +273,7 @@ function ClearData(game,playerID);
 			print("Deleted playerGameData for " .. Players)
 			playerGameData[Players] = {};
 		end
-	
+		
 		Mod.PlayerGameData = playerGameData;
 		
 		--Remove all publicGameData and set a bool flag to false
@@ -281,6 +281,28 @@ function ClearData(game,playerID);
 		publicGameData = {};
 		publicGameData.ChatModEnabled = false;
 		Mod.PublicGameData = publicGameData;
+	
+	else
+		--This is a server side safety check. If we end up here, the game should always be over.
+		--Check if there are any players still playing. If there is not, delete all playerGameData
+		local numAlive = 0; --If we have 2 or more alive game is ongoing.
+		local Teams = {};
+		local numTeamAlive = 0; --If we have teams, num teams alive 
+		
+		for playerID, player in pairs (game.Game.Players)do
+			if (IsAlive(playerID, game)) then
+				numAlive = numAlive+1;
+				if (Teams[game.Game.Players[playerID].Team] == nil) then
+					Teams[game.Game.Players[playerID].Team] = true;
+					numTeamAlive = numTeamAlive +1;
+				end
+			end
+		end
+		if (numTeamAlive > 1)then return end; --More then 1 team alive
+		if (Teams[-1] == true)then 	--If there are no teams (-1 is a special value for no teams)
+			if (numAlive > 1)then return end; --And there are more then 1 alive, return
+		end;		
+		ClearData(game,69603);
 	end;
 end
 
@@ -291,7 +313,7 @@ function TurnDivider(turnNumber)
 	local ChatInfo = {};
 	ChatInfo.Sender = -1; --The Mod is the sender
 	ChatInfo.Chat = " ------ End of turn " .. turnNumber+1 .. " ------";	
-
+	
 	--For All playerGameData
 	for playerID, player in pairs (playerGameData) do
 		--For ALL groups
