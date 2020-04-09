@@ -16,7 +16,7 @@ end
 
 --Alert when new chat.
 function CheckUnreadChat(game)
-	if (skipRefresh == nil or skipRefresh == true)then return;	
+	if (skipRefresh == nil or skipRefresh == true)then return end;	
 
 	local PlayerGameData = Mod.PlayerGameData;
 	if (PlayerGameData == nil)then 
