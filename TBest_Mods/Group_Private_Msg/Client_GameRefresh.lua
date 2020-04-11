@@ -51,35 +51,38 @@ function CheckUnreadChat(game)
 			--Check if we have the chat group selected, and if we do add the message to the chat layout
 			if (ChatGroupSelectedID ~= nil) then
 				if (ChatGroupSelectedID == i)then
+					print("***")
+					performClose();
 					
-					--The chat layout VerticalLayoutGroup has alredy been created in presentMenu. We stored it in ChatMsgContainerArray[2]
-					ChatLayout = ChatMsgContainerArray[2];		
-					local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
 					
-					local ChatArrayIndex = nil;
+					-- --The chat layout VerticalLayoutGroup has alredy been created in presentMenu. We stored it in ChatMsgContainerArray[2]
+					-- ChatLayout = ChatMsgContainerArray[2];		
+					-- local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
 					
-					if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
-						ChatArrayIndex = 0;
-						else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
-					end;
+					-- local ChatArrayIndex = nil;
 					
-					for i = ChatArrayIndex, ChatArrayIndex do 
-						local horz = UI.CreateHorizontalLayoutGroup(horzMain);
+					-- if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
+						-- ChatArrayIndex = 0;
+						-- else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
+					-- end;
+					
+					-- for i = ChatArrayIndex, ChatArrayIndex do 
+						-- local horz = UI.CreateHorizontalLayoutGroup(horzMain);
 						
-						--Chat Sender
-						ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150).SetPreferredHeight(8)		
-						if (PlayerGameData[ChatGroupSelectedID][i].Sender == -1) then
-							ChatSenderbtn.SetText("Mod Info").SetColor('#880085')		
-							else
-							ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
-							.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
-						end
-						--Chat messages
-						UI.CreateLabel(horz)
-						.SetFlexibleWidth(1)
-						.SetFlexibleHeight(1)
-						.SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
-					end						
+						-- --Chat Sender
+						-- ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150).SetPreferredHeight(8)		
+						-- if (PlayerGameData[ChatGroupSelectedID][i].Sender == -1) then
+							-- ChatSenderbtn.SetText("Mod Info").SetColor('#880085')		
+							-- else
+							-- ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
+							-- .SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
+						-- end
+						-- --Chat messages
+						-- UI.CreateLabel(horz)
+						-- .SetFlexibleWidth(1)
+						-- .SetFlexibleHeight(1)
+						-- .SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
+					-- end						
 				end;
 			end
 		end;
