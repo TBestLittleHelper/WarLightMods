@@ -185,12 +185,13 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		
 		--Validate input for NumPastChat, sizeX and sizeY 
 		if NumPastChat < 3 then NumPastChat = 3 end
-		if NumPastChat > 1000 then NumPastChat = 1000 end;
+		else if NumPastChat > 1000 then NumPastChat = 1000 end;
 		
 		if SizeX < 200 then SizeX = 200 end
-		if SizeX > 2000 then SizeX = 2000 end
+		else if SizeX > 2000 then SizeX = 2000 end
+		
 		if SizeY < 200 then SizeY = 200 end
-		if SizeY > 2000 then SizeY = 2000 end
+		else if SizeY > 2000 then SizeY = 2000 end
 		
 		--Save settings serverside
 		

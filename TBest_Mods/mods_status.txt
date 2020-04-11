@@ -3,6 +3,7 @@ MirrorPicker
 RandomTemplate
 We respect your privacy : shows random info about players
 Manual Dist : What territories can be picked
+Manual Dist : Namib pick, only wastland bonuses
 CityFeatures : commanders can't leave a city.  
 CityFeatures : Armies far away from a city suffers from 'low moral' 
 Order delay : only delay 1 order (each)
