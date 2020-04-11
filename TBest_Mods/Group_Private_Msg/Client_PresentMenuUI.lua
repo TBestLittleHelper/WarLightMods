@@ -11,7 +11,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	PlayerGameData = Mod.PlayerGameData;
 	skipRefresh = false; --This is set to true if we go to Edit or Settings Dialog		
 	CloseDialog = nil;
-	setClose(close);
 	
 	--Check if we have any saved settings
 	PublicGameData = Mod.PublicGameData;
@@ -139,13 +138,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		SendChat();
 	end);
 end;	
-
-
-function setClose(close) CloseDialog = close end;
-function performClose() 
-	if CloseDialog ~= nil then CloseDialog end;
-end;
-
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)		
 	
 	setMaxSize(410,380); --This dialog's size

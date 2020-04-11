@@ -48,12 +48,13 @@ function CheckUnreadChat(game)
 					alertMsg = alertMsg .. groups[i].GroupName .. " has unread chat. The last chat message is: \n " .. groups[i][groups[i].NumChat].Chat .. " from " .. sender;
 				end
 			end;			
+			
+			--The following code is unsafe. We might find a way to reanable it in the future.
+
 			--Check if we have the chat group selected, and if we do add the message to the chat layout
-			if (ChatGroupSelectedID ~= nil) then
-				if (ChatGroupSelectedID == i)then
-					print("***")
-					performClose();
-					
+	--		if (ChatGroupSelectedID ~= nil) then
+	--			if (ChatGroupSelectedID == i)then
+					--The following code is unsafe. We might find a way to reanable it in the future.
 					
 					-- --The chat layout VerticalLayoutGroup has alredy been created in presentMenu. We stored it in ChatMsgContainerArray[2]
 					-- ChatLayout = ChatMsgContainerArray[2];		
@@ -83,8 +84,8 @@ function CheckUnreadChat(game)
 						-- .SetFlexibleHeight(1)
 						-- .SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
 					-- end						
-				end;
-			end
+	--			end;
+	--		end
 		end;
 	end;	
 	if (Alerts == true and alertMsg ~= "")then UI.Alert(alertMsg) end;
