@@ -1,4 +1,14 @@
 function Server_AdvanceTurn_Start (game, addNewOrder)	
+	local cityCap = 10;
+	local cityGrowth = 1;
+
+	--Have to check for nil, as this setting was added in an update
+	if (Mod.Settings.CityGrowth ~= nil)then
+		if (Mod.Settings.CityGrowth == false)then return end; --City growth is off
+		cityCap = Mod.Settings.CityGrowthCap;
+		cityGrowth = Mod.Settings.CityGrowthPower;
+	end;
+	
 	--The turns cities can grow.
 	if ((game.Game.NumberOfTurns+1) %5 == 0) then
 		local standing = game.ServerGame.LatestTurnStanding; --todo use standing instead of game. etc.
@@ -12,9 +22,10 @@ function Server_AdvanceTurn_Start (game, addNewOrder)
 			--Can be 0, if a territory has been bombed. We don't want that city to grow.
 			if not(territory.Structures == nil or territory.Structures[WL.StructureType.City] == 0) then
 				local terrMod = WL.TerritoryModification.Create(territory.ID);		
-				structure[Cities] = territory.Structures[WL.StructureType.City] +1;
+				structure[Cities] = territory.Structures[WL.StructureType.City] +cityGrowth;
 				--A hard-coded cap on how big cities can grow.
-				if (structure[Cities] < 11 ) then
+				--TODO make this not be hardcoded
+				if (structure[Cities] <= cityCap) then
 					terrMod.SetStructuresOpt   = structure
 					NewOrders[CurrentIndex]=terrMod;
 					CurrentIndex=CurrentIndex+1;
@@ -128,7 +139,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	end;
 		
 	--If we blockade or emergency blockade on a city we own. We build on that city
-	if(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon' and Mod.Settings.BlockadeBuildCityActive == true) then
+	if(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon') then
+		if (Mod.Settings.BlockadeBuildCityActive == false) then return end;
 		--If there is a structure present
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
 			--Check that the player controls the territory

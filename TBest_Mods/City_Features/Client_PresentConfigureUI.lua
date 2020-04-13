@@ -5,16 +5,27 @@ function Client_PresentConfigureUI(rootParent)
 	if (Mod.Settings.DefPower ~= nil)then
 		initialDefPower = Mod.Settings.DefPower * 100; --This number is stored as a decimal. So *100 to show a %
 	else initialDefPower = 25; end
+	--City growth
+	initialCityGrowth = Mod.Settings.CityGrowth;
+	initialCityGrowthCap = Mod.Settings.CityGrowthCap;
+	initialCityGrowthPower = Mod.Settings.CityGrowthPower;
+
 	--Bomb card
 	initialBombcardActive = Mod.Settings.BombcardActive;	
 	initialBombcardPower = Mod.Settings.BombcardPower;
 	--Capitals
 	initialCustomSenarioCapitals = Mod.Settings.CustomSenarioCapitals;
+	initialCapitalsToggle = false;
+	if (initialCustomSenarioCapitals ~= nil)then
+		if (initialCustomSenarioCapitals == -1)then 
+			initialCapitalsToggle = false;
+		end;
+	end;
 	initialCapitalExtraCities = Mod.Settings.CapitalExtraStartingCities;
 	--Distributed starting cities
 	initialCitiesActive = Mod.Settings.StartingCitiesActive;
 	initialNumberOfStartingCities = Mod.Settings.NumberOfStartingCities;
-	initialWastlandCities = Mod.Settings.WastlandsCities;
+	initialWastlandCities = Mod.Settings.WastlandCities;
 	--Commerce city deployment
 	initialCommerceFree = Mod.Settings.CommerceFreeCityDeploy;
 	initialArmyDeployment = Mod.Settings.CityDeployOnly;
@@ -25,10 +36,14 @@ function Client_PresentConfigureUI(rootParent)
 	initialEMBActive = Mod.Settings.EMBActive;
 	initialEMBPower = Mod.Settings.EMBPower;
 
-
+--Wastlands and capitals are checked always
 
 	if initialCityWalls == nil then initialCityWalls = true; end
 	if initialDefPower == nil then initialDefPower = 25; end
+	
+	if initialCityGrowth == nil then initialCityGrowth = true; end
+	if initialCityGrowthCap == nil then initialCityGrowthCap = 10; end
+	if initialCityGrowthPower == nil then initialCityGrowthPower = 1; end
 	
 	if initialBombcardActive == nil then initialBombcardActive = true; end
 	if initialBombcardPower == nil then initialBombcardPower = 2; end
@@ -62,6 +77,7 @@ function Client_PresentConfigureUI(rootParent)
 	
 	--Options
 	horzlist[10] = UI.CreateHorizontalLayoutGroup(rootParent);
+	horzlist[15] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[20] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[30] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[40] = UI.CreateHorizontalLayoutGroup(rootParent);
@@ -74,10 +90,13 @@ function Client_PresentConfigureUI(rootParent)
 	cityWallsToggle= UI.CreateCheckBox(horzlist[10]).SetText('City Walls').SetIsChecked(initialCityWalls).SetOnValueChanged(ShowCitySettings);
 	horzlist[11] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
+	cityGrowthToggle= UI.CreateCheckBox(horzlist[15]).SetText('City Growth').SetIsChecked(initialCityGrowth).SetOnValueChanged(ShowGrowthSettings);
+	horzlist[16] = UI.CreateHorizontalLayoutGroup(rootParent);
+	
 	bombCardToggle= UI.CreateCheckBox(horzlist[20]).SetText('Bomb card attack on cities').SetIsChecked(initialBombcardActive).SetOnValueChanged(ShowBombSettings);
 	horzlist[21] = UI.CreateHorizontalLayoutGroup(rootParent);
 	
-	capitalsToggle= UI.CreateCheckBox(horzlist[30]).SetText('Capitals').SetIsChecked(initialBuildCityActive).SetOnValueChanged(ShowCapitalsSettings);
+	capitalsToggle= UI.CreateCheckBox(horzlist[30]).SetText('Capitals').SetIsChecked(initialCapitalsToggle).SetOnValueChanged(ShowCapitalsSettings);
 	horzlist[31] = UI.CreateHorizontalLayoutGroup(rootParent);
 	horzlist[32] = UI.CreateHorizontalLayoutGroup(rootParent);
 
@@ -108,11 +127,15 @@ function Client_PresentConfigureUI(rootParent)
 		ShowCitySettings();
 	end
 	
+	if (initialCityGrowth == true) then
+		ShowGrowthSettings();
+	end
+	
 	if (initialBombcardActive == true) then
 		ShowBombSettings();
 	end
 	
-	if (initialBuildCityActive == true) then
+	if (initialCapitalsToggle == true) then
 		ShowCapitalsSettings();
 	end
 	
@@ -159,6 +182,18 @@ function ShowCitySettings()
 		else
 		textDefBonus = UI.CreateLabel(horzlist[11]).SetText('Percantage bonus for each city:');
 		sliderDefBonus = UI.CreateNumberInputField(horzlist[11]).SetSliderMinValue(10).SetSliderMaxValue(50).SetValue(initialDefPower);
+	end
+end	
+
+function ShowGrowthSettings()
+	if(textGrowth ~= nil) then
+		UI.Destroy(textGrowth);
+		UI.Destroy(sliderCityGrowthCap);
+		
+		textGrowth = nil;
+		else
+		textGrowth = UI.CreateLabel(horzlist[16]).SetText('The max size a city can naturaly grow:');
+		sliderCityGrowthCap = UI.CreateNumberInputField(horzlist[16]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(initialCityGrowthCap);
 	end
 end	
 

@@ -8,6 +8,15 @@ function Client_SaveConfigureUI(alert)
 		if (Mod.Settings.DefPower > 100) then Mod.Settings.DefPower = 100; end			
 	end;
 	
+	Mod.Settings.CityGrowth = false;
+	if (cityGrowthToggle.GetIsChecked()) then 
+		Mod.Settings.CityGrowth = true;
+		Mod.Settings.CityGrowthCap = sliderCityGrowthCap.GetValue();
+		if (Mod.Settings.CityGrowthCap < 1) then Mod.Settings.DefPower = 1; end
+		if (Mod.Settings.CityGrowthCap > 100) then Mod.Settings.DefPower = 100; end			
+		Mod.Settings.CityGrowthPower = 1; --For now, a host can't change this value but we might open it up in the future.
+	end;
+	
 	Mod.Settings.BombcardActive = false;
 	if (bombCardToggle.GetIsChecked()) then 
 		Mod.Settings.BombcardActive = bombCardToggle.GetIsChecked();

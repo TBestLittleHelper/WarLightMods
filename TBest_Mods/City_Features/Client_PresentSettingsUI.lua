@@ -1,6 +1,6 @@
 function Client_PresentSettingsUI(rootParent)
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
-	
+	--TODO add growth settings
 	if (Mod.Settings.StartingCitiesActive) then
 		UI.CreateLabel(vert).SetText('Number of cities in distributed territories ' .. Mod.Settings.NumberOfStartingCities);
 	end
