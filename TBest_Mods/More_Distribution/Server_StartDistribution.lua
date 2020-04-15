@@ -106,7 +106,6 @@ function WastlandOnly(Game, standing)
 	local terrInBonus;
 	local index;
 	--for all territores in each bonus, check if we have a wastland
-	Dump(AllBonuses)
 	for _, bonus in pairs (AllBonuses) do
 		terrInBonus = {};
 		haveWastland = false;
@@ -114,7 +113,6 @@ function WastlandOnly(Game, standing)
 		for _,terrID in pairs (bonus.Territories) do
 			if (standing.Territories[terrID].NumArmies.NumArmies == Game.Settings.WastelandSize)then		
 				haveWastland = true;
-				print('$$$$$$$$$')
 			else
 				terrInBonus[index] = terrID;
 				standing.Territories[terrID].OwnerPlayerID = -0; --Make it nonpickable
