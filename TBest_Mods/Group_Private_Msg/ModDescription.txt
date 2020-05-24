@@ -1,1 +1,1 @@
-Adds a new way to chat in the game! Now you can have multiple custom private group chat's, where you can add/remove players as you please! Note that messages to the server is rate-limited to 5 calls every 30 seconds per client.
+Adds a new way to chat in the game! Now you can have multiple custom private group chat's, where you can add/remove players as you please! Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. When a game is over, all chat should be considred public and readable by anyone on warzone.

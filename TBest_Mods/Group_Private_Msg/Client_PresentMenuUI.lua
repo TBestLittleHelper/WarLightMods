@@ -1,9 +1,18 @@
 require('Utilities');
+require("Giftgold")
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
+	if (Mod.PublicGameData.GameFinalized == false) then
+	--Check if the game has ended.
+	--We need to check here and not in ServerAdvanceTurn. Since VTE is not detectable there
+	CheckGameEnded(game);
+	
+	
+	end;
+
 	--If a spectator, just alert then return
-	if (game.Us == nil or Mod.PublicGameData.ChatModEnabled == false) then
-		UI.Alert("You can't do anything as a spectator or if the game has ended.");
+	if (game.Us == nil) then
+		UI.Alert("You can't do anything as a spectator until the game has ended.");
 		return;
 	end;	
 	--Make some global var's
@@ -81,7 +90,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetText("Chat Group")
 			.SetFlexibleWidth(0.6)
 			.SetColor(randomColor());
-			--Make a button for to select chat group
+			--Make a button to select chat group
 			UI.CreateButton(horizontalLayout)
 			.SetText("Select chat group")
 			.SetFlexibleWidth(0.2)
@@ -137,22 +146,20 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end		
 		SendChat();
 	end);
+	--Send gold button
+	--TODO if enabled
+	if (ClientGame.Settings.CommerceGame == true) then
+		UI.CreateButton(ChatButtonContainer).SetColor("#880085").SetText("Gift gold").SetOnClick(function()
+			ClientGame.CreateDialog(GiftGoldMenu);
+			close();--Close this dialog. 
+		end);
+	end;
 end;	
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)		
 	
 	setMaxSize(410,380); --This dialog's size
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
-	
-	--Removed this block of code -> We don't need it anymore. Just in case, we keep it here in case we want to use it for future dev.
-	-- --This only shows for Admin/Me only (this is checked server side too)
-	-- if (ClientGame.Us.ID == 69603) then 
-		-- ClearChatBtn = UI.CreateButton(vert).SetText("Remove all playerdata").SetOnClick(function()
-			-- local payload = {};
-			-- payload.Message = "ClearData";			
-			-- ClientGame.SendGameCustomMessage("ClearData" , payload, function(returnValue)end);
-		-- end);
-	-- end;	
-	
+		
 	--Alert user of unread chat
 	AlertUnreadChatCheckBox = UI.CreateCheckBox(vert).SetIsChecked(AlertUnreadChat).SetText("Show an alert when there is unread chat");
 	
@@ -410,9 +417,10 @@ function SendChat()
 	payload.Chat = ChatMessageText.GetText();
 	print("Chat sent " .. payload.Chat .. " to " .. payload.TargetGroupID .. " from " .. ClientGame.Us.ID)
 	ClientGame.SendGameCustomMessage("Sending chat...", payload, function(returnValue) 
-		RefreshChat();
+		UI.Alert(returnValue.Status);
 	end);
 	ChatMessageText.SetText("");
+
 end;
 
 function RefreshChat()
@@ -612,3 +620,44 @@ function IsPotentialTarget(player)
 	
 	return not player.IsAI; --In multi-player, never allow adding an AI.
 end					
+
+--Determines if the player is alive.
+function IsAlive(playerID, ClientGame)	
+	if (ClientGame.Game.PlayingPlayers[playerID] ~= nil) then 
+		return true;
+	end;
+	return false;
+end
+
+function CheckGameEnded(game)
+	-- 3 == playing : 4 == elim + over
+	print(game.Game.State) 
+	if (game.Game.State ~= 4 ) then return end;
+--	
+--	--Check if there are any players still playing. If there is not, delete all playerGameData
+--	local numAlive = 0; --If we have 2 or more alive game is ongoing.
+--	local Teams = {};
+--	local numTeamAlive = 0; --If we have teams, num teams alive 
+--
+--	for playerID, player in pairs (game.Game.Players)do
+--		if (IsAlive(playerID, game)) then
+--			numAlive = numAlive+1;
+--			if (Teams[game.Game.Players[playerID].Team] == nil) then
+--				Teams[game.Game.Players[playerID].Team] = true;
+--				numTeamAlive = numTeamAlive +1;
+--			end
+--		end
+--	end
+--	if (numTeamAlive > 1)then return end; --More then 1 team alive
+--	if (Teams[-1] == true)then 	--If there are no teams (-1 is a special value for no teams)
+--		if (numAlive > 1)then return end; --And there are more then 1 alive, return
+--	end;
+--
+--	--ClearData. We send a msg to the server, then do a server check as well. TODO
+	local payload = {};
+
+	print(gameEnded)
+	payload.Message = "ClearData";	
+	game.SendGameCustomMessage("Clearing mod data...", payload, function(returnValue) end);
+end;
+

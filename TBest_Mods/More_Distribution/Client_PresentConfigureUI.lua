@@ -14,7 +14,7 @@ function Client_PresentConfigureUI(rootParent)
 	local mainContainer = UI.CreateVerticalLayoutGroup(rootParent);
 	
 	local vert = UI.CreateVerticalLayoutGroup(mainContainer);
-	UI.CreateLabel(vert).SetText("If the settings would produce a non-working distribution, the mod will turn it into a full distribution. You also have to make sure to select either warlords or city distrubution in the game settings. At the moment, combining settings below is not supported.");	
+	UI.CreateLabel(vert).SetText("If the settings would produce a non-working distribution, the mod will turn it into a full distribution. You also have to make sure to select either warlords or city distrubution in the game settings and Manual Distribution. At the moment, combining settings below is not supported (with the exception of inverse).");	
 	
 	local HorzLayout = UI.CreateHorizontalLayoutGroup(mainContainer);
 	reverseDistCheckBox = UI.CreateCheckBox(HorzLayout).SetIsChecked(initialReverseDist).SetText('Do the inverse of the settings below');

@@ -2,14 +2,16 @@ require('Utilities');
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	if (Mod.PublicGameData.ChatModEnabled == false)then return end;
-	
+	Dump(payload)
+
 	--Sorted according to what is used most
 	if (payload.Message == "ReadChat") then
 		--Mark as read
 		ReadChat(playerID)
+		
 		elseif (payload.Message == "SendChat") then
 		--DeliverChat
-		DeliverChat(game,playerID,payload)
+		DeliverChat(game,playerID,payload, setReturnTable)
 		
 		elseif (payload.Message == "AddGroupMember") then
 		--Add to group
@@ -30,6 +32,10 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		elseif (payload.Message == "SaveSettings") then
 		--Save settings
 		SaveSettings(game, playerID, payload)
+
+		elseif (payload.Message == "GiftGold") then
+		--Gift gold
+		GiftGold(game,playerID, payload, setReturnTable)
 		
 		elseif (payload.Message == "ClearData") then
 		--Remove all playerGameData. Useful for testing (works only for admin)
@@ -163,7 +169,7 @@ function AddToGroup(game,playerID,payload)
 	end
 end
 
-function DeliverChat(game,playerID,payload)
+function DeliverChat(game,playerID,payload,setReturnTable)
 	local playerGameData = Mod.PlayerGameData
 	local data = playerGameData[playerID];
 	local TargetGroupID = payload.TargetGroupID
@@ -190,6 +196,16 @@ function DeliverChat(game,playerID,payload)
 	playerGameData[playerID] = data;
 	
 	UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
+	local Alerts = true;
+	local PublicGameData = Mod.PublicGameData;
+	if (PublicGameData ~= nil)then
+		if (PublicGameData[game.Us.ID] ~= nil) then
+			Alerts = PublicGameData[game.Us.ID].AlertUnreadChat;
+		end;
+	end;
+	if (Alerts)then
+	setReturnTable({Status = "Chat sent"}) 
+	end;
 end
 
 function ReadChat(playerID)
@@ -265,7 +281,7 @@ function SaveSettings(game,playerID, payload)
 end;
 
 --Removing all Mod data when a game is over (also useful during development.)
-function ClearData(game,playerID);
+function ClearData(game,playerID)
 	if (playerID == 69603)then --My playerID
 		--Remove all playerGameData
 		local playerGameData = Mod.PlayerGameData;		
@@ -330,4 +346,28 @@ function TurnDivider(turnNumber)
 	end
 	--Save playerGameData
 	Mod.PlayerGameData = playerGameData;
+end
+
+function GiftGold(game, playerID, payload, setReturnTable)
+	if (playerID == payload.TargetPlayerID) then
+		setReturnTable({ Message = "You can't gift yourself" });
+		return;
+	end
+	local goldSending = payload.Gold;
+
+	local goldHave = game.ServerGame.LatestTurnStanding.NumResources(playerID, WL.ResourceType.Gold);
+
+	if (goldHave < goldSending) then
+		setReturnTable({ Message = "You can't gift " .. goldSending .. " when you only have " .. goldHave });
+		return;
+	end
+
+	local targetPlayer = game.Game.Players[payload.TargetPlayerID];
+	local targetPlayerHasGold = game.ServerGame.LatestTurnStanding.NumResources(targetPlayer.ID, WL.ResourceType.Gold);
+	
+	--Subtract goldSending from ourselves, add goldSending to target
+	game.ServerGame.SetPlayerResource(playerID, WL.ResourceType.Gold, goldHave - goldSending);
+	game.ServerGame.SetPlayerResource(targetPlayer.ID, WL.ResourceType.Gold, targetPlayerHasGold + goldSending);
+	setReturnTable({ Message = "Sent " .. targetPlayer.DisplayName(nil, false) .. ' ' .. goldSending .. ' gold. You now have ' .. (goldHave - goldSending) .. '.'  });
+
 end
