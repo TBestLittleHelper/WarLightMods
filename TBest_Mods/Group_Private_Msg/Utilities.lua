@@ -128,3 +128,12 @@ function randomColor()
 	
 	return color;
 end
+
+--Used by Diplo Mod
+function NewIdentity()
+	local data = Mod.PublicGameData;
+	local ret = data.Identity or 1;
+	data.Identity = ret + 1;
+	Mod.PublicGameData = data;
+	return ret;
+end

@@ -1,9 +1,11 @@
 require('Utilities');
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
-	if (Mod.PublicGameData.ChatModEnabled == false)then return end;
+	--If the game is over, return
+	if (Mod.PublicGameData.GameFinalized == true)then return end;
 	Dump(payload)
 
+	--TODO we should move on from elseif mess.
 	--Sorted according to what is used most
 	if (payload.Message == "ReadChat") then
 		--Mark as read
@@ -33,13 +35,28 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		--Save settings
 		SaveSettings(game, playerID, payload)
 
-		elseif (payload.Message == "GiftGold") then
+		--Diplomacy
+		elseif(payload.Mod == 'Diplomacy' and Mod.Settings.ModDiplomacyEnabled == true)then
+			if (payload.Message == "Propose") then
+			Propose(game,playerID, payload)
+			elseif (payload.Message == "AcceptProposal" or "DeclineProposal") then
+			ProposeDeclineAccept(game,playerID, payload)
+			elseif (payload.Message == "SeenAllianceMessage") then
+			Propose(game,playerID, payload, setReturnTable)
+			elseif (payload.Message == "SeenAlerts") then
+			Propose(game,playerID, payload, setReturnTable)
+			else return end;
+		
 		--Gift gold
+		elseif (payload.Message == "GiftGold" and Mod.Settings.ModGiftGoldEnabled == true) then
 		GiftGold(game,playerID, payload, setReturnTable)
 		
 		elseif (payload.Message == "ClearData") then
 		--Remove all playerGameData. Useful for testing (works only for admin)
 		ClearData(game,playerID);		
+
+		else
+		error("Payload message not understood (" .. payload.Message .. ")");
 	end
 end	
 
@@ -199,6 +216,7 @@ function DeliverChat(game,playerID,payload,setReturnTable)
 	local Alerts = true;
 	local PublicGameData = Mod.PublicGameData;
 	if (PublicGameData ~= nil)then
+		--TODO 127: ERROR: Server_GameCustomMessage.lua:(219,2-45): attempt to index a nil value : possibley a SP error
 		if (PublicGameData[game.Us.ID] ~= nil) then
 			Alerts = PublicGameData[game.Us.ID].AlertUnreadChat;
 		end;
@@ -369,5 +387,78 @@ function GiftGold(game, playerID, payload, setReturnTable)
 	game.ServerGame.SetPlayerResource(playerID, WL.ResourceType.Gold, goldHave - goldSending);
 	game.ServerGame.SetPlayerResource(targetPlayer.ID, WL.ResourceType.Gold, targetPlayerHasGold + goldSending);
 	setReturnTable({ Message = "Sent " .. targetPlayer.DisplayName(nil, false) .. ' ' .. goldSending .. ' gold. You now have ' .. (goldHave - goldSending) .. '.'  });
-
+	
 end
+
+--Diplomacy Mod
+function Propose(game,playerID,payload)
+	--Create a proposal
+	local proposal = {};
+	proposal.ID = NewIdentity();
+	proposal.PlayerOne = playerID;
+	proposal.PlayerTwo = payload.TargetPlayerID;
+
+	if (game.Settings.SinglePlayer) then
+		--In single-player, just auto-accept proposals for testing.
+		ProposalAccepted(proposal, game);
+	else
+		--Write it into the player-specific data
+		local playerData = Mod.PlayerGameData;
+		if (playerData[payload.TargetPlayerID] == nil) then
+			playerData[payload.TargetPlayerID] = {};
+		end
+
+		local pendingProposals = playerData[payload.TargetPlayerID].PendingProposals or {};
+		table.insert(pendingProposals, proposal);
+		playerData[payload.TargetPlayerID].PendingProposals = pendingProposals;
+		Mod.PlayerGameData = playerData;
+	end
+end
+function ProposeDeclineAccept(game,playerID,payload)
+	local proposal = first(Mod.PlayerGameData[playerID].PendingProposals, function(prop) return prop.ID == payload.ProposalID end);
+		if (proposal == nil) then return; end; --skip if the proposal ID is invalid.  This can happen if it gets accepted/declined twice
+		--Remove it from PlayerGameData
+		local pgd = Mod.PlayerGameData;
+		pgd[playerID].PendingProposals = filter(pgd[playerID].PendingProposals, function(prop) return prop.ID ~= payload.ProposalID end);
+		Mod.PlayerGameData = pgd;
+		--If we're accepting it, call ProposalAccepted. If we're declining it, just do nothing and let it be removed.
+		if (payload.Message == "AcceptProposal") then
+			ProposalAccepted(proposal, game);
+		end
+end
+function SeenAllianceMessage(playerID,payload)
+	local playerData = Mod.PlayerGameData;
+	if (playerData[playerID] == nil) then
+		playerData[playerID] = {};
+	end
+	playerData[playerID].HighestAllianceIDSeen = payload.HighestAllianceIDSeen;
+	Mod.PlayerGameData = playerData;
+end
+function SeenAlerts(playerID,payload)
+	local playerData = Mod.PlayerGameData;
+		if (playerData[playerID] == nil) then
+			playerData[playerID] = {};
+		end
+		playerData[playerID].Alerts = nil;
+		Mod.PlayerGameData = playerData;
+end
+function ProposalAccepted(proposal, game)
+	
+	--Create the alliance
+	local alliance = {};
+	alliance.ID = NewIdentity();
+	alliance.PlayerOne = proposal.PlayerOne;
+	alliance.PlayerTwo = proposal.PlayerTwo;
+
+	local data = Mod.PublicGameData;
+	local alliances = data.Alliances or {};
+
+	--Do we already have an alliance? Remove it if so.
+	alliances = filter(alliances, function(a) return not ((a.PlayerOne == alliance.PlayerOne and a.PlayerTwo == alliance.PlayerTwo) or (a.PlayerOne == alliance.PlayerTwo and a.PlayerTwo == alliance.PlayerOne)) end);
+
+	--Write it into Mod.PublicGameData for all to see
+	table.insert(alliances, alliance);
+	data.Alliances = alliances;
+	Mod.PublicGameData = data;
+end
+

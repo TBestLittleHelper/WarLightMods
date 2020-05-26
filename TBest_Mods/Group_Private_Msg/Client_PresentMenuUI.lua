@@ -1,17 +1,17 @@
 require('Utilities');
-require("Giftgold")
+require('Giftgold');
+require('Diplomacy');
+
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	if (Mod.PublicGameData.GameFinalized == false) then
 	--Check if the game has ended.
 	--We need to check here and not in ServerAdvanceTurn. Since VTE is not detectable there
-	CheckGameEnded(game);
-	
-	
+		CheckGameEnded(game);
 	end;
 
 	--If a spectator, just alert then return
-	if (game.Us == nil) then
+	if (game.Us == nil and Mod.PublicGameData.GameFinalized == false) then
 		UI.Alert("You can't do anything as a spectator until the game has ended.");
 		return;
 	end;	
@@ -147,14 +147,19 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		SendChat();
 	end);
 	--Send gold button
-	--TODO if enabled
-	if (ClientGame.Settings.CommerceGame == true) then
-		UI.CreateButton(ChatButtonContainer).SetColor("#880085").SetText("Gift gold").SetOnClick(function()
+	if (ClientGame.Settings.CommerceGame == true and Mod.Settings.ModGiftGoldEnabled == true) then
+		UI.CreateButton(ChatButtonContainer).SetColor("#FFFF00").SetText("Gift gold").SetOnClick(function()
 			ClientGame.CreateDialog(GiftGoldMenu);
-			close();--Close this dialog. 
 		end);
 	end;
+	--Diplomacy button
+	if (Mod.Settings.ModDiplomacyEnabled)then
+		UI.CreateButton(ChatButtonContainer).SetColor("#0000ff").SetText("Diplomacy Menu").SetOnClick(function()
+		ClientGame.CreateDialog(DiplomacyMenu);
+		end);
+	end
 end;	
+
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)		
 	
 	setMaxSize(410,380); --This dialog's size
@@ -417,10 +422,10 @@ function SendChat()
 	payload.Chat = ChatMessageText.GetText();
 	print("Chat sent " .. payload.Chat .. " to " .. payload.TargetGroupID .. " from " .. ClientGame.Us.ID)
 	ClientGame.SendGameCustomMessage("Sending chat...", payload, function(returnValue) 
+		--TODO only if alert is on
 		UI.Alert(returnValue.Status);
 	end);
 	ChatMessageText.SetText("");
-
 end;
 
 function RefreshChat()
@@ -505,6 +510,7 @@ function RefreshChat()
 	end
 end
 
+--TODO bug when opening a diffrent mod, then using Manage groups after
 function DestroyOldUIelements(Container)
 	if (next(Container)~=nil) then
 		for count = #Container, 1, -1 do		
@@ -631,6 +637,7 @@ end
 
 function CheckGameEnded(game)
 	-- 3 == playing : 4 == elim + over
+	print('Game.state code:')
 	print(game.Game.State) 
 	if (game.Game.State ~= 4 ) then return end;
 --	
@@ -655,8 +662,6 @@ function CheckGameEnded(game)
 --
 --	--ClearData. We send a msg to the server, then do a server check as well. TODO
 	local payload = {};
-
-	print(gameEnded)
 	payload.Message = "ClearData";	
 	game.SendGameCustomMessage("Clearing mod data...", payload, function(returnValue) end);
 end;

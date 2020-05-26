@@ -1,10 +1,15 @@
-require('Client_PresentMenuUI');
+require('Client_PresentMenuUI'); --TODO check if this is still requiered 
 
 function Client_GameRefresh(game)	
     --Skip if we're not in the game or if the game is over.
     if (game.Us == nil or Mod.PublicGameData.GameFinalized == false) then 
         return;
 	end
+	--Check for new Diplomacy
+	if (Mod.Settings.ModDiplomacyEnabled)then
+		if (CheckDiplomacyAlert(game) == true) then return end;
+	end;
+	
 	--Check for unread chat
 	print("Checking unread chat")
 	CheckUnreadChat(game);
@@ -54,3 +59,62 @@ function CheckUnreadChat(game)
 		game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) end)
 	end;
 end;
+
+
+
+function CheckDiplomacyAlert(game)
+	if (HighestAllianceIDSeen == 0 and Mod.PlayerGameData.HighestAllianceIDSeen ~= nil and Mod.PlayerGameData.HighestAllianceIDSeen > HighestAllianceIDSeen) then
+        HighestAllianceIDSeen = Mod.PlayerGameData.HighestAllianceIDSeen;
+    end
+
+    --Check for proposals we haven't alerted the player about yet
+    for _,proposal in pairs(filter(Mod.PlayerGameData.PendingProposals or {}, function(proposal) return HighestProposalIDSeen < proposal.ID end)) do
+        DoProposalPrompt(game, proposal);
+        if (HighestProposalIDSeen < proposal.ID) then
+            HighestProposalIDSeen = proposal.ID;
+        end
+    end
+
+    --Notify players of new alliances via UI.Alert()
+    local unseenAlliances = filter(Mod.PublicGameData.Alliances or {}, function(alliance) return HighestAllianceIDSeen < alliance.ID end);
+    if (#unseenAlliances > 0) then
+        for _,alliance in pairs(unseenAlliances) do
+            if (HighestAllianceIDSeen < alliance.ID) then
+                HighestAllianceIDSeen = alliance.ID;
+            end
+        end
+
+        local msgs = map(unseenAlliances, function(alliance)
+            local playerOne = game.Game.Players[alliance.PlayerOne].DisplayName(nil, false);
+			local playerTwo = game.Game.Players[alliance.PlayerTwo].DisplayName(nil, false);
+			return playerOne .. ' and ' .. playerTwo .. ' are now allied!';
+        end);
+        local finalMsg = table.concat(msgs, '\n');
+
+        --Let the server know we've seen it.  Wait on doing the alert until after the message is received just to avoid two things appearing on the screen at once.
+		local payload = {};
+		payload.Mod = 'Diplomacy';
+        payload.Message = 'SeenAllianceMessage';
+        payload.HighestAllianceIDSeen = HighestAllianceIDSeen;
+        game.SendGameCustomMessage('Read receipt...', payload, function(returnValue)
+            UI.Alert(finalMsg);
+        end);
+        return true;
+    end
+
+    --Notify players of any pending alerts
+    local unseenAlerts = Mod.PlayerGameData.Alerts or {};
+
+    if (#unseenAlerts > 0) then
+        local msg = table.concat(map(unseenAlerts, function(alert) return alert.Message end), '\n');
+
+        --Let the server know we've seen all of these. Wait on doing the alert until after the message is received just to avoid two things appearing on the screen at once.
+		local payload = {};
+		payload.Mod = 'Diplomacy';
+        payload.Message = 'SeenAlerts';
+        game.SendGameCustomMessage('Read receipt...', payload, function(returnValue)
+            UI.Alert(msg);
+		end);
+		return true;
+    end
+end
