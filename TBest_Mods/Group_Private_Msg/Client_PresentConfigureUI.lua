@@ -1,4 +1,5 @@
 require("PresentConfigureModBetterCities")
+require("PresentConfigureModWinCon")
 
 function Client_PresentConfigureUI(rootParent)
 	ModGiftGoldEnabled = Mod.Settings.ModGiftGoldEnabled
@@ -7,19 +8,19 @@ function Client_PresentConfigureUI(rootParent)
 	ModWinningConditionsEnabled = Mod.Settings.ModWinningConditionsEnabled
 
 	if ModGiftGoldEnabled == nil then
-		ModGiftGoldEnabled = true
+		ModGiftGoldEnabled = false
 	end
 	if ModDiplomacyEnabled == nil then
-		ModDiplomacyEnabled = true
+		ModDiplomacyEnabled = false
 	end
 	if ModBetterCitiesEnabled == nil then
-		ModBetterCitiesEnabled = true
+		ModBetterCitiesEnabled = false
 	end
 	if ModWinningConditionsEnabled == nil then
-		ModWinningConditionsEnabled = true
+		ModWinningConditionsEnabled = false
 	end
 
-	UI.CreateLabel(rootParent).SetText("Turn on/off major parts of the mod.")
+	UI.CreateLabel(rootParent).SetText("Turn on/off major individual parts of the modpack.")
 
 	horzlist = {}
 	horzlist[0] = UI.CreateHorizontalLayoutGroup(rootParent)
@@ -28,10 +29,13 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[3] = UI.CreateHorizontalLayoutGroup(rootParent)
 	horzlist[4] = UI.CreateVerticalLayoutGroup(rootParent) --Used for BetterCities Mod
 	horzlist[5] = UI.CreateHorizontalLayoutGroup(rootParent)
+	horzlist[6] = UI.CreateVerticalLayoutGroup(rootParent) --Used for WinCon mod
+
 
 	--Instructions text
 	showOptionsToggle =
-		UI.CreateCheckBox(horzlist[0]).SetText("Show Options").SetIsChecked(false).SetOnValueChanged(ShowOptions)
+		UI.CreateCheckBox(horzlist[0]).SetText("Show Options").SetIsChecked(true).SetOnValueChanged(ShowOptions)
+	ShowOptions();		
 end
 
 function ShowOptions()
@@ -40,10 +44,14 @@ function ShowOptions()
 		UI.Destroy(DiplomacyCheckBox)
 		UI.Destroy(BetterCitiesCheckBox)
 		if (vertlistBetterCities ~= nil)then
-			for i=0,100,1 do UI.Destroy(vertlistBetterCities[i]) end
+			for i=0,25,1 do UI.Destroy(vertlistBetterCities[i]) end
 			vertlistBetterCities = nil;
 		end;
 		UI.Destroy(WinningConditionsCheckBox)
+		if (vertlistWinCon ~= nil)then
+			for i=0,25,1 do UI.Destroy(vertlistWinCon[i]) end
+			vertlistWinCon = nil;
+		end;
 
 		GiftGoldCheckBox = nil
 	else
@@ -77,7 +85,6 @@ function SaveConfig()
 
 	if (ModBetterCitiesEnabled) then
 		if (vertlistBetterCities == nil)then
-			print("ModBetterCitiesEnabled")
 			vertlistBetterCities = {}   
 			for i=0,25,1 do vertlistBetterCities[i] = UI.CreateHorizontalLayoutGroup(horzlist[4]) end
 			PresentModBetterCitiesSettings()
@@ -86,6 +93,19 @@ function SaveConfig()
 		if (vertlistBetterCities ~= nil)then
 			for i=0,25,1 do UI.Destroy(vertlistBetterCities[i]) end
 			vertlistBetterCities = nil;
+		end;
+	end
+
+	if (ModWinningConditionsEnabled) then
+		if (vertlistWinCon == nil)then
+			vertlistWinCon = {}   
+			for i=0,25,1 do vertlistWinCon[i] = UI.CreateHorizontalLayoutGroup(horzlist[6]) end
+			PresentModWinConSettings()
+		end
+	else
+		if (vertlistWinCon ~= nil)then
+			for i=0,25,1 do UI.Destroy(vertlistWinCon[i]) end
+			vertlistWinCon = nil;
 		end;
 	end
 end

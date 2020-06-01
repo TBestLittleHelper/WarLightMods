@@ -20,8 +20,8 @@ function CheckUnreadChat(game)
 	if (skipRefresh == nil or skipRefresh == true)then return end;	
 
 	local PlayerGameData = Mod.PlayerGameData;
-	if (PlayerGameData == nil)then 
-		print("PlayerGameData is nil. No unread chat")
+	if (PlayerGameData.Chat == nil)then 
+		print("PlayerGameData.Chat is nil. No unread chat")
 		return;
 	end;
 	
@@ -37,8 +37,8 @@ function CheckUnreadChat(game)
 		end;
 	end;
 	
-	for i, v in pairs(PlayerGameData) do
-		groups[i] = PlayerGameData[i]
+	for i, v in pairs(PlayerGameData.Chat) do
+		groups[i] = PlayerGameData.Chat[i]
 		if (groups[i].UnreadChat == true) then
 			markChatAsRead = true;
 			--Only show an alert if we are not the sender or if it is a SinglePlayer game (for testing)
@@ -63,12 +63,12 @@ end;
 
 
 function CheckDiplomacyAlert(game)
-	if (HighestAllianceIDSeen == 0 and Mod.PlayerGameData.HighestAllianceIDSeen ~= nil and Mod.PlayerGameData.HighestAllianceIDSeen > HighestAllianceIDSeen) then
-        HighestAllianceIDSeen = Mod.PlayerGameData.HighestAllianceIDSeen;
+	if (HighestAllianceIDSeen == 0 and Mod.PlayerGameData.Diplo.HighestAllianceIDSeen ~= nil and Mod.PlayerGameData.Diplo.HighestAllianceIDSeen > HighestAllianceIDSeen) then
+        HighestAllianceIDSeen = Mod.PlayerGameData.Diplo.HighestAllianceIDSeen;
     end
 
     --Check for proposals we haven't alerted the player about yet
-    for _,proposal in pairs(filter(Mod.PlayerGameData.PendingProposals or {}, function(proposal) return HighestProposalIDSeen < proposal.ID end)) do
+    for _,proposal in pairs(filter(Mod.PlayerGameData.Diplo.PendingProposals or {}, function(proposal) return HighestProposalIDSeen < proposal.ID end)) do
         DoProposalPrompt(game, proposal);
         if (HighestProposalIDSeen < proposal.ID) then
             HighestProposalIDSeen = proposal.ID;
@@ -103,7 +103,7 @@ function CheckDiplomacyAlert(game)
     end
 
     --Notify players of any pending alerts
-    local unseenAlerts = Mod.PlayerGameData.Alerts or {};
+    local unseenAlerts = Mod.PlayerGameData.Diplo.Alerts or {};
 
     if (#unseenAlerts > 0) then
         local msg = table.concat(map(unseenAlerts, function(alert) return alert.Message end), '\n');

@@ -1,7 +1,7 @@
 require('Utilities');
 require('Giftgold');
 require('Diplomacy');
-
+require('WinCon')
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	if (Mod.PublicGameData.GameFinalized == false) then
@@ -34,7 +34,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end;
 	
 	if (AlertUnreadChat == nil) then AlertUnreadChat = true end;  --Alert the user when they have unread chat
-	if (EachGroupButton == nil) then EachGroupButton = false end; --If each group has a button in PresentMenuUi
+	if (EachGroupButton == nil) then EachGroupButton = true end; --Each group has a button in PresentMenuUi
 	if (NumPastChat == nil) then
 		NumPastChat = 7; --Max amount of past chat shown
 	end;
@@ -69,21 +69,21 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	.SetText("Manage groups")
 	.SetFlexibleWidth(0.2)
 	.SetOnClick(function()
-		DestroyOldUIelements(ChatMsgContainerArray)
+		if (ChatMsgContainerArray ~= {})then DestroyOldUIelements(ChatMsgContainerArray) end;
 		skipRefresh = true;
 		ClientGame.CreateDialog(CreateEditDialog);
 		close();--Close this dialog. 
 	end);
 	
 	UI.CreateButton(rootParent).SetText("Settings").SetColor("#00ff05").SetOnClick(function()
-		DestroyOldUIelements(ChatMsgContainerArray)
+		if (ChatMsgContainerArray ~= {})then DestroyOldUIelements(ChatMsgContainerArray) end;
 		skipRefresh = true;
 		ClientGame.CreateDialog(SettingsDialog);
 		close();--Close this dialog. 
 	end);
 	
 	--If we are in a group, show the chat options
-	if (next(PlayerGameData) ~= nil) then
+	if (next(PlayerGameData.Chat) ~= nil) then
 		if not(EachGroupButton) then
 			--A text field for the group selected
 			ChatGroupSelectedText = UI.CreateButton(horizontalLayout)
@@ -97,10 +97,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetOnClick(ChatGroupSelected)
 			else
 			--For all groups, show a button
-			for GroupID, group in pairs (PlayerGameData) do
+			for GroupID, group in pairs (PlayerGameData.Chat) do
 				UI.CreateButton(horizontalLayout)
-				.SetText(PlayerGameData[GroupID].GroupName)
-				.SetColor(PlayerGameData[GroupID].Color)
+				.SetText(PlayerGameData.Chat[GroupID].GroupName)
+				.SetColor(PlayerGameData.Chat[GroupID].Color)
 				.SetOnClick(function() 
 					ChatMessageText.SetInteractable(true)
 					ChatGroupSelectedID = GroupID;
@@ -124,8 +124,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		ChatMessageText.SetInteractable(false)
 		else
 		if not (EachGroupButton)then 
-			ChatGroupSelectedText.SetText(PlayerGameData[ChatGroupSelectedID].GroupName)
-			ChatGroupSelectedText.SetColor(PlayerGameData[ChatGroupSelectedID].Color)
+			ChatGroupSelectedText.SetText(PlayerGameData.Chat[ChatGroupSelectedID].GroupName)
+			ChatGroupSelectedText.SetColor(PlayerGameData.Chat[ChatGroupSelectedID].Color)
 		end;			
 	end
 	RefreshChat();
@@ -146,16 +146,28 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end		
 		SendChat();
 	end);
-	--Send gold button
+	--TODO add go back button to all dialog's. Also go back when done gifting gold.
+	--Send gold button 
 	if (ClientGame.Settings.CommerceGame == true and Mod.Settings.ModGiftGoldEnabled == true) then
 		UI.CreateButton(ChatButtonContainer).SetColor("#FFFF00").SetText("Gift gold").SetOnClick(function()
 			ClientGame.CreateDialog(GiftGoldMenu);
+			close();--Close this dialog. 
 		end);
 	end;
 	--Diplomacy button
 	if (Mod.Settings.ModDiplomacyEnabled)then
 		UI.CreateButton(ChatButtonContainer).SetColor("#0000ff").SetText("Diplomacy Menu").SetOnClick(function()
-		ClientGame.CreateDialog(DiplomacyMenu);
+			ClientGame.CreateDialog(DiplomacyMenu);
+			close();--Close this dialog. 
+		end);
+	end
+
+	--TODO test
+	--WinCon button
+	if (Mod.Settings.ModDiplomacyEnabled)then
+		UI.CreateButton(ChatButtonContainer).SetColor("#0000ff").SetText("Winning Conditions").SetOnClick(function()
+		ClientGame.CreateDialog(PresentMenuWinCon);
+		close();--Close this dialog. 
 		end);
 	end
 end;	
@@ -236,8 +248,8 @@ end
 
 function ChatGroupSelected()
 	local groups = {}
-	for i, v in pairs(PlayerGameData) do
-		groups[i] = PlayerGameData[i]
+	for i, v in pairs(PlayerGameData.Chat) do
+		groups[i] = PlayerGameData.Chat[i]
 	end
 	local options = map(groups, ChatGroupSelectedButton);
 	UI.PromptFromList("Select a chat group", options);
@@ -258,12 +270,12 @@ function ChatGroupSelectedButton(group)
 end
 
 function getGroupMembers()	
-	if (next(PlayerGameData) ~= nil and ChatGroupSelectedID ~= nil) then		
-		local groupMembers = PlayerGameData[ChatGroupSelectedID].GroupName .. " has the following members:  ";
+	if (next(PlayerGameData.Chat) ~= nil and ChatGroupSelectedID ~= nil) then		
+		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
 		local ListMsg = ""; 
 		
-		for j, val in pairs(PlayerGameData[ChatGroupSelectedID].Members) do
+		for j, val in pairs(PlayerGameData.Chat[ChatGroupSelectedID].Members) do
 			if (val == true) then
 				playerID = j
 				local player = ClientGame.Game.Players[playerID];
@@ -294,7 +306,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
 	
-	if (next(PlayerGameData) ~= nil) then
+	if (next(PlayerGameData.Chat) ~= nil) then
 		ChatGroupBtn = UI.CreateButton(row2).SetText("Pick an existing group").SetOnClick(ChatGroupClicked);
 	end
 	
@@ -311,7 +323,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		
 		if (TargetGroupID == nil) then
 			local temp =0;
-			for groupID, v in pairs(PlayerGameData) do
+			for groupID, v in pairs(PlayerGameData.Chat) do
 				temp = temp +1;				
 			end
 			temp = ClientGame.Us.ID .. '00' .. temp;
@@ -348,7 +360,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 			return;
 		end
 		--We can't remove the owner of a group
-		if (TargetPlayerID == Mod.PlayerGameData[TargetGroupID].Owner)then
+		if (TargetPlayerID == Mod.PlayerGameData.Chat[TargetGroupID].Owner)then
 			UI.Alert("You can't remove the owner of a group")
 			return;
 		end;
@@ -378,7 +390,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 			UI.Alert("Please choose a group from the list");
 			return;
 		end
-		if (Mod.PlayerGameData[TargetGroupID].Owner == ClientGame.Us.ID) then
+		if (Mod.PlayerGameData.Chat[TargetGroupID].Owner == ClientGame.Us.ID) then
 			UI.Alert("You can't leave a group you created. You can, however delete the group.")
 			return;
 		end;
@@ -401,7 +413,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 			return;
 		end
 		
-		if (Mod.PlayerGameData[TargetGroupID].Owner ~= ClientGame.Us.ID) then
+		if (Mod.PlayerGameData.Chat[TargetGroupID].Owner ~= ClientGame.Us.ID) then
 			UI.Alert("You can only delete if you are the owner of a group")
 			return;
 		end;
@@ -411,7 +423,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		payload.TargetGroupID = TargetGroupID;
 		
 		--Ask for confirmation from the player
-		UI.PromptFromList("Are you sure you want to delete " .. Mod.PlayerGameData[TargetGroupID].GroupName .. "?", { DeleteGroupConfirmed(ClientGame, payload), DeleteGroupDeclined()});
+		UI.PromptFromList("Are you sure you want to delete " .. Mod.PlayerGameData.Chat[TargetGroupID].GroupName .. "?", { DeleteGroupConfirmed(ClientGame, payload), DeleteGroupDeclined()});
 	end);
 end
 
@@ -455,13 +467,13 @@ function RefreshChat()
 	
 	--If there are no past chat or no group selected display the example
 	if (ChatGroupSelectedID ~= nil)then
-		if (PlayerGameData[ChatGroupSelectedID].NumChat == nil) then 
+		if (PlayerGameData.Chat[ChatGroupSelectedID].NumChat == nil) then 
 			ChatArrayIndex = 0;
 			ChatMessageText.SetInteractable(true)
-			else ChatArrayIndex = PlayerGameData[ChatGroupSelectedID].NumChat
+			else ChatArrayIndex = PlayerGameData.Chat[ChatGroupSelectedID].NumChat
 		end;
 	end
-	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then -- or PlayerGameData.Chat[ChatGroupSelectedID] == nil)then	
+	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then
 		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
 		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
 		.SetPreferredWidth(150)
@@ -496,21 +508,20 @@ function RefreshChat()
 		
 		--Chat Sender
 		ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150).SetPreferredHeight(8)		
-		if (PlayerGameData[ChatGroupSelectedID][i].Sender == -1) then
+		if (PlayerGameData.Chat[ChatGroupSelectedID][i].Sender == -1) then
 			ChatSenderbtn.SetText("Mod Info").SetColor('#880085')		
 			else
-			ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
-			.SetColor(ClientGame.Game.Players[PlayerGameData[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
+			ChatSenderbtn.SetText(ClientGame.Game.Players[PlayerGameData.Chat[ChatGroupSelectedID][i].Sender].DisplayName(nil, false))
+			.SetColor(ClientGame.Game.Players[PlayerGameData.Chat[ChatGroupSelectedID][i].Sender].Color.HtmlColor)	
 		end
 		--Chat messages
 		UI.CreateLabel(horz)
 		.SetFlexibleWidth(1)
 		.SetFlexibleHeight(1)
-		.SetText(PlayerGameData[ChatGroupSelectedID][i].Chat)		
+		.SetText(PlayerGameData.Chat[ChatGroupSelectedID][i].Chat)		
 	end
 end
 
---TODO bug when opening a diffrent mod, then using Manage groups after
 function DestroyOldUIelements(Container)
 	if (next(Container)~=nil) then
 		for count = #Container, 1, -1 do		
@@ -531,9 +542,9 @@ function TargetGroupClicked()
 	print("TargetGroupClicked")
 	
 	local groups = {}
-	for i, v in pairs(PlayerGameData) do
+	for i, v in pairs(PlayerGameData.Chat) do
 		print(i)
-		groups[i] = PlayerGameData[i]
+		groups[i] = PlayerGameData.Chat[i]
 	end
 	local options = map(groups, GroupButton);
 	UI.PromptFromList("Select the group you'd like to add this player too", options);
@@ -567,9 +578,9 @@ end
 function ChatGroupClicked()
 	local groups = {}
 	PlayerGameData = Mod.PlayerGameData; --Make sure we have the latest PlayerGameData
-	for i, v in pairs(PlayerGameData) do
+	for i, v in pairs(PlayerGameData.Chat) do
 		print(i)
-		groups[i] = PlayerGameData[i]
+		groups[i] = PlayerGameData.Chat[i]
 	end
 	local options = map(groups, ChatGroupButton);
 	UI.PromptFromList("Select a chat group", options);
@@ -583,7 +594,7 @@ function ChatGroupButton(group)
 		TargetGroupID = group.GroupID;
 		GroupTextNameLabel.SetText("Selected group ")
 		--Check if we are owner or member
-		if (ClientGame.Us.ID == Mod.PlayerGameData[TargetGroupID].Owner) then
+		if (ClientGame.Us.ID == Mod.PlayerGameData.Chat[TargetGroupID].Owner) then
 			--If we are the owner, we can delete the group
 			deleteGroupBtn.SetInteractable(true);
 			LeaveGroupBtn.SetInteractable(false);
@@ -639,28 +650,9 @@ function CheckGameEnded(game)
 	-- 3 == playing : 4 == elim + over
 	print('Game.state code:')
 	print(game.Game.State) 
+	if (game.Us == nil) then return end; --Return if spectator
 	if (game.Game.State ~= 4 ) then return end;
---	
---	--Check if there are any players still playing. If there is not, delete all playerGameData
---	local numAlive = 0; --If we have 2 or more alive game is ongoing.
---	local Teams = {};
---	local numTeamAlive = 0; --If we have teams, num teams alive 
---
---	for playerID, player in pairs (game.Game.Players)do
---		if (IsAlive(playerID, game)) then
---			numAlive = numAlive+1;
---			if (Teams[game.Game.Players[playerID].Team] == nil) then
---				Teams[game.Game.Players[playerID].Team] = true;
---				numTeamAlive = numTeamAlive +1;
---			end
---		end
---	end
---	if (numTeamAlive > 1)then return end; --More then 1 team alive
---	if (Teams[-1] == true)then 	--If there are no teams (-1 is a special value for no teams)
---		if (numAlive > 1)then return end; --And there are more then 1 alive, return
---	end;
---
---	--ClearData. We send a msg to the server, then do a server check as well. TODO
+
 	local payload = {};
 	payload.Message = "ClearData";	
 	game.SendGameCustomMessage("Clearing mod data...", payload, function(returnValue) end);
