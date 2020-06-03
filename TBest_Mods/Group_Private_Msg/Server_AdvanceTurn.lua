@@ -10,6 +10,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 		BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 	end;
 	if (Mod.Settings.ModWinningConditionsEnabled)then
+		WinConGameWon = false;
 		WinCon_Server_AdvanceTurn_Start(game, addNewOrder)
 	end;
 end;
@@ -116,11 +117,11 @@ end
 function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder) 
 	if (Mod.Settings.CityGrowth == false)then return end; --City growth is off
 
-	local cityCap = Mod.Settings.CityGrowthCap;
-	local cityGrowth = Mod.Settings.CityGrowthPower;
-	
 	--The turns cities can grow.
-	if ((game.Game.NumberOfTurns+1) %5 == 0) then
+	if ((game.Game.NumberOfTurns+1) % Mod.Settings.CityGrowthFrequency == 0) then
+		local cityCap = Mod.Settings.CityGrowthCap;
+		local cityGrowth = Mod.Settings.CityGrowthPower;
+	
 		local standing = game.ServerGame.LatestTurnStanding;
 		local CurrentIndex=1;
 		local NewOrders={};
@@ -133,8 +134,6 @@ function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 			if not(territory.Structures == nil or territory.Structures[WL.StructureType.City] == 0) then
 				local terrMod = WL.TerritoryModification.Create(territory.ID);		
 				structure[Cities] = territory.Structures[WL.StructureType.City] +cityGrowth;
-				--A hard-coded cap on how big cities can grow.
-				--TODO make this not be hardcoded
 				if (structure[Cities] <= cityCap) then
 					terrMod.SetStructuresOpt   = structure
 					NewOrders[CurrentIndex]=terrMod;
@@ -254,11 +253,15 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 		if (Mod.Settings.BlockadeBuildCityActive == false) then return end;
 		--If there is a structure present
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
-			--TODO check that city size is not zero
 			--Check that the player controls the territory
 			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].OwnerPlayerID ~= order.PlayerID) then
 				return;
 			end;
+			--A city at size zero won't grow by itself. 
+			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
+				return;
+			end;
+			
 			
 			local structure = {}
 			local NewOrders={};
@@ -308,6 +311,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 end
 
 --WinCon functions
+--TODO fixme there are a few 'hidden' orders at the end of a turn, that creates issues. Like gold earned in commerce or players eliminated
 function WinCon_Server_AdvanceTurn_Start(game, addNewOrder)
 	playerGameData = Mod.PlayerGameData;
 	recalculate = {};
@@ -316,6 +320,8 @@ function WinCon_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, add
 	if(order.PlayerID == WL.PlayerID.Neutral)then
 		return;
 	end
+	if (WinConGameWon)then return end;
+
 	if(order.proxyType == "GameOrderDeploy")then
 		if(game.ServerGame.Game.Players[order.PlayerID].IsAI == false)then
 			playerGameData[order.PlayerID].WinCon.Ownedarmies = playerGameData[order.PlayerID].WinCon.Ownedarmies+order.NumArmies;
@@ -330,9 +336,9 @@ function WinCon_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, add
 		end
 		local player2 = game.ServerGame.LatestTurnStanding.Territories[targetterr].OwnerPlayerID;
 		if(player2 ~= WL.PlayerID.Neutral and game.ServerGame.Game.Players[player2].IsAI == false)then
-			playerGameData[player2].WinCon.Lostarmies = playerGameData[player2].WinCon.Lostarmies+game.ServerGame.LatestTurnStanding.Territories[targetterr].NumArmies.NumArmies/2;
-			playerGameData[player2].WinCon.Ownedarmies = playerGameData[player2].WinCon.Ownedarmies - game.ServerGame.LatestTurnStanding.Territories[targetterr].NumArmies.NumArmies/2;;
-			checkwin(order.PlayerID,addNewOrder,game);
+			playerGameData[player2].WinCon.Lostarmies = playerGameData[player2].WinCon.Lostarmies+game.ServerGame.LatestTurnStanding.Territories[targetterr].NumArmies.NumArmies/2
+			playerGameData[player2].WinCon.Ownedarmies = playerGameData[player2].WinCon.Ownedarmies - game.ServerGame.LatestTurnStanding.Territories[targetterr].NumArmies.NumArmies/2
+			checkwin(order.PlayerID,addNewOrder,game)
 		end
 	end
 	if(order.proxyType == "GameOrderPlayCardAbandon" or order.proxyType == "GameOrderPlayCardBlockade")then
@@ -491,6 +497,7 @@ function WinCon_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, add
 	
 end
 function WinCon_Server_AdvanceTurn_End (game,addNewOrder)
+	if (WinConGameWon)then return end;
 	for _,pid in pairs(game.ServerGame.Game.PlayingPlayers)do
 		if(pid.IsAI == false)then
 			print(pid.ID .. " playerGameData: playerGameData[pid.ID].WinCon "); 
@@ -506,7 +513,6 @@ function WinCon_Server_AdvanceTurn_End (game,addNewOrder)
 			end
 			playerGameData[terr.OwnerPlayerID].WinCon.HoldTerritories[terr.ID] = playerGameData[terr.OwnerPlayerID].WinCon.HoldTerritories[terr.ID] + 1;
 			checkwin(terr.OwnerPlayerID,addNewOrder,game)
-			--TODO fixme bug : we don't need to check win, if the game ended in AdvanceTurn_Order
 		end
 	end
 	Mod.PlayerGameData = playerGameData;
@@ -596,6 +602,7 @@ function checkwin(pid,addNewOrder,game)
 			effect[num].SetOwnerOpt = pid;
 			num = num +1;
 		end
+		WinConGameWon = true;
 		addNewOrder(WL.GameOrderEvent.Create(pid, "Win", nil, effect));
 	end
 end

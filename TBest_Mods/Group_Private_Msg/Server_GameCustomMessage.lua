@@ -66,27 +66,27 @@ function RemoveFromGroup (game,playerID,payload,setReturnTable)
 	local TargetPlayerID = payload.TargetPlayerID;
 	
 	local group = {};
-	if (playerGameData[playerID].chat == nil or playerGameData[playerID].chat[TargetGroupID] == nil)then
+	if (playerGameData[playerID].Chat == nil or playerGameData[playerID].Chat[TargetGroupID] == nil)then
 		print("group to be removed not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
 		
 		--Check if the TargetPlayerID is the owner 
-		elseif(TargetPlayerID == playerGameData[playerID].chat[TargetGroupID].Owner) then
+		elseif(TargetPlayerID == playerGameData[playerID].Chat[TargetGroupID].Owner) then
 		print("Can't remove the owner of a group")
 		return;
 		
 		else
 		print("removing " .. TargetPlayerID .. " from  :" .. TargetGroupID .. " ID")
-		Group = playerGameData[playerID].chat[TargetGroupID]
+		Group = playerGameData[playerID].Chat[TargetGroupID]
 		removeFromSet(Group.Members, TargetPlayerID)
-		playerGameData[playerID].chat[TargetGroupID] = Group;
+		playerGameData[playerID].Chat[TargetGroupID] = Group;
 		
-		--Remove the group from the playerGameData.chat of the removed player, if it's not an AI 
+		--Remove the group from the playerGameData.Chat of the removed player, if it's not an AI 
 		if not(game.Game.Players[TargetPlayerID].IsAI)then
-			Mod.playerGameData.chat[TargetPlayerID][TargetGroupID]=nil;
+			Mod.playerGameData.Chat[TargetPlayerID][TargetGroupID]=nil;
 		end;
 		--Update all other group members
-		UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData.chat);
+		UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData.Chat);
 		
 		--Send a chat msg to the group chat
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " was removed from " .. Group.GroupName;
@@ -99,23 +99,23 @@ function LeaveGroup (game,playerID,payload,setReturnTable)
 	local TargetGroupID = payload.TargetGroupID;
 	local TargetPlayerID = playerID;
 	
-	if (playerGameData[playerID].chat == nil or playerGameData[playerID].chat[TargetGroupID] == nil)then
+	if (playerGameData[playerID].Chat == nil or playerGameData[playerID].Chat[TargetGroupID] == nil)then
 		print("group to leave from not found " .. TargetGroupID)
 		return; --Group can't be found. Do nothing
 	end	
 	--Check if the TargetPlayerID is the owner 
-	if(TargetPlayerID == playerGameData[playerID].chat[TargetGroupID].Owner) then
+	if(TargetPlayerID == playerGameData[playerID].Chat[TargetGroupID].Owner) then
 		print("The owner of a group can't leave. They must use delete group")
 		return;
 	end
 	
 	print(playerID .. " left  :" .. TargetGroupID .. " groupID")
 	--Remove the player
-	local Group = playerGameData[playerID].chat[TargetGroupID]
+	local Group = playerGameData[playerID].Chat[TargetGroupID]
 	removeFromSet(Group.Members, TargetPlayerID)
 	--Update the players data
 	for Members, v in pairs (Group.Members) do
-		playerGameData[Members].chat[TargetGroupID] = Group;
+		playerGameData[Members].Chat[TargetGroupID] = Group;
 	end
 	Mod.PlayerGameData = playerGameData;
 	--Add a msg to the chat
@@ -133,17 +133,17 @@ function AddToGroup(game,playerID,payload,setReturnTable)
 	print(TargetPlayerID .. " targetplayer")
 	print(TargetGroupID .. " TargetGroupID")
 	
-	if (playerGameData[playerID].chat == nil) then 
+	if (playerGameData[playerID].Chat == nil) then 
 		--if nill, make an empty table where we can place GroupID
-		playerGameData[playerID].chat = {};
-		print(" {} playerGameData.chat")
+		playerGameData[playerID].Chat = {};
+		print(" {} playerGameData.Chat")
 		else
-		print("dump playerGameData.chat")
-		Dump(playerGameData[playerID].chat)
+		print("dump playerGameData.Chat")
+		Dump(playerGameData[playerID].Chat)
 	end
 	
 	local Group ={};
-	if (playerGameData[playerID].chat == nil or playerGameData[playerID].chat[TargetGroupID] == nil)then
+	if (playerGameData[playerID].Chat == nil or playerGameData[playerID].Chat[TargetGroupID] == nil)then
 		print("new group " .. TargetGroupID)
 		Group = {
 			Members = {},
@@ -157,18 +157,18 @@ function AddToGroup(game,playerID,payload,setReturnTable)
 		addToSet(Group.Members, playerID)
 		addToSet(Group.Members, TargetPlayerID)
 		--Save to mod storage
-		playerGameData[playerID].chat[TargetGroupID] = Group; 
+		playerGameData[playerID].Chat[TargetGroupID] = Group; 
 		
 		UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 		--Send a msg to the chat of the group
 		payload.Chat = game.Game.Players[Group.Owner].DisplayName(nil,false) .. " created " .. Group.GroupName;
-		DeliverChat(game,playerID,payload)
+		DeliverChat(game,playerID,payload,setReturnTable)
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil,false) .. " was added to " .. Group.GroupName;
-		DeliverChat(game,playerID,payload)
+		DeliverChat(game,playerID,payload,setReturnTable)
 		
 		else
 		print("nice, old group :" .. TargetGroupID .. " ID")
-		Group = playerGameData[playerID].chat[TargetGroupID]
+		Group = playerGameData[playerID].Chat[TargetGroupID]
 		
 		--Check if the player is already in the group. If so, return
 		if (Group.Members[TargetPlayerID] ~= nil) then
@@ -177,7 +177,7 @@ function AddToGroup(game,playerID,payload,setReturnTable)
 		end;
 		--Add the player
 		addToSet(Group.Members, TargetPlayerID)
-		playerGameData[playerID].chat[TargetGroupID] = Group;
+		playerGameData[playerID].Chat[TargetGroupID] = Group;
 		--Update Storage
 		UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 		--Send a msg to the chat of the group
@@ -188,7 +188,7 @@ end
 
 function DeliverChat(game,playerID,payload,setReturnTable)
 	local playerGameData = Mod.PlayerGameData
-	local data = playerGameData[playerID].chat;
+	local data = playerGameData[playerID].Chat;
 	local TargetGroupID = payload.TargetGroupID
 	
 	local ChatInfo = {};
@@ -210,7 +210,7 @@ function DeliverChat(game,playerID,payload,setReturnTable)
 	data[TargetGroupID][ChatArrayIndex] = ChatInfo;
 	--Mark the chat as unread for everyone in the group.
 	data[TargetGroupID].UnreadChat = true;
-	playerGameData[playerID].chat = data;
+	playerGameData[playerID].Chat = data;
 	
 	UpdateAllGroupMembers(game, playerID, TargetGroupID,playerGameData);
 	local Alerts = true;
@@ -228,15 +228,15 @@ end
 function ReadChat(playerID)
 	local playerGameData = Mod.PlayerGameData;
 	--Mark chat as read
-	for i, v in pairs(playerGameData[playerID].chat) do
-		playerGameData[playerID].chat[i].UnreadChat = false;
+	for i, v in pairs(playerGameData[playerID].Chat) do
+		playerGameData[playerID].Chat[i].UnreadChat = false;
 	end;
 	Mod.PlayerGameData = playerGameData;
 end
 
 function UpdateAllGroupMembers(game, playerID, groupID , playerGameData)
 	local playerGameData = playerGameData;
-	local ReffrencePlayerData = playerGameData[playerID].chat; --We already updated the info for this player. Now we need to sync that to the other players
+	local ReffrencePlayerData = playerGameData[playerID].Chat; --We already updated the info for this player. Now we need to sync that to the other players
 	
 	local Group = ReffrencePlayerData[groupID]
 	local outdatedPlayerData;
@@ -245,13 +245,13 @@ function UpdateAllGroupMembers(game, playerID, groupID , playerGameData)
 	for Members, v in pairs (Group.Members) do 
 		--Make sure we don't add AI's. This code is useful for testing in SP and as a safety
 		if not(game.Game.Players[Members].IsAI)then
-			outdatedPlayerData = playerGameData[Members].chat;				
+			outdatedPlayerData = playerGameData[Members].Chat;				
 			--if nil, make an empty table where we can place GroupID
 			if (outdatedPlayerData == nil) then 
 				outdatedPlayerData = {};				
 			end
 			outdatedPlayerData[groupID] = Group;
-			playerGameData[Members].chat = outdatedPlayerData;
+			playerGameData[Members].Chat = outdatedPlayerData;
 		end		
 	end;
 	--Finally write back to Mod.PlayerGameData
@@ -260,7 +260,7 @@ end
 
 function DeleteGroup(game,playerID,payload)
 	local playerGameData = Mod.PlayerGameData;
-	local data = playerGameData[playerID].chat;
+	local data = playerGameData[playerID].Chat;
 	
 	local TargetGroupID = payload.TargetGroupID;
 	local Group = data[TargetGroupID]
@@ -272,9 +272,9 @@ function DeleteGroup(game,playerID,payload)
 	end;
 	--Set groupID data to nil for each player
 	for Members, v in pairs (Group.Members) do
-		--Make sure we skip AI's. This code is useful for testing in SP and as a safety as AI's can't have playerGameData.chat
+		--Make sure we skip AI's. This code is useful for testing in SP and as a safety as AI's can't have playerGameData.Chat
 		if not(game.Game.Players[Members].IsAI)then			
-			playerGameData[Members].chat[TargetGroupID] = nil;
+			playerGameData[Members].Chat[TargetGroupID] = nil;
 		end
 	end
 	Mod.PlayerGameData = playerGameData;
@@ -304,8 +304,8 @@ function ClearData(game,playerID)
 		--Remove all playerGameData
 		local playerGameData = Mod.PlayerGameData;		
 		for Players in pairs (playerGameData) do
-			print("Deleted playerGameData.chat for " .. Players)
-			playerGameData[Players].chat = {};
+			print("Deleted playerGameData.Chat for " .. Players)
+			playerGameData[Players].Chat = {};
 		end
 		
 		Mod.PlayerGameData = playerGameData;
@@ -318,7 +318,7 @@ function ClearData(game,playerID)
 	
 	else
 		--This is a server side safety check. If we end up here, the game should always be over.
-		--Check if there are any players still playing. If there is not, delete all playerGameData.chat
+		--Check if there are any players still playing. If there is not, delete all playerGameData.Chat
 		local numAlive = 0; --If we have 2 or more alive game is ongoing.
 		local Teams = {};
 		local numTeamAlive = 0; --If we have teams, num teams alive 
@@ -348,19 +348,19 @@ function TurnDivider(turnNumber)
 	ChatInfo.Sender = -1; --The Mod is the sender
 	ChatInfo.Chat = " ------ End of turn " .. turnNumber+1 .. " ------";	
 	
-	--For All playerGameData.chat
+	--For All playerGameData.Chat
 	for playerID, player in pairs (playerGameData) do
 		--For ALL groups
-		if(playerGameData[playerID].chat ~= nil)then
-			for TargetGroupID, group in pairs (playerGameData[playerID].chat)do
+		if(playerGameData[playerID].Chat ~= nil)then
+			for TargetGroupID, group in pairs (playerGameData[playerID].Chat)do
 				--ADD a turn chat
-				if (playerGameData[playerID].chat[TargetGroupID] == nil) then 
+				if (playerGameData[playerID].Chat[TargetGroupID] == nil) then 
 					ChatArrayIndex = 1;
-					else ChatArrayIndex = #playerGameData[playerID].chat[TargetGroupID] +1
+					else ChatArrayIndex = #playerGameData[playerID].Chat[TargetGroupID] +1
 				end;					
-				playerGameData[playerID].chat[TargetGroupID].NumChat = ChatArrayIndex;
-				playerGameData[playerID].chat[TargetGroupID][ChatArrayIndex] = {};
-				playerGameData[playerID].chat[TargetGroupID][ChatArrayIndex] = ChatInfo;
+				playerGameData[playerID].Chat[TargetGroupID].NumChat = ChatArrayIndex;
+				playerGameData[playerID].Chat[TargetGroupID][ChatArrayIndex] = {};
+				playerGameData[playerID].Chat[TargetGroupID][ChatArrayIndex] = ChatInfo;
 			end
 		end
 	end

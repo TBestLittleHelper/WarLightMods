@@ -2,9 +2,11 @@ function Client_SaveConfigureUI(alert)
 	Mod.Settings.ModGiftGoldEnabled= ModGiftGoldEnabled  
 	Mod.Settings.ModDiplomacyEnabled= ModDiplomacyEnabled
 	Mod.Settings.ModBetterCitiesEnabled= ModBetterCitiesEnabled 
-	if (ModBetterCitiesEnabled) then SaveModBetterCities() end;
 	Mod.Settings.ModWinningConditionsEnabled= ModWinningConditionsEnabled 
-	if (ModWinningConditionsEnabled)then SaveModWinCon(alert)end;
+	
+
+	if (ModBetterCitiesEnabled) then SaveModBetterCities() end
+	if (ModWinningConditionsEnabled)then SaveModWinCon(alert) end
 end	
 
 
@@ -13,16 +15,25 @@ function SaveModBetterCities()
 	if (cityWallsToggle.GetIsChecked()) then 
 		Mod.Settings.CityWallsActive = true;
 		Mod.Settings.DefPower = sliderDefBonus.GetValue() * 0.01; -- Convert to decimals from percentage
-		if (Mod.Settings.DefPower < 0) then Mod.Settings.DefPower = 0; end
-		if (Mod.Settings.DefPower > 100) then Mod.Settings.DefPower = 100; end			
+		if (Mod.Settings.DefPower < 0) then Mod.Settings.DefPower = 0
+			elseif (Mod.Settings.DefPower > 100) then Mod.Settings.DefPower = 100; 
+		end			
 	end;
 	
 	Mod.Settings.CityGrowth = false;
 	if (cityGrowthToggle.GetIsChecked()) then 
 		Mod.Settings.CityGrowth = true;
 		Mod.Settings.CityGrowthCap = sliderCityGrowthCap.GetValue();
-		if (Mod.Settings.CityGrowthCap < 1) then Mod.Settings.DefPower = 1; end
-		if (Mod.Settings.CityGrowthCap > 100) then Mod.Settings.DefPower = 100; end			
+		Mod.Settings.CityGrowthFrequency = sliderCityGrowthFrequency.GetValue();
+	
+		if (Mod.Settings.CityGrowthCap < 1) then Mod.Settings.CityGrowthCap = 1
+			elseif (Mod.Settings.CityGrowthCap > 100) then Mod.Settings.CityGrowthCap = 100
+		end
+		
+		if (Mod.Settings.CityGrowthFrequency < 1) then Mod.Settings.CityGrowthFrequency = 1
+			elseif (Mod.Settings.CityGrowthFrequency > 100) then Mod.Settings.CityGrowthFrequency = 100
+		end
+					
 		Mod.Settings.CityGrowthPower = 1; --For now, a host can't change this value but we might open it up in the future.
 	end;
 	
@@ -146,6 +157,8 @@ function SaveModWinCon(alert)
 	end
 end
 function InRange(setting)
+
+
 	if(setting>100000)then
 		Alert("Numbers can't be higher then 100000");
 	end

@@ -6,14 +6,26 @@ function Server_StartGame(game, standing)
 	publicGameData.Chat = {};
 	Mod.PublicGameData = publicGameData;
 
-	--TODO set up all playergamedata
+	playerGameDataSetup(game);
 
 
 	if (Mod.Settings.ModBetterCitiesEnabled)then StartGameBetterCities(game, standing) end;
-	--NOTE: We are setting up PlayerGameData.Chat in StartGameWinCon too
 	if (Mod.Settings.ModWinningConditionsEnabled)then StartGameWinCon(game, standing) end;
 end
 
+function playerGameDataSetup(game)
+	local playerGameData = Mod.PlayerGameData;
+	for _,pid in pairs(game.ServerGame.Game.Players)do
+		if(pid.IsAI == false)then
+			playerGameData[pid.ID] = {};
+			playerGameData[pid.ID].Chat = {}; -- For the chat function
+			playerGameData[pid.ID].Diplo = {}; -- For the diplo function
+			playerGameData[pid.ID].Diplo.PendingProposals = {}
+			
+		end
+	end
+	Mod.PlayerGameData = playerGameData;
+end
 
 function StartGameBetterCities( game, standing )
 		--If we are not doing anything, return
@@ -54,11 +66,7 @@ function StartGameWinCon(game, standing)
 	local playerGameData = Mod.PlayerGameData;
 	for _,pid in pairs(game.ServerGame.Game.Players)do
 		if(pid.IsAI == false)then
-			playerGameData[pid.ID] = {};
 			playerGameData[pid.ID].WinCon = {};
-
-			playerGameData[pid.ID].Chat = {}; -- For the chat function
-
 			playerGameData[pid.ID].WinCon.Capturedterritories = 0;
 			playerGameData[pid.ID].WinCon.Lostterritories = 0;
 			playerGameData[pid.ID].WinCon.Ownedterritories = 0;

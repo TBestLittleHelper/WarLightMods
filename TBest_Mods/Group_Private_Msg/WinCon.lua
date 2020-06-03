@@ -1,6 +1,6 @@
 require("Utilities")
 
-function PresentMenuWinCon(rootParent, setMaxSize, setScrollable, game)
+function PresentMenuWinCon(rootParent, setMaxSize, setScrollable, game, close)
     root = rootParent;
     if (game.Us == nil) then
         UI.CreateLabel(rootParent).SetText("You have no progress since you aren't in the game");
@@ -69,7 +69,12 @@ function PresentMenuWinCon(rootParent, setMaxSize, setScrollable, game)
           UI.CreateLabel(rootParent).SetText("If you lose one of the territories, the condition restarts, when you get it again").SetColor('#FF0000');
       end
   end
+
+  UI.CreateButton(rootParent).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
+        RefreshMainDialog(close, game);
+    end);
 end
+
 function getterrid(game,name)
   for _,terr in pairs(game.Map.Territories)do
       if(terr.Name == name)then

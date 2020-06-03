@@ -10,6 +10,7 @@ function PresentModBetterCitiesSettings()
 	initialCityGrowth = Mod.Settings.CityGrowth
 	initialCityGrowthCap = Mod.Settings.CityGrowthCap
 	initialCityGrowthPower = Mod.Settings.CityGrowthPower
+	initialCityGrowthFrequency = Mod.Settings.CityGrowthFrequency
 
 	--Bomb card
 	initialBombcardActive = Mod.Settings.BombcardActive
@@ -55,6 +56,9 @@ function PresentModBetterCitiesSettings()
 	if initialCityGrowthPower == nil then
 		initialCityGrowthPower = 1
 	end
+	if initialCityGrowthFrequency == nil then 
+		initialCityGrowthFrequency = 5
+	end;
 
 	if initialBombcardActive == nil then
 		initialBombcardActive = true
@@ -126,7 +130,10 @@ text3 =
 		UI.CreateCheckBox(vertlistBetterCities[7]).SetText("Natural City Growth").SetIsChecked(initialCityGrowth)
 	textGrowth = UI.CreateLabel(vertlistBetterCities[8]).SetText("The max size a city can naturaly grow:")
 	sliderCityGrowthCap =
-		UI.CreateNumberInputField(vertlistBetterCities[9]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(initialCityGrowthCap)
+		UI.CreateNumberInputField(vertlistBetterCities[8]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(initialCityGrowthCap)
+	textGrowth = UI.CreateLabel(vertlistBetterCities[9]).SetText("How often cities grows (Turns+1 % [modulos] frequency )")
+	sliderCityGrowthFrequency =	UI.CreateNumberInputField(vertlistBetterCities[9]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(initialCityGrowthFrequency)
+	
 
 	bombCardToggle =
 		UI.CreateCheckBox(vertlistBetterCities[10]).SetText("Bomb card damages cities").SetIsChecked(initialBombcardActive)

@@ -48,12 +48,15 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 		end
 	end
 
-	if (game.Us ~= nil) then --don't show propose button to spectators
+	if (game.Us ~= nil) then --don't show buttons to spectators
 		UI.CreateButton(vert).SetText("Propose Alliance").SetOnClick(function()
 			game.CreateDialog(CreateProposeDialog);
 		end);
-	end
 
+		UI.CreateButton(vert).SetText("Go Back").SetColor("#0000FF").SetOnClick(function() 		
+			RefreshMainDialog(close, game);
+		end);
+	end
 end
 
 function BreakAlliance(otherPlayerID, otherPlayerName)
