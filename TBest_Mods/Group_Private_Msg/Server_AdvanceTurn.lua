@@ -152,8 +152,8 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			if (Mod.Settings.CityDeployOnly)then 
 				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 				orderSkiped = true;
-				return;
 			end;	
+			return;
 			
 		else if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] == 0) then					
 				if (Mod.Settings.CityDeployOnly)then 
