@@ -159,8 +159,8 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 				if (Mod.Settings.CityDeployOnly)then 
 					skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 					orderSkiped = true;
-					return;
 				end;	
+				return;
 			end;
 		end;	
 		
