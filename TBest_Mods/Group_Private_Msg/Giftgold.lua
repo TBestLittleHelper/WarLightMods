@@ -41,7 +41,7 @@ function GiftGoldPlayerButton(player)
 	return ret;
 end
 
-function SubmitClicked()
+function SubmitClicked(game)
 	if (TargetPlayerID == nil) then
 		UI.Alert("Please choose a player first");
 		return;
@@ -62,5 +62,6 @@ function SubmitClicked()
 	Game.SendGameCustomMessage("Gifting Gold...", payload, function(returnValue) 
 		UI.Alert(returnValue.Message);
 		Close(); --Close the dialog since we're done with it
+		RefreshMainDialog(close, game)		
 	end);
 end

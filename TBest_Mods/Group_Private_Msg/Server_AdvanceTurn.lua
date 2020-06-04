@@ -311,7 +311,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 end
 
 --WinCon functions
---TODO fixme there are a few 'hidden' orders at the end of a turn, that creates issues. Like gold earned in commerce or players eliminated
+--TODO fixme there are a few 'hidden' orders at the end of a turn, that creates issues. Like gold earned in commerce or players eliminated. Maybe use Publicgamedata here?
 function WinCon_Server_AdvanceTurn_Start(game, addNewOrder)
 	playerGameData = Mod.PlayerGameData;
 	recalculate = {};

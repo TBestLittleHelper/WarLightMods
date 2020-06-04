@@ -74,7 +74,20 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		ClientGame.CreateDialog(CreateEditDialog);
 		close();--Close this dialog. 
 	end);
-	
+	--TODO set color. Maybe for manage groups too
+	UI.CreateButton(horizontalLayout)
+	.SetText("Broadcast")
+	.SetFlexibleWidth(0.2)
+	.SetColor('#880085')	
+	.SetOnClick(function()
+		if (ChatMsgContainerArray ~= {})then DestroyOldUIelements(ChatMsgContainerArray) end;
+		ChatMessageText.SetInteractable(false)
+		ChatGroupSelectedID = nil;				
+		GroupMembersNames.SetText("Broadcast");
+		RefreshChat();
+	end);
+
+
 	UI.CreateButton(rootParent).SetText("Settings").SetColor("#00ff05").SetOnClick(function()
 		if (ChatMsgContainerArray ~= {})then DestroyOldUIelements(ChatMsgContainerArray) end;
 		skipRefresh = true;
@@ -146,7 +159,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end		
 		SendChat();
 	end);
-	--TODO add go back button to all dialog's. Also go back when done gifting gold.
 	--Send gold button 
 	if (ClientGame.Settings.CommerceGame == true and Mod.Settings.ModGiftGoldEnabled == true) then
 		UI.CreateButton(ChatButtonContainer).SetColor("#FFFF00").SetText("Gift gold").SetOnClick(function()
@@ -161,8 +173,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			close();--Close this dialog. 
 		end);
 	end
-
-	--TODO test
 	--WinCon button
 	if (Mod.Settings.ModDiplomacyEnabled)then
 		UI.CreateButton(ChatButtonContainer).SetColor("#0000ff").SetText("Winning Conditions").SetOnClick(function()
@@ -286,7 +296,8 @@ function getGroupMembers()
 		ListMsg = ListMsg .. groupMembers .. "\n";
 		return ListMsg;
 	end;
-	return "No group selected";
+	--The deafault case is the mod's broadcast
+	return "Broadcast";
 end
 
 function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
@@ -474,26 +485,24 @@ function RefreshChat()
 		end;
 	end
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then
-		local ExampleChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
-		ChatExample1 =	UI.CreateButton(ExampleChatLayout)
-		.SetPreferredWidth(150)
-		.SetPreferredHeight(8)
-		.SetText("Mod Info")
-		.SetColor('#880085')	
-		ChatMessageTextRecived = UI.CreateLabel(ExampleChatLayout)
-		.SetFlexibleWidth(1)
-		.SetFlexibleHeight(1)
-		.SetText("When a game ends, all saved mod data will be deleted. Also, check out settings and tweek it to your liking.")
-		local ExampleChatLayout2 = UI.CreateHorizontalLayoutGroup(horzMain);
-		ChatExample2 =	UI.CreateButton(ExampleChatLayout2)
-		.SetPreferredWidth(150)
-		.SetPreferredHeight(8)
-		.SetText("Mod Info")
-		.SetColor('#880085')	
-		ChatMessageTextRecived2 = UI.CreateLabel(ExampleChatLayout2)
-		.SetFlexibleWidth(1)
-		.SetFlexibleHeight(1)
-		.SetText("Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!")
+		local startIndex = 1;
+		local NumChat = Mod.PublicGameData.Chat.BroadcastGroup.NumChat
+		if (NumChat > NumPastChat) then 
+			startIndex = ChatArrayIndex - NumPastChat + startIndex; 
+		end;
+
+		for i = startIndex, NumChat do 
+			local BroadcastChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
+			ChatExample1 =	UI.CreateButton(BroadcastChatLayout)
+			.SetPreferredWidth(150)
+			.SetPreferredHeight(8)
+			.SetText("Mod Info")
+			.SetColor('#880085')	
+			ChatMessageTextRecived = UI.CreateLabel(BroadcastChatLayout)
+			.SetFlexibleWidth(1)
+			.SetFlexibleHeight(1)
+			.SetText(Mod.PublicGameData.Chat.BroadcastGroup[i])
+		end
 		return;
 	end;
 	

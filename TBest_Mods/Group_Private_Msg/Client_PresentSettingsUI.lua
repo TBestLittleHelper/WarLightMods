@@ -19,12 +19,16 @@ end;
 
 function ModBetterCitiesPresentSettings(rootParent)
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
-	--TODO add growth settings
 	if (Mod.Settings.StartingCitiesActive) then
 		UI.CreateLabel(vert).SetText('Number of cities in distributed territories : ' .. Mod.Settings.NumberOfStartingCities);
 	end
 	if(Mod.Settings.CityWallsActive) then
 		UI.CreateLabel(vert).SetText('Percantage bonus for each city on a territory is :  ' .. Mod.Settings.DefPower*100 .. '%');
+	end
+	if(Mod.Settings.CityGrowth)then
+		UI.CreateLabel(vert).SetText('City growth cap is : ' .. Mod.Settings.CityGrowthCap)
+		UI.CreateLabel(vert).SetText('City growth frequency is : ' ..  Mod.Settings.CityGrowthFrequency)
+		UI.CreateLabel(vert).SetText('City growth power is : ' .. Mod.Settings.CityGrowthPower)
 	end
 	if (Mod.Settings.CustomSenarioCapitals > 0) then
 		UI.CreateLabel(vert).SetText('Capitals had this many armies in the custom senario distribution : ' .. Mod.Settings.CustomSenarioCapitals);

@@ -297,10 +297,16 @@ function SaveSettings(game,playerID, payload)
 	Mod.PublicGameData = PublicGameData;
 end;
 
---Removing all Mod data when a game is over (also useful during development.)
+--Remove data that we don't need anymore, when a game is over
 function ClearData(game,playerID)
-	--TODO update serverside check. Remove my playerID cond
-	if (playerID == 69603)then --My playerID
+	-- 3 == playing : 4 == elim + over
+	print('Server_gamecustmsg : Game.state code:')
+	print(game.Game.State) 
+	if (game.Game.State ~= 4 ) then return end;
+	local publicGameData = Mod.PublicGameData
+	--Check that we have not allready done this
+	if (publicGameData.ChatModEnabled == false)then return end;
+		--TODO move playerGameData to publicgamedata 
 		--Remove all playerGameData
 		local playerGameData = Mod.PlayerGameData;		
 		for Players in pairs (playerGameData) do
@@ -311,33 +317,8 @@ function ClearData(game,playerID)
 		Mod.PlayerGameData = playerGameData;
 		
 		--Remove all publicGameData and set a bool flag to false
-		local publicGameData = Mod.PublicGameData
-		publicGameData = {};
 		publicGameData.ChatModEnabled = false;
 		Mod.PublicGameData = publicGameData;
-	
-	else
-		--This is a server side safety check. If we end up here, the game should always be over.
-		--Check if there are any players still playing. If there is not, delete all playerGameData.Chat
-		local numAlive = 0; --If we have 2 or more alive game is ongoing.
-		local Teams = {};
-		local numTeamAlive = 0; --If we have teams, num teams alive 
-		
-		for playerID, player in pairs (game.Game.Players)do
-			if (IsAlive(playerID, game)) then
-				numAlive = numAlive+1;
-				if (Teams[game.Game.Players[playerID].Team] == nil) then
-					Teams[game.Game.Players[playerID].Team] = true;
-					numTeamAlive = numTeamAlive +1;
-				end
-			end
-		end
-		if (numTeamAlive > 1)then return end; --More then 1 team alive
-		if (Teams[-1] == true)then 	--If there are no teams (-1 is a special value for no teams)
-			if (numAlive > 1)then return end; --And there are more then 1 alive, return
-		end;		
-		ClearData(game,69603);
-	end;
 end
 
 function TurnDivider(turnNumber)
