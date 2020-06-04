@@ -146,15 +146,14 @@ function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 end
 function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	if (order.proxyType == 'GameOrderDeploy') then
-		--if city is already destroyed or is not present (nil), return or skip according to Mod.Settings	
+		--if city is already destroyed (0) or is not present (nil), return or skip according to Mod.Settings	
 		if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures == nil) then
 			--If mod settings say city deploy only, skip. Else return
 			if (Mod.Settings.CityDeployOnly)then 
 				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 				orderSkiped = true;
 			end;	
-			return;
-			
+			return;			
 		else if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] == 0) then					
 				if (Mod.Settings.CityDeployOnly)then 
 					skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
@@ -181,7 +180,6 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);		
 			orderSkiped = true;	
 		end	
-		
 		return;
 	end
 	--Give a X% def. bonus per city on defending territory 

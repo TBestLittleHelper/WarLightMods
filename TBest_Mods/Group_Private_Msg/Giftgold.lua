@@ -59,9 +59,10 @@ function SubmitClicked(game)
 	payload.TargetPlayerID = TargetPlayerID;
 	payload.Gold = gold;
 
+	--TODO add a go back button instead?
 	Game.SendGameCustomMessage("Gifting Gold...", payload, function(returnValue) 
-		UI.Alert(returnValue.Message);
 		Close(); --Close the dialog since we're done with it
 		RefreshMainDialog(close, game)		
+		UI.Alert(returnValue.Message);
 	end);
 end

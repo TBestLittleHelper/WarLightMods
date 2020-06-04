@@ -7,6 +7,7 @@ function PresentMenuWinCon(rootParent, setMaxSize, setScrollable, game, close)
         return;
     end
     setMaxSize(450, 350);
+    --TODO maybe redo this part a bit
     UI.CreateLabel(rootParent).SetText('To win, you need to complete ' .. Mod.Settings.Conditionsrequiredforwin .. ' of the red conditions;').SetColor('#FF0000');
     if (Mod.Settings.Capturedterritories > 0)then 
         CreateLine('Captured this many territories : ',Mod.PlayerGameData.WinCon.Capturedterritories, Mod.Settings.Capturedterritories,0);

@@ -174,7 +174,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end);
 	end
 	--WinCon button
-	if (Mod.Settings.ModDiplomacyEnabled)then
+	if (Mod.Settings.ModWinningConditionsEnabled)then
 		UI.CreateButton(ChatButtonContainer).SetColor("#0000ff").SetText("Winning Conditions").SetOnClick(function()
 		ClientGame.CreateDialog(PresentMenuWinCon);
 		close();--Close this dialog. 
@@ -187,6 +187,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 	setMaxSize(410,380); --This dialog's size
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 		
+	--TODO more/better alert options?
 	--Alert user of unread chat
 	AlertUnreadChatCheckBox = UI.CreateCheckBox(vert).SetIsChecked(AlertUnreadChat).SetText("Show an alert when there is unread chat");
 	
@@ -452,6 +453,7 @@ function SendChat()
 end;
 
 function RefreshChat()
+	--TODO remove this, and check that it is safe
 	if (Mod.PublicGameData.ChatModEnabled == false)then 
 		UI.Alert("You can't do anything if the game has ended.");
 		return;
