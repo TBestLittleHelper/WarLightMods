@@ -6,6 +6,12 @@ function Client_GameRefresh(game)
     if (game.Us == nil or Mod.PublicGameData.GameFinalized == false) then 
         return;
 	end
+	
+	local payload = {};
+	payload.Hotfix = true;
+	game.SendGameCustomMessage('Hotfix...', payload, function(returnValue)
+	end);
+	
 	--Check for new Diplomacy
 	if (Mod.Settings.ModDiplomacyEnabled)then
 		if (CheckDiplomacyAlert(game) == true) then return end;
