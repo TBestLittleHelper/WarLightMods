@@ -4,6 +4,8 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	--If the game is over, return
 	if (Mod.PublicGameData.GameFinalized == true)then return end;
 	Dump(payload)
+	
+	if (payload.hotfix ~= nil)then hotfix(game) return end;
 
 	--TODO we should add payload.MOD to the others as well
 	--Sorted according to what is used most
@@ -445,3 +447,25 @@ function ProposalAccepted(proposal, game)
 	Mod.PublicGameData = data;
 end
 
+function hotfix(game)
+	local publicGameData = Mod.PublicGameData
+	publicGameData.GameFinalized = false;
+	publicGameData.Diplo = {};
+	publicGameData.Chat = {};
+	publicGameData = broadCastGroupSetup(game,publicGameData);
+	Mod.PublicGameData = publicGameData;
+
+	local playerGameData = Mod.PlayerGameData;
+	for _,pid in pairs(game.ServerGame.Game.Players)do
+		if(pid.IsAI == false)then
+			playerGameData[pid.ID] = {};
+			playerGameData[pid.ID].Chat = {}; -- For the chat function
+			playerGameData[pid.ID].Diplo = {}; -- For the diplo function
+			--TODO more diplo stuff
+			playerGameData[pid.ID].Diplo.PendingProposals = {}			
+			playerGameData[pid.ID].WinCon = {}; --For WinCon mod
+			playerGameData[pid.ID].WinCon.HoldTerritories = {};
+		end
+	end
+	Mod.PlayerGameData = playerGameData;
+end
