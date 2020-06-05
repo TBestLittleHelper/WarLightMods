@@ -1,3 +1,5 @@
+--TODO we want some of this to be in  Server_StartDistribution (Server_StartDistribution.lua)
+
 function Server_StartGame(game, standing)		
 	--Set the mod boolean flag to be enabled
 	local publicGameData = Mod.PublicGameData
