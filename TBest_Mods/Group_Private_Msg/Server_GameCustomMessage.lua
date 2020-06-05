@@ -469,3 +469,11 @@ function hotfix(game)
 	end
 	Mod.PlayerGameData = playerGameData;
 end
+function broadCastGroupSetup(game,publicGameData)
+	publicGameData.Chat.BroadcastGroup = {};
+	publicGameData.Chat.BroadcastGroup[1] = "When a game ends, all chat messages will be made public. Also, check out settings and tweek it to your liking."
+	--publicGameData.Chat.BroadcastGroup[1].Sender = 0; --this might be someting we add in the future
+	publicGameData.Chat.BroadcastGroup[2] = "Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!"
+	publicGameData.Chat.BroadcastGroup.NumChat = 2
+	return publicGameData;
+end
