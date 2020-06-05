@@ -281,6 +281,7 @@ function ChatGroupSelectedButton(group)
 end
 
 function getGroupMembers()	
+	PlayerGameData = Mod.PlayerGameData;
 	if (next(PlayerGameData.Chat) ~= nil and ChatGroupSelectedID ~= nil) then		
 		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
