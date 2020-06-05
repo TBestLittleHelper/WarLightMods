@@ -5,7 +5,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	if (Mod.PublicGameData.GameFinalized == true)then return end;
 	Dump(payload)
 	
-	if (payload.hotfix ~= nil)then hotfix(game) return end;
+	if (payload.Hotfix ~= nil)then hotfix(game) return end;
 
 	--TODO we should add payload.MOD to the others as well
 	--Sorted according to what is used most
