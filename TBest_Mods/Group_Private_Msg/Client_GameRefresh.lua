@@ -1,3 +1,6 @@
+require('Utilities');
+
+
 function Client_GameRefresh(game)	
     --Skip if we're not in the game or if the game is over.
     if (game.Us == nil or Mod.PublicGameData.GameFinalized == false) then 
@@ -62,8 +65,12 @@ end;
 
 function CheckDiplomacyAlert(game)
 	--TODO  Maybe we can do this in a better way 
-	local PlayerGameData = Mod.PlayerGameData;
+	--remembers what proposal IDs and alliance IDs we've alerted the player about so we don't alert them twice.
+	HighestAllianceIDSeen = 0;
+	HighestProposalIDSeen = 0; 
 
+	local PlayerGameData = Mod.PlayerGameData;
+	Dump(PlayerGameData)
 	if (PlayerGameData.Diplo.HighestAllianceIDSeen == nil)then PlayerGameData.Diplo.HighestAllianceIDSeen = 0;
 		Mod.PlayerGameData = playerGameData;
 	end;
