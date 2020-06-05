@@ -21,6 +21,7 @@ function playerGameDataSetup(game)
 			playerGameData[pid.ID] = {};
 			playerGameData[pid.ID].Chat = {}; -- For the chat function
 			playerGameData[pid.ID].Diplo = {}; -- For the diplo function
+			--TODO more diplo stuff
 			playerGameData[pid.ID].Diplo.PendingProposals = {}			
 			playerGameData[pid.ID].WinCon = {}; --For WinCon mod
 			playerGameData[pid.ID].WinCon.HoldTerritories = {};

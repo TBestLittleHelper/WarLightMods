@@ -62,7 +62,13 @@ end;
 
 function CheckDiplomacyAlert(game)
 	--TODO  Maybe we can do this in a better way 
-	HighestAllianceIDSeen = 0;
+	local PlayerGameData = Mod.Mod.PlayerGameData;
+
+	if (PlayerGameData.Diplo.HighestAllianceIDSeen == nil)then PlayerGameData.Diplo.HighestAllianceIDSeen = 0;
+	Mod.PlayerGameData = playerGameData;
+
+			
+	HighestAllianceIDSeen = Mod.PlayerGameData.Diplo.HighestAllianceIDSeen;
 	HighestProposalIDSeen = 0; 
 
 	if (HighestAllianceIDSeen == 0 and Mod.PlayerGameData.Diplo.HighestAllianceIDSeen ~= nil and Mod.PlayerGameData.Diplo.HighestAllianceIDSeen > HighestAllianceIDSeen) then
