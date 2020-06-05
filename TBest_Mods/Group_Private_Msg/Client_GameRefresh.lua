@@ -70,7 +70,9 @@ function CheckDiplomacyAlert(game)
 	HighestProposalIDSeen = 0; 
 
 	local PlayerGameData = Mod.PlayerGameData;
-	Dump(PlayerGameData)
+	UI.Alert(PlayerGameData.Diplo);
+	
+	if (PlayerGameData.Diplo == nil)then PlayerGameData.Diplo = {}end;
 	if (PlayerGameData.Diplo.HighestAllianceIDSeen == nil)then PlayerGameData.Diplo.HighestAllianceIDSeen = 0;
 		Mod.PlayerGameData = playerGameData;
 	end;
