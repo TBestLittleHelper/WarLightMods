@@ -309,11 +309,11 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 end
 
 --WinCon functions
---TODO fixme there are a few 'hidden' orders at the end of a turn, that creates issues. Like gold earned in commerce or players eliminated. Maybe use Publicgamedata here?
 function WinCon_Server_AdvanceTurn_Start(game, addNewOrder)
 	playerGameData = Mod.PlayerGameData;
 	recalculate = {};
 end;
+--TODO we can do checkwin much better and faster
 function WinCon_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	if(order.PlayerID == WL.PlayerID.Neutral)then
 		return;
@@ -495,15 +495,9 @@ function WinCon_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, add
 	
 end
 function WinCon_Server_AdvanceTurn_End (game,addNewOrder)
+
 	if (WinConGameWon)then return end;
-	for _,pid in pairs(game.ServerGame.Game.PlayingPlayers)do
-		if(pid.IsAI == false)then
-			print(pid.ID .. " playerGameData: playerGameData[pid.ID].WinCon "); 
-			if(playerGameData[pid.ID].WinCon.HoldTerritories == nil)then
-				playerGameData[pid.ID].WinCon.HoldTerritories = {};
-			end
-		end
-	end
+
 	for _,terr in pairs(game.ServerGame.LatestTurnStanding.Territories)do
 		if(terr.OwnerPlayerID ~= WL.PlayerID.Neutral and game.ServerGame.Game.Players[terr.OwnerPlayerID].IsAI == false)then
 			if(playerGameData[terr.OwnerPlayerID].WinCon.HoldTerritories[terr.ID] == nil)then
@@ -511,6 +505,7 @@ function WinCon_Server_AdvanceTurn_End (game,addNewOrder)
 			end
 			playerGameData[terr.OwnerPlayerID].WinCon.HoldTerritories[terr.ID] = playerGameData[terr.OwnerPlayerID].WinCon.HoldTerritories[terr.ID] + 1;
 			checkwin(terr.OwnerPlayerID,addNewOrder,game)
+			if (WinConGameWon)then return end;
 		end
 	end
 	Mod.PlayerGameData = playerGameData;

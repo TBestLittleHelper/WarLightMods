@@ -1,5 +1,3 @@
-require('Client_PresentMenuUI'); --TODO check if this is still requiered 
-
 function Client_GameRefresh(game)	
     --Skip if we're not in the game or if the game is over.
     if (game.Us == nil or Mod.PublicGameData.GameFinalized == false) then 

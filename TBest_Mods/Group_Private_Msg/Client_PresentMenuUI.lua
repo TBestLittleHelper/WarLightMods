@@ -446,7 +446,7 @@ function SendChat()
 	payload.Chat = ChatMessageText.GetText();
 	print("Chat sent " .. payload.Chat .. " to " .. payload.TargetGroupID .. " from " .. ClientGame.Us.ID)
 	ClientGame.SendGameCustomMessage("Sending chat...", payload, function(returnValue) 
-		--TODO only if alert is on
+		--TODO only if alert is on?
 		UI.Alert(returnValue.Status);
 	end);
 	ChatMessageText.SetText("");
@@ -495,11 +495,13 @@ function RefreshChat()
 
 		for i = startIndex, NumChat do 
 			local BroadcastChatLayout = UI.CreateHorizontalLayoutGroup(horzMain);
-			ChatExample1 =	UI.CreateButton(BroadcastChatLayout)
+			BroadcastChatMsg =	UI.CreateButton(BroadcastChatLayout)
 			.SetPreferredWidth(150)
 			.SetPreferredHeight(8)
-			.SetText("Mod Info")
 			.SetColor('#880085')	
+			if (Mod.PublicGameData.Chat.BroadcastGroup[i].Sender == nil)then BroadcastChatMsg.SetText("Mod Info") else
+				BroadcastChatMsg.SetText(Mod.PublicGameData.Chat.BroadcastGroup[i].Sender)
+			end
 			ChatMessageTextRecived = UI.CreateLabel(BroadcastChatLayout)
 			.SetFlexibleWidth(1)
 			.SetFlexibleHeight(1)

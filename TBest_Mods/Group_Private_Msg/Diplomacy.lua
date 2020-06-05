@@ -7,7 +7,6 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 
 	--List pending proposals.  This isn't absolutely necessary since we also alert the player of new proposals, but it's nice to list them here anyway.
-	--TODO : bug Index a nil value 
 	for _,proposal in pairs(Mod.PlayerGameData.Diplo.PendingProposals or {}) do
 		local otherPlayer = game.Game.Players[proposal.PlayerOne].DisplayName(nil, false);
 		local row = UI.CreateHorizontalLayoutGroup(vert);
