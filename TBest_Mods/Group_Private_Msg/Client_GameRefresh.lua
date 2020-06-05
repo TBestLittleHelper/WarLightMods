@@ -64,19 +64,15 @@ end;
 
 
 function CheckDiplomacyAlert(game)
+	if (game.Game.ID == 22605599) then return end; --TODO fix this bug
 	--TODO  Maybe we can do this in a better way 
-	--remembers what proposal IDs and alliance IDs we've alerted the player about so we don't alert them twice.
-	HighestAllianceIDSeen = 0;
-	HighestProposalIDSeen = 0; 
-
 	local PlayerGameData = Mod.PlayerGameData;
 	--UI.Alert(PlayerGameData.Diplo);
 	
 	if (PlayerGameData.Diplo == nil)then PlayerGameData.Diplo = {}end;
-	if (PlayerGameData.Diplo.HighestAllianceIDSeen == nil)then PlayerGameData.Diplo.HighestAllianceIDSeen = 0;
-		Mod.PlayerGameData = playerGameData;
-	end;
-			
+	if (PlayerGameData.Diplo.HighestAllianceIDSeen == nil)then PlayerGameData.Diplo.HighestAllianceIDSeen = 0 end;		
+
+	----remembers what proposal IDs and alliance IDs we've alerted the player about so we don't alert them twice.
 	HighestAllianceIDSeen = Mod.PlayerGameData.Diplo.HighestAllianceIDSeen;
 	HighestProposalIDSeen = 0; 
 
