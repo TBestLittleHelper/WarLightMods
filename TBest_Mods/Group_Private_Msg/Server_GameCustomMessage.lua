@@ -388,13 +388,14 @@ function Propose(game,playerID,payload)
 	else
 		--Write it into the player-specific data
 		local playerData = Mod.PlayerGameData;
-		if (playerData.Diplo[payload.TargetPlayerID] == nil) then
-			playerData.Diplo[payload.TargetPlayerID] = {};
+		--TODO check if we need this? We should have set this up earlier when the game was made
+		if (playerData[payload.TargetPlayerID].Diplo == nil) then
+			playerData[payload.TargetPlayerID].Diplo = {};
 		end
 
-		local pendingProposals = playerData.Diplo[payload.TargetPlayerID].PendingProposals or {};
+		local pendingProposals = playerData[payload.TargetPlayerID].Diplo.PendingProposals or {};
 		table.insert(pendingProposals, proposal);
-		playerData.Diplo[payload.TargetPlayerID].PendingProposals = pendingProposals;
+		playerData[payload.TargetPlayerID].Diplo.PendingProposals = pendingProposals;
 		Mod.PlayerGameData = playerData;
 	end
 end
@@ -403,7 +404,7 @@ function ProposeDeclineAccept(game,playerID,payload)
 		if (proposal == nil) then return; end; --skip if the proposal ID is invalid.  This can happen if it gets accepted/declined twice
 		--Remove it from PlayerGameData
 		local pgd = Mod.PlayerGameData;
-		pgd[playerID].PendingProposals = filter(pgd[playerID].PendingProposals, function(prop) return prop.ID ~= payload.ProposalID end);
+		pgd[playerID].Diplo.PendingProposals = filter(pgd[playerID].Diplo.PendingProposals, function(prop) return prop.ID ~= payload.ProposalID end);
 		Mod.PlayerGameData = pgd;
 		--If we're accepting it, call ProposalAccepted. If we're declining it, just do nothing and let it be removed.
 		if (payload.Message == "AcceptProposal") then
@@ -412,18 +413,18 @@ function ProposeDeclineAccept(game,playerID,payload)
 end
 function SeenAllianceMessage(playerID,payload)
 	local playerData = Mod.PlayerGameData;
-	if (playerData.Diplo[playerID] == nil) then
-		playerData.Diplo[playerID] = {};
+	if (playerData[playerID].Diplo == nil) then
+		playerData[playerID].Diplo = {};
 	end
-	playerData.Diplo[playerID].HighestAllianceIDSeen = payload.HighestAllianceIDSeen;
+	playerData[playerID].Diplo.HighestAllianceIDSeen = payload.HighestAllianceIDSeen;
 	Mod.PlayerGameData = playerData;
 end
 function SeenAlerts(playerID,payload)
 	local playerData = Mod.PlayerGameData;
-		if (playerData.Diplo[playerID] == nil) then
-			playerData.Diplo[playerID] = {};
+		if (playerData[playerID.Diplo == nil) then
+			playerData[playerID].Diplo = {};
 		end
-		playerData.Diplo[playerID].Alerts = nil;
+		playerData[playerID].Diplo.Alerts = nil;
 		Mod.PlayerGameData = playerData;
 end
 function ProposalAccepted(proposal, game)
