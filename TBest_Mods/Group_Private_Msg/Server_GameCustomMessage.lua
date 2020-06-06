@@ -4,39 +4,38 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	--If the game is over, return
 	if (Mod.PublicGameData.GameFinalized == true)then return end;
 	Dump(payload)
-	
-	if (payload.Hotfix ~= nil)then hotfix(game) return end;
 
-	--TODO we should add payload.MOD to the others as well
 	--Sorted according to what is used most
-	if (payload.Message == "ReadChat") then
-		--Mark as read
-		ReadChat(playerID)
-		
-		elseif (payload.Message == "SendChat") then
-		--DeliverChat
-		DeliverChat(game,playerID,payload, setReturnTable)
-		
-		elseif (payload.Message == "AddGroupMember") then
-		--Add to group
-		AddToGroup(game,playerID,payload,setReturnTable);
-		
-		elseif (payload.Message == "RemoveGroupMember") then
-		--RemoveFromGroup
-		RemoveFromGroup(game,playerID,payload,setReturnTable);
-		
-		elseif (payload.Message == "LeaveGroup") then
-		--Leave group
-		LeaveGroup(game,playerID,payload,setReturnTable)
-		
-		elseif (payload.Message == "DeleteGroup") then
-		--Delete group
-		DeleteGroup(game,playerID,payload,setReturnTable)
-		
-		elseif (payload.Message == "SaveSettings") then
-		--Save settings
-		SaveSettings(game, playerID, payload,setReturnTable)
-
+	if (payload.Mod == 'Chat')then
+		--If Chat or main mod related
+		if (payload.Message == "ReadChat") then
+			--Mark as read
+			ReadChat(playerID)
+			
+			elseif (payload.Message == "SendChat") then
+			--DeliverChat
+			DeliverChat(game,playerID,payload, setReturnTable)
+			
+			elseif (payload.Message == "AddGroupMember") then
+			--Add to group
+			AddToGroup(game,playerID,payload,setReturnTable);
+			
+			elseif (payload.Message == "RemoveGroupMember") then
+			--RemoveFromGroup
+			RemoveFromGroup(game,playerID,payload,setReturnTable);
+			
+			elseif (payload.Message == "LeaveGroup") then
+			--Leave group
+			LeaveGroup(game,playerID,payload,setReturnTable)
+			
+			elseif (payload.Message == "DeleteGroup") then
+			--Delete group
+			DeleteGroup(game,playerID,payload,setReturnTable)
+			
+			elseif (payload.Message == "SaveSettings") then
+			--Save settings
+			SaveSettings(game, playerID, payload,setReturnTable)
+		end
 		--Diplomacy
 		elseif(payload.Mod == 'Diplomacy' and Mod.Settings.ModDiplomacyEnabled == true)then
 			if (payload.Message == "Propose") then
@@ -447,33 +446,3 @@ function ProposalAccepted(proposal, game)
 	Mod.PublicGameData = data;
 end
 
-function hotfix(game)
-	local publicGameData = Mod.PublicGameData
-	publicGameData.GameFinalized = false;
-	publicGameData.Diplo = {};
-	publicGameData.Chat = {};
-	publicGameData = broadCastGroupSetup(game,publicGameData);
-	Mod.PublicGameData = publicGameData;
-
-	local playerGameData = Mod.PlayerGameData;
-	for _,pid in pairs(game.ServerGame.Game.Players)do
-		if(pid.IsAI == false)then
-			playerGameData[pid.ID] = {};
-			playerGameData[pid.ID].Chat = {}; -- For the chat function
-			playerGameData[pid.ID].Diplo = {}; -- For the diplo function
-			--TODO more diplo stuff
-			playerGameData[pid.ID].Diplo.PendingProposals = {}			
-			playerGameData[pid.ID].WinCon = {}; --For WinCon mod
-			playerGameData[pid.ID].WinCon.HoldTerritories = {};
-		end
-	end
-	Mod.PlayerGameData = playerGameData;
-end
-function broadCastGroupSetup(game,publicGameData)
-	publicGameData.Chat.BroadcastGroup = {};
-	publicGameData.Chat.BroadcastGroup[1] = "When a game ends, all chat messages will be made public. Also, check out settings and tweek it to your liking."
-	--publicGameData.Chat.BroadcastGroup[1].Sender = 0; --this might be someting we add in the future
-	publicGameData.Chat.BroadcastGroup[2] = "Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!"
-	publicGameData.Chat.BroadcastGroup.NumChat = 2
-	return publicGameData;
-end
