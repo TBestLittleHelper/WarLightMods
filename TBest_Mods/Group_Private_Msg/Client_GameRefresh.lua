@@ -119,7 +119,7 @@ function CheckDiplomacyAlert(game)
     end
 
     --Notify players of any pending alerts
-    local unseenAlerts = Mod.PlayerGameData.Diplo.Alerts or {};
+    local unseenAlerts = PlayerGameData.Diplo.Alerts or {};
 
     if (#unseenAlerts > 0) then
         local msg = table.concat(map(unseenAlerts, function(alert) return alert.Message end), '\n');
