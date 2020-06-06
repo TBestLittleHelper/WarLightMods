@@ -6,8 +6,12 @@ function Client_GameRefresh(game)
     if (game.Us == nil or Mod.PublicGameData.GameFinalized == false) then 
         return;
 	end
+	print("client game refresh")
+	if (Mod.PublicGameData == nil) then return end;
+
 	--Check for new Diplomacy
 	if (Mod.Settings.ModDiplomacyEnabled)then
+		print("Checking Diplo alert chat")
 		if (CheckDiplomacyAlert(game) == true) then return end;
 	end;
 	
@@ -56,6 +60,7 @@ function CheckUnreadChat(game)
 	--Mark the chat as read, if we had any unread chat, server side, so we only show 1 alert per group 
 	if (markChatAsRead)then
 		local payload = {};
+		payload.Mod = "Chat"
 		payload.Message = "ReadChat";			
 		game.SendGameCustomMessage("Marking chat as read...", payload, function(returnValue) end)
 	end;
@@ -64,8 +69,6 @@ end;
 
 
 function CheckDiplomacyAlert(game)
-	if (game.Game.ID == 22605599) then return end; --TODO fix this bug
-	--TODO  Maybe we can do this in a better way 
 	local PlayerGameData = Mod.PlayerGameData;
 	--UI.Alert(PlayerGameData.Diplo);
 	
@@ -73,15 +76,15 @@ function CheckDiplomacyAlert(game)
 	if (PlayerGameData.Diplo.HighestAllianceIDSeen == nil)then PlayerGameData.Diplo.HighestAllianceIDSeen = 0 end;		
 
 	----remembers what proposal IDs and alliance IDs we've alerted the player about so we don't alert them twice.
-	HighestAllianceIDSeen = Mod.PlayerGameData.Diplo.HighestAllianceIDSeen;
-	HighestProposalIDSeen = 0; 
+	HighestAllianceIDSeen = PlayerGameData.Diplo.HighestAllianceIDSeen;
+	local HighestProposalIDSeen = 0; 
 
-	if (HighestAllianceIDSeen == 0 and Mod.PlayerGameData.Diplo.HighestAllianceIDSeen ~= nil and Mod.PlayerGameData.Diplo.HighestAllianceIDSeen > HighestAllianceIDSeen) then
-        HighestAllianceIDSeen = Mod.PlayerGameData.Diplo.HighestAllianceIDSeen;
+	if (HighestAllianceIDSeen == 0 and PlayerGameData.Diplo.HighestAllianceIDSeen ~= nil and PlayerGameData.Diplo.HighestAllianceIDSeen > HighestAllianceIDSeen) then
+        HighestAllianceIDSeen = PlayerGameData.Diplo.HighestAllianceIDSeen;
     end
 
     --Check for proposals we haven't alerted the player about yet
-    for _,proposal in pairs(filter(Mod.PlayerGameData.Diplo.PendingProposals or {}, function(proposal) return HighestProposalIDSeen < proposal.ID end)) do
+    for _,proposal in pairs(filter(PlayerGameData.Diplo.PendingProposals or {}, function(proposal) return HighestProposalIDSeen < proposal.ID end)) do
         DoProposalPrompt(game, proposal);
         if (HighestProposalIDSeen < proposal.ID) then
             HighestProposalIDSeen = proposal.ID;

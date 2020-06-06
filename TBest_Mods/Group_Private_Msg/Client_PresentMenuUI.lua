@@ -231,6 +231,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		--Save settings serverside
 		
 		local payload = {};
+		payload.Mod = "SaveSettings"
 		payload.Message = "SaveSettings"
 		payload.AlertUnreadChat = AlertUnreadChat;
 		payload.EachGroupButton = EachGroupButton;
@@ -348,6 +349,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		end
 		
 		local payload = {};
+		payload.Mod = "Chat"
 		payload.Message = "AddGroupMember";
 		payload.TargetPlayerID = TargetPlayerID;
 		payload.TargetGroupID = TargetGroupID;
@@ -380,6 +382,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		
 		
 		local payload = {};
+		payload.Mod = "Chat"
 		payload.Message = "RemoveGroupMember";
 		payload.TargetPlayerID = TargetPlayerID;
 		payload.TargetGroupID = TargetGroupID;
@@ -408,6 +411,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 			return;
 		end;
 		local payload = {};
+		payload.Mod = "Chat"
 		payload.Message = "LeaveGroup";
 		payload.TargetGroupID = TargetGroupID;
 		ClientGame.SendGameCustomMessage("Leaving the group...", payload, function(returnValue) 
@@ -432,6 +436,7 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 		end;
 		
 		local payload = {};
+		payload.Mod = "Chat"
 		payload.Message = "DeleteGroup";
 		payload.TargetGroupID = TargetGroupID;
 		
@@ -442,6 +447,7 @@ end
 
 function SendChat()	
 	local payload = {};
+	payload.Mod = "Chat"
 	payload.Message = "SendChat";
 	payload.TargetGroupID = ChatGroupSelectedID;
 	payload.Chat = ChatMessageText.GetText();
@@ -661,7 +667,7 @@ function IsAlive(playerID, ClientGame)
 end
 
 function CheckGameEnded(game)
-	-- 3 == playing : 4 == elim + over
+	-- 3 == playing : 4 == elim + over , 5 == manual picks
 	print('Game.state code:')
 	print(game.Game.State) 
 	if (game.Us == nil) then return end; --Return if spectator

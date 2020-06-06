@@ -5,36 +5,37 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	if (Mod.PublicGameData.GameFinalized == true)then return end;
 	Dump(payload)
 
-	--TODO we should add payload.MOD to the others as well
 	--Sorted according to what is used most
-	if (payload.Message == "ReadChat") then
-		--Mark as read
-		ReadChat(playerID)
-		
-		elseif (payload.Message == "SendChat") then
-		--DeliverChat
-		DeliverChat(game,playerID,payload, setReturnTable)
-		
-		elseif (payload.Message == "AddGroupMember") then
-		--Add to group
-		AddToGroup(game,playerID,payload,setReturnTable);
-		
-		elseif (payload.Message == "RemoveGroupMember") then
-		--RemoveFromGroup
-		RemoveFromGroup(game,playerID,payload,setReturnTable);
-		
-		elseif (payload.Message == "LeaveGroup") then
-		--Leave group
-		LeaveGroup(game,playerID,payload,setReturnTable)
-		
-		elseif (payload.Message == "DeleteGroup") then
-		--Delete group
-		DeleteGroup(game,playerID,payload,setReturnTable)
-		
-		elseif (payload.Message == "SaveSettings") then
-		--Save settings
-		SaveSettings(game, playerID, payload,setReturnTable)
-
+	if (payload.Mod == 'Chat')then
+		--If Chat or main mod related
+		if (payload.Message == "ReadChat") then
+			--Mark as read
+			ReadChat(playerID)
+			
+			elseif (payload.Message == "SendChat") then
+			--DeliverChat
+			DeliverChat(game,playerID,payload, setReturnTable)
+			
+			elseif (payload.Message == "AddGroupMember") then
+			--Add to group
+			AddToGroup(game,playerID,payload,setReturnTable);
+			
+			elseif (payload.Message == "RemoveGroupMember") then
+			--RemoveFromGroup
+			RemoveFromGroup(game,playerID,payload,setReturnTable);
+			
+			elseif (payload.Message == "LeaveGroup") then
+			--Leave group
+			LeaveGroup(game,playerID,payload,setReturnTable)
+			
+			elseif (payload.Message == "DeleteGroup") then
+			--Delete group
+			DeleteGroup(game,playerID,payload,setReturnTable)
+			
+			elseif (payload.Message == "SaveSettings") then
+			--Save settings
+			SaveSettings(game, playerID, payload,setReturnTable)
+		end
 		--Diplomacy
 		elseif(payload.Mod == 'Diplomacy' and Mod.Settings.ModDiplomacyEnabled == true)then
 			if (payload.Message == "Propose") then
