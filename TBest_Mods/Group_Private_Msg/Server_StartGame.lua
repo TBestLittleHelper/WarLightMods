@@ -4,9 +4,6 @@ function Server_StartGame(game, standing)
 	if (Mod.PublicGameData == nil) then 
 		playerGameDataSetup(game, standing);
 	end;
-
-
-
 	if (Mod.Settings.ModBetterCitiesEnabled)then StartGameBetterCities(game, standing) end;
 end
 
