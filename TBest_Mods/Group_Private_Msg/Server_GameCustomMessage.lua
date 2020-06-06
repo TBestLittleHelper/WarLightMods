@@ -421,7 +421,7 @@ function SeenAllianceMessage(playerID,payload)
 end
 function SeenAlerts(playerID,payload)
 	local playerData = Mod.PlayerGameData;
-		if (playerData[playerID.Diplo == nil) then
+		if (playerData[playerID].Diplo == nil) then
 			playerData[playerID].Diplo = {};
 		end
 		playerData[playerID].Diplo.Alerts = nil;
