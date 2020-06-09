@@ -6,6 +6,7 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 
+	--TODO list proposals we have sent
 	--List pending proposals.  This isn't absolutely necessary since we also alert the player of new proposals, but it's nice to list them here anyway.
 	for _,proposal in pairs(Mod.PlayerGameData.Diplo.PendingProposals or {}) do
 		local otherPlayer = game.Game.Players[proposal.PlayerOne].DisplayName(nil, false);
@@ -14,7 +15,7 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 		UI.CreateButton(row).SetText('Respond').SetOnClick(function() DoProposalPrompt(game, proposal); close(); end);
     end
 
-	local alliances = Mod.PublicGameData.Alliances or {};
+	local alliances = Mod.PublicGameData.Diplo.Alliances or {};
 	if (#alliances == 0) then
 		UI.CreateLabel(vert).SetText("No alliances are currently in effect");
 	else
