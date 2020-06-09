@@ -46,7 +46,9 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			Propose(game,playerID, payload, setReturnTable)
 			elseif (payload.Message == "SeenAlerts") then
 			Propose(game,playerID, payload, setReturnTable)
-			else return end;
+			else 		
+				error("Payload message not understood (" .. payload.Message .. ")");
+			end;
 		
 		--Gift gold
 		elseif (payload.Message == "GiftGold" and Mod.Settings.ModGiftGoldEnabled == true) then
@@ -384,6 +386,7 @@ function Propose(game,playerID,payload)
 
 	if (game.Settings.SinglePlayer) then
 		--In single-player, just auto-accept proposals for testing.
+		--TODO change this to isAI
 		ProposalAccepted(proposal, game);
 	else
 		--Write it into the player-specific data
