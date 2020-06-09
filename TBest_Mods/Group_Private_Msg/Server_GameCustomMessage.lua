@@ -403,7 +403,7 @@ function Propose(game,playerID,payload)
 	end
 end
 function ProposeDeclineAccept(game,playerID,payload)
-	local proposal = first(Mod.PlayerGameData[playerID].PendingProposals, function(prop) return prop.ID == payload.ProposalID end);
+	local proposal = first(Mod.PlayerGameData[playerID].Diplo.PendingProposals, function(prop) return prop.ID == payload.ProposalID end);
 		if (proposal == nil) then return; end; --skip if the proposal ID is invalid.  This can happen if it gets accepted/declined twice
 		--Remove it from PlayerGameData
 		local pgd = Mod.PlayerGameData;
