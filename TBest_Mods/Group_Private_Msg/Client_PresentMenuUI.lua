@@ -231,7 +231,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		--Save settings serverside
 		
 		local payload = {};
-		payload.Mod = "SaveSettings"
+		payload.Mod = "Chat"
 		payload.Message = "SaveSettings"
 		payload.AlertUnreadChat = AlertUnreadChat;
 		payload.EachGroupButton = EachGroupButton;
