@@ -96,7 +96,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end);
 	
 	--If we are in a group, show the chat options
-	if (next(PlayerGameData.Chat) ~= nil) then
+	if (PlayerGameData.Chat ~= nil) then
 		if not(EachGroupButton) then
 			--A text field for the group selected
 			ChatGroupSelectedText = UI.CreateButton(horizontalLayout)
@@ -231,7 +231,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 		--Save settings serverside
 		
 		local payload = {};
-		payload.Mod = "SaveSettings"
+		payload.Mod = "Chat"
 		payload.Message = "SaveSettings"
 		payload.AlertUnreadChat = AlertUnreadChat;
 		payload.EachGroupButton = EachGroupButton;
@@ -283,7 +283,8 @@ end
 
 function getGroupMembers()	
 	PlayerGameData = Mod.PlayerGameData;
-	if (next(PlayerGameData.Chat) ~= nil and ChatGroupSelectedID ~= nil) then		
+	print(ChatGroupSelectedID)
+	if (ChatGroupSelectedID ~= nil) then		
 		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
 		local ListMsg = ""; 
@@ -460,11 +461,7 @@ function SendChat()
 end;
 
 function RefreshChat()
-	--TODO remove this, and check that it is safe
-	if (Mod.PublicGameData.ChatModEnabled == false)then 
-		UI.Alert("You can't do anything if the game has ended.");
-		return;
-	end;
+
 	
 	if(skipRefresh)then print('skipRefresh chat') return end;
 	print("RefreshChat() called")
@@ -485,14 +482,18 @@ function RefreshChat()
 	local PlayerGameData = Mod.PlayerGameData;	
 	local ChatArrayIndex = nil;
 	
-	--If there are no past chat or no group selected display the example
-	if (ChatGroupSelectedID ~= nil)then
-		if (PlayerGameData.Chat[ChatGroupSelectedID].NumChat == nil) then 
-			ChatArrayIndex = 0;
-			ChatMessageText.SetInteractable(true)
-			else ChatArrayIndex = PlayerGameData.Chat[ChatGroupSelectedID].NumChat
-		end;
+	--If there are no past chat private or no group selected display the example
+	--TODO else case
+	if (Mod.PublicGameData.GameFinalized == false)then 
+		if (ChatGroupSelectedID ~= nil)then
+			if (PlayerGameData.Chat[ChatGroupSelectedID].NumChat == nil) then 
+				ChatArrayIndex = 0;
+				ChatMessageText.SetInteractable(true)
+				else ChatArrayIndex = PlayerGameData.Chat[ChatGroupSelectedID].NumChat
+			end;
+		end
 	end
+
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then
 		local startIndex = 1;
 		local NumChat = Mod.PublicGameData.Chat.BroadcastGroup.NumChat
@@ -514,12 +515,16 @@ function RefreshChat()
 			.SetFlexibleHeight(1)
 			.SetText(Mod.PublicGameData.Chat.BroadcastGroup[i])
 		end
+		if (Mod.PublicGameData.GameFinalized == false) then
+			--TODO add any other groups that we have moved to public
+		end;
+
 		return;
 	end;
 	
 	ChatMessageText.SetInteractable(true)
 	--Adjust to fit with NumPastChat. 
-	local startIndex = 1;
+	local startIndex = 1;	
 	if (ChatArrayIndex > NumPastChat) then 
 		startIndex = ChatArrayIndex - NumPastChat + startIndex; 
 	end;
