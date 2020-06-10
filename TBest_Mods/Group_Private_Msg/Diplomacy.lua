@@ -3,10 +3,9 @@
 function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 	Game = game; --make it globally accessible
 
-
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 
-	--TODO list proposals we have sent
+	--TODO list proposals we have sent, but have not recived a response
 	--List pending proposals.  This isn't absolutely necessary since we also alert the player of new proposals, but it's nice to list them here anyway.
 	for _,proposal in pairs(Mod.PlayerGameData.Diplo.PendingProposals or {}) do
 		local otherPlayer = game.Game.Players[proposal.PlayerOne].DisplayName(nil, false);
@@ -35,7 +34,6 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 			UI.CreateLabel(horz).SetText('You are allied with ' .. otherPlayerName);
 			UI.CreateButton(horz).SetText("Break").SetOnClick(function() 
 				BreakAlliance(otherPlayerID, otherPlayerName);
-				close();
 			end);
 		end
 
@@ -67,6 +65,8 @@ function BreakAlliance(otherPlayerID, otherPlayerName)
 	local orders = Game.Orders;
 	table.insert(orders, WL.GameOrderCustom.Create(Game.Us.ID, msg, payload));
 	Game.Orders = orders;
+	--TODO if alerts?
+	UI.Alert("The break order has been added to the order list. Note that if you had already commited, you need to uncommit then repeat this action.")
 end
 
 function CreateProposeDialog(rootParent, setMaxSize, setScrollable, game, close)

@@ -1,23 +1,34 @@
+require("Utilities")
 
 function Server_StartGame(game, standing)		
-	--TODO if not manual dist call setup
-	if (Mod.PublicGameData == nil) then 
-		playerGameDataSetup(game, standing);
+	--TODO we can move stuff here around better so we don't call unneeded things
+	publicGameData = Mod.PublicGameData
+	playerGameData = Mod.PlayerGameData;
+
+	--Call playerGameDataSetup if we havn't done it already 
+	for _,pid in pairs(game.ServerGame.Game.Players)do
+		if(pid.IsAI == false)then
+			if (playerGameData[pid.ID] == nil )then 
+				print('Doing playerGameDataSetup')
+				playerGameDataSetup(game, standing);
+			end;
+		end
 	end;
 	if (Mod.Settings.ModBetterCitiesEnabled)then StartGameBetterCities(game, standing) end;
+	if (Mod.Settings.ModWinningConditionsEnabled)then StartGameWinCon(game, standing) end;
+
+	Mod.PublicGameData = publicGameData;
+	Mod.PlayerGameData = playerGameData;
+
 end
 
 function playerGameDataSetup(game, standing)
 	--Set the mod boolean flag to be enabled
-	local publicGameData = Mod.PublicGameData
 	publicGameData.GameFinalized = false;
 	publicGameData.Diplo = {};
 	publicGameData.Chat = {};
-	publicGameData = broadCastGroupSetup(game,publicGameData);
-	Mod.PublicGameData = publicGameData;
-	
-	local playerGameData = Mod.PlayerGameData;
-	
+	broadCastGroupSetup(game);
+		
 	for _,pid in pairs(game.ServerGame.Game.Players)do
 		if(pid.IsAI == false)then
 			playerGameData[pid.ID] = {};
@@ -29,22 +40,20 @@ function playerGameDataSetup(game, standing)
 			playerGameData[pid.ID].WinCon.HoldTerritories = {};
 		end
 	end
-	Mod.PlayerGameData = playerGameData;
-	if (Mod.Settings.ModWinningConditionsEnabled)then StartGameWinCon(game, standing) end;
 
 end
-function broadCastGroupSetup(game,publicGameData)
+function broadCastGroupSetup(game)
 	publicGameData.Chat.BroadcastGroup = {};
 	publicGameData.Chat.BroadcastGroup[1] = "When a game ends, all chat messages will be made public. Also, check out settings and tweek it to your liking."
 	--publicGameData.Chat.BroadcastGroup[1].Sender = 0; --this might be someting we add in the future
 	publicGameData.Chat.BroadcastGroup[2] = "Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!"
 	publicGameData.Chat.BroadcastGroup.NumChat = 2
-	return publicGameData;
+	
 end
 function StartGameWinCon(game, standing) 
-	local playerGameData = Mod.PlayerGameData;
 	for _,pid in pairs(game.ServerGame.Game.Players)do
 		if(pid.IsAI == false)then
+			Dump(playerGameData)
 			playerGameData[pid.ID].WinCon = {};
 			playerGameData[pid.ID].WinCon.Capturedterritories = 0;
 			playerGameData[pid.ID].WinCon.Lostterritories = 0;
@@ -87,7 +96,6 @@ function StartGameWinCon(game, standing)
 	end
 	Mod.PlayerGameData = playerGameData;
 end
-
 
 function StartGameBetterCities( game, standing )
 	--If we are not doing anything, return
