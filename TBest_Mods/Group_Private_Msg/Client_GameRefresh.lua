@@ -3,7 +3,7 @@ require('Utilities');
 
 function Client_GameRefresh(game)	
     --Skip if we're not in the game or if the game is over.
-    if (game.Us == nil or Mod.PublicGameData.GameFinalized == false) then 
+    if (game.Us == nil or Mod.PublicGameData.GameFinalized) then 
         return;
 	end
 	print("client game refresh")
