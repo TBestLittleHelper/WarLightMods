@@ -680,3 +680,4 @@ function CheckGameEnded(game)
 	payload.Message = "ClearData";	
 	game.SendGameCustomMessage("Clearing mod data...", payload, function(returnValue) end);
 end;
+
