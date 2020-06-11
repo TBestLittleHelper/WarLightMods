@@ -35,9 +35,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	if (AlertUnreadChat == nil) then AlertUnreadChat = true end;  --Alert the user when they have unread chat
 	if (EachGroupButton == nil) then EachGroupButton = true end; --Each group has a button in PresentMenuUi
-	if (NumPastChat == nil) then
-		NumPastChat = 7; --Max amount of past chat shown
-	end;
+	if (NumPastChat == nil) then NumPastChat = 7 end; --Max amount of past chat shown
 	
 	if (SizeX == nil or SizeY == nil) then
 		SizeX = 500; --Chat window

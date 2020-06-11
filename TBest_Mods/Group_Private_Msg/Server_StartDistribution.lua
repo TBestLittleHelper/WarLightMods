@@ -5,14 +5,14 @@ end
 
 function playerGameDataSetup(game, standing)
 	--Set the mod boolean flag to be enabled
-	local publicGameData = Mod.PublicGameData
+	publicGameData = Mod.PublicGameData
 	publicGameData.GameFinalized = false;
 	publicGameData.Diplo = {};
 	publicGameData.Chat = {};
-	publicGameData = broadCastGroupSetup(game,publicGameData);
+	broadCastGroupSetup(game);
 	Mod.PublicGameData = publicGameData;
 	
-	local playerGameData = Mod.PlayerGameData;
+	playerGameData = Mod.PlayerGameData;
 	
 	for _,pid in pairs(game.ServerGame.Game.Players)do
 		if(pid.IsAI == false)then
@@ -29,13 +29,12 @@ function playerGameDataSetup(game, standing)
 	if (Mod.Settings.ModWinningConditionsEnabled)then StartGameWinCon(game, standing) end;
 
 end
-function broadCastGroupSetup(game,publicGameData)
+function broadCastGroupSetup(game)
 	publicGameData.Chat.BroadcastGroup = {};
 	publicGameData.Chat.BroadcastGroup[1] = "When a game ends, all chat messages will be made public. Also, check out settings and tweek it to your liking."
 	--publicGameData.Chat.BroadcastGroup[1].Sender = 0; --this might be someting we add in the future
 	publicGameData.Chat.BroadcastGroup[2] = "Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!"
 	publicGameData.Chat.BroadcastGroup.NumChat = 2
-	return publicGameData;
 end
 function StartGameWinCon(game, standing) 
 	local playerGameData = Mod.PlayerGameData;
@@ -56,31 +55,7 @@ function StartGameWinCon(game, standing)
 			playerGameData[pid.ID].WinCon.Eleminateaisandplayers = 0;
 		end
 	end
-	for _,terr in pairs(standing.Territories)do
-		if(terr.OwnerPlayerID ~= WL.PlayerID.Neutral)then
-			if(game.ServerGame.Game.PlayingPlayers[terr.OwnerPlayerID].IsAI == false)then
-				playerGameData[terr.OwnerPlayerID].WinCon.Ownedterritories = playerGameData[terr.OwnerPlayerID].WinCon.Ownedterritories+1;
-				playerGameData[terr.OwnerPlayerID].WinCon.Ownedarmies = playerGameData[terr.OwnerPlayerID].WinCon.Ownedarmies+terr.NumArmies.NumArmies;
-			end
-		end
-	end
-	for _,boni in pairs(game.Map.Bonuses)do
-		local Match = true;
-		for _,terrid in pairs(boni.Territories)do
-			if(pid == nil)then
-				pid = standing.Territories[terrid].OwnerPlayerID;
-			end
-			if(pid ~= standing.Territories[terrid].OwnerPlayerID)then
-				Match = false;
-			end
-		end
-		if(Match == true)then
-			if(pid ~= WL.PlayerID.Neutral and game.ServerGame.Game.PlayingPlayers[pid].IsAI == false)then
-				playerGameData[pid].WinCon.Ownedbonuses = playerGameData[pid].WinCon.Ownedbonuses+1;
-			end
-		end
-		pid = nil;
-	end
+	--Note that we are skipping territory and bonus check here, since we are at the pick state
 	Mod.PlayerGameData = playerGameData;
 end
 

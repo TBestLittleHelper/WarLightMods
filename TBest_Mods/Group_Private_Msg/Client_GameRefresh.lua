@@ -1,5 +1,5 @@
 require('Utilities');
-require("Alerts")
+require("Diplomacy")
 
 function Client_GameRefresh(game)	
     --Skip if we're not in the game or if the game is over.
@@ -46,7 +46,7 @@ function CheckUnreadChat(game)
 		groups[i] = PlayerGameData.Chat[i]
 		if (groups[i].UnreadChat == true) then
 			markChatAsRead = true;
-			--Only show an alert if we are not the sender or if it is a SinglePlayer game (for testing)
+			--Only show an alert if we are not the sender (or if it is a SinglePlayer game for testing)
 			if (game.Us.ID ~= groups[i][groups[i].NumChat].Sender or game.Settings.SinglePlayer == true) then				
 				if (Alerts)then
 					local sender = game.Game.Players[groups[i][groups[i].NumChat].Sender].DisplayName(nil, false);
