@@ -62,7 +62,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	--List the members of the current selected group.
 	UI.Alert('63')
-	GroupMembersNames = getError()
+	GroupMembersNames = UI.CreateLabel(rootParent).SetText(getError)
 	
 	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers);
 	UI.Alert('65')
@@ -100,7 +100,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		ClientGame.CreateDialog(SettingsDialog);
 		close();--Close this dialog. 
 	end);
-	UI.Alert('96')
+	UI.Alert('103')
 
 	--If we are in a group, show the chat options
 	if (PlayerGameData.Chat ~= nil) then
