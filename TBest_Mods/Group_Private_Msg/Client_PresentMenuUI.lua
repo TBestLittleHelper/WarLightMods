@@ -138,9 +138,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			ChatGroupSelectedText.SetColor(PlayerGameData.Chat[ChatGroupSelectedID].Color)
 		end;			
 	end
-	UI.Alert('151')
 	RefreshChat();
-	UI.Alert('153')
 
 	ChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert);
 	--RefreshChat button
@@ -281,9 +279,7 @@ function ChatGroupSelectedButton(group)
 end
 
 function getGroupMembers()	
-	UI.Alert('284')
 	local PlayerGameData = Mod.PlayerGameData;
-	UI.Alert('287')
 	if (ChatGroupSelectedID ~= nil) then		
 		UI.Alert(ChatGroupSelected)
 		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
@@ -301,7 +297,6 @@ function getGroupMembers()
 		ListMsg = ListMsg .. groupMembers .. "\n";
 		return ListMsg;
 	end;
-	UI.Alert('307')
 	--The deafault case is the mod's broadcast
 	return "Broadcast";
 end
@@ -468,9 +463,7 @@ function RefreshChat()
 	if(skipRefresh)then print('skipRefresh chat') return end;
 	print("RefreshChat() called")
 	--Update the members of the current selected group.
-	UI.Alert('471')
 	GroupMembersNames.SetText(getGroupMembers());
-	UI.Alert('473')
 
 	--Remove old elements todo
 	DestroyOldUIelements(ChatMsgContainerArray)
@@ -497,7 +490,6 @@ function RefreshChat()
 			end;
 		end
 	end
-	UI.Alert('500')
 
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then
 		local startIndex = 1;
