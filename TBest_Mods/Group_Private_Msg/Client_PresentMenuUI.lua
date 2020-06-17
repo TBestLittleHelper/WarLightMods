@@ -3,10 +3,6 @@ require('Giftgold');
 require('Diplomacy');
 require('WinCon')
 
-function getError()
-	return "string"
-end
-
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	if (Mod.PublicGameData.GameFinalized == false) then
 	--Check if the game has ended.
@@ -60,12 +56,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	--Setting up the main Dialog window
 	
-	--List the members of the current selected group.
-	UI.Alert('63')
-	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getError)
+	--Make a label to list members of the current selected group.
 	GroupMembersNames = UI.CreateLabel(rootParent) 
 	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers);
-	UI.Alert('65')
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert);
@@ -92,7 +85,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		GroupMembersNames.SetText("Broadcast");
 		RefreshChat();
 	end);
-
 
 	UI.CreateButton(rootParent).SetText("Settings").SetColor("#00ff05").SetOnClick(function()
 		if (ChatMsgContainerArray ~= {})then DestroyOldUIelements(ChatMsgContainerArray) end;
@@ -130,7 +122,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end
 	end;
 	ChatContainer = UI.CreateVerticalLayoutGroup(vert);
-	UI.Alert('133')
 
 	ChatMessageText = UI.CreateTextInputField(vert)
 	.SetPlaceholderText(" Max 300 characters in one messages")
@@ -138,7 +129,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	.SetCharacterLimit(300)
 	.SetPreferredWidth(500)
 	.SetPreferredHeight(40)
-	UI.Alert('141')
 
 	if (ChatGroupSelectedID == nil)then
 		ChatMessageText.SetInteractable(false)
@@ -478,8 +468,10 @@ function RefreshChat()
 	if(skipRefresh)then print('skipRefresh chat') return end;
 	print("RefreshChat() called")
 	--Update the members of the current selected group.
+	Ui.Alert('471')
 	GroupMembersNames.SetText(getGroupMembers());
-	
+	Ui.Alert('473')
+
 	--Remove old elements todo
 	DestroyOldUIelements(ChatMsgContainerArray)
 	
@@ -505,6 +497,7 @@ function RefreshChat()
 			end;
 		end
 	end
+	Ui.Alert('500')
 
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then
 		local startIndex = 1;
