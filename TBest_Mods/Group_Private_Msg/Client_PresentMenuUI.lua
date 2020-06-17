@@ -37,6 +37,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	if (EachGroupButton == nil) then EachGroupButton = true end; --Each group has a button in PresentMenuUi
 	if (NumPastChat == nil) then NumPastChat = 7 end; --Max amount of past chat shown
 	
+	UI.Alert('40')
 	if (SizeX == nil or SizeY == nil) then
 		SizeX = 500; --Chat window
 		SizeY = 500; --Chat window
@@ -92,9 +93,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		ClientGame.CreateDialog(SettingsDialog);
 		close();--Close this dialog. 
 	end);
-	
+	UI.Alert('96')
+
 	--If we are in a group, show the chat options
-	if (next(PlayerGameData.Chat) ~= nil) then
+	if (PlayerGameData.Chat ~= nil) then
 		if not(EachGroupButton) then
 			--A text field for the group selected
 			ChatGroupSelectedText = UI.CreateButton(horizontalLayout)
