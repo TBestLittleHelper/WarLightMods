@@ -62,7 +62,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert);
-	
+	UI.Alert('65')
+
 	--Manage group button
 	UI.CreateButton(horizontalLayout)
 	.SetText("Manage groups")
