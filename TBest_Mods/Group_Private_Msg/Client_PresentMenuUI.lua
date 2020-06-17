@@ -58,8 +58,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	--List the members of the current selected group.
 	UI.Alert('63')
-
-	GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers());
+	local text = getGroupMembers()''
+	GroupMembersNames = UI.CreateLabel(rootParent).SetText(text);
 	UI.Alert('65')
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
