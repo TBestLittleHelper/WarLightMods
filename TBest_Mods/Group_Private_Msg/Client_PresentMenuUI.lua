@@ -94,7 +94,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end);
 	
 	--If we are in a group, show the chat options
-	if (PlayerGameData.Chat ~= nil) then
+	if (next(PlayerGameData.Chat) ~= nil) then
 		if not(EachGroupButton) then
 			--A text field for the group selected
 			ChatGroupSelectedText = UI.CreateButton(horizontalLayout)
