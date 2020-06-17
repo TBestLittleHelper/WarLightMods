@@ -281,7 +281,6 @@ end
 function getGroupMembers()	
 	local PlayerGameData = Mod.PlayerGameData;
 	if (ChatGroupSelectedID ~= nil) then		
-		UI.Alert(ChatGroupSelected)
 		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
 		local ListMsg = ""; 

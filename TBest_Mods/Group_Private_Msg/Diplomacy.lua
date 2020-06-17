@@ -6,6 +6,7 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 
 	--TODO list proposals we have sent, but have not recived a response
+	--TODO make the players into buttons so we can color them? Or maybe just color them
 	--List pending proposals.  This isn't absolutely necessary since we also alert the player of new proposals, but it's nice to list them here anyway.
 	for _,proposal in pairs(Mod.PlayerGameData.Diplo.PendingProposals or {}) do
 		local otherPlayer = game.Game.Players[proposal.PlayerOne].DisplayName(nil, false);
