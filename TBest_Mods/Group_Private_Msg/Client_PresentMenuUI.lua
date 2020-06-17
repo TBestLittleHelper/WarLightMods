@@ -283,7 +283,6 @@ end
 function getGroupMembers()	
 	UI.Alert('284')
 	local PlayerGameData = Mod.PlayerGameData;
-	print(ChatGroupSelectedID)
 	UI.Alert('287')
 	if (ChatGroupSelectedID ~= nil) then		
 		UI.Alert(ChatGroupSelected)
