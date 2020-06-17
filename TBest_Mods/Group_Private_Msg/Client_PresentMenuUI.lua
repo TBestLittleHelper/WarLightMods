@@ -62,9 +62,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	--List the members of the current selected group.
 	UI.Alert('63')
-	GroupMembersNames = UI.CreateLabel(rootParent).SetText(getError)
+	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getError)
 	
-	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers);
+	GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers);
 	UI.Alert('65')
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
@@ -132,7 +132,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end
 	end;
 	ChatContainer = UI.CreateVerticalLayoutGroup(vert);
-	
+	UI.Alert('135')
+
 	ChatMessageText = UI.CreateTextInputField(vert)
 	.SetPlaceholderText(" Max 300 characters in one messages")
 	.SetFlexibleWidth(0.9)
@@ -149,7 +150,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end;			
 	end
 	RefreshChat();
-	
+	UI.Alert('153')
+
 	ChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert);
 	--RefreshChat button
 	UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor("#00ff05").SetOnClick(RefreshChat)
