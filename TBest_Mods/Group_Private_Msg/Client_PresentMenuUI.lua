@@ -63,8 +63,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--List the members of the current selected group.
 	UI.Alert('63')
 	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getError)
-	
-	GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers);
+	GroupMembersNames = UI.CreateLabel(rootParent) 
+	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers);
 	UI.Alert('65')
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
@@ -100,8 +100,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		ClientGame.CreateDialog(SettingsDialog);
 		close();--Close this dialog. 
 	end);
-	UI.Alert('103')
-
 	--If we are in a group, show the chat options
 	if (PlayerGameData.Chat ~= nil) then
 		if not(EachGroupButton) then
@@ -132,7 +130,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end
 	end;
 	ChatContainer = UI.CreateVerticalLayoutGroup(vert);
-	UI.Alert('135')
+	UI.Alert('133')
 
 	ChatMessageText = UI.CreateTextInputField(vert)
 	.SetPlaceholderText(" Max 300 characters in one messages")
@@ -140,7 +138,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	.SetCharacterLimit(300)
 	.SetPreferredWidth(500)
 	.SetPreferredHeight(40)
-	
+	UI.Alert('141')
+
 	if (ChatGroupSelectedID == nil)then
 		ChatMessageText.SetInteractable(false)
 		else
@@ -149,6 +148,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			ChatGroupSelectedText.SetColor(PlayerGameData.Chat[ChatGroupSelectedID].Color)
 		end;			
 	end
+	UI.Alert('151')
 	RefreshChat();
 	UI.Alert('153')
 
