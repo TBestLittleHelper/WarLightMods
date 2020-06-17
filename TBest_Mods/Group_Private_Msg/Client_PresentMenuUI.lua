@@ -44,13 +44,15 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end;	
 	setMaxSize(SizeX, SizeY);
 	setScrollable(false,true);
-	
+	UI.Alert('47')
 	if (ChatGroupSelected == nil) then
 		ChatGroupSelectedID = nil;
 	end;
 	if (TargetGroupID ~= nil and ChatGroupSelectedID ~= nil) then 
 		ChatGroupSelectedID = TargetGroupID 
 	end;
+	UI.Alert('54')
+
 	ChatLayout = nil;
 	ChatContainer = nil;
 	ChatMsgContainerArray = {};
@@ -58,11 +60,13 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Setting up the main Dialog window
 	
 	--List the members of the current selected group.
+	UI.Alert('63')
+
 	GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers());
-	
+	UI.Alert('65')
+
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
 	local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert);
-	UI.Alert('65')
 
 	--Manage group button
 	UI.CreateButton(horizontalLayout)
