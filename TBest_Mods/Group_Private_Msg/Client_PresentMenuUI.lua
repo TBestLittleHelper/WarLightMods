@@ -37,21 +37,18 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	if (EachGroupButton == nil) then EachGroupButton = true end; --Each group has a button in PresentMenuUi
 	if (NumPastChat == nil) then NumPastChat = 7 end; --Max amount of past chat shown
 	
-	UI.Alert('40')
 	if (SizeX == nil or SizeY == nil) then
 		SizeX = 500; --Chat window
 		SizeY = 500; --Chat window
 	end;	
 	setMaxSize(SizeX, SizeY);
 	setScrollable(false,true);
-	UI.Alert('47')
 	if (ChatGroupSelected == nil) then
 		ChatGroupSelectedID = nil;
 	end;
 	if (TargetGroupID ~= nil and ChatGroupSelectedID ~= nil) then 
 		ChatGroupSelectedID = TargetGroupID 
 	end;
-	UI.Alert('54')
 
 	ChatLayout = nil;
 	ChatContainer = nil;
@@ -289,7 +286,9 @@ end
 function getGroupMembers()	
 	PlayerGameData = Mod.PlayerGameData;
 	print(ChatGroupSelectedID)
+	UI.Alert('289')
 	if (ChatGroupSelectedID ~= nil) then		
+		UI.Alert(ChatGroupSelected)
 		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
 		local ListMsg = ""; 
@@ -305,6 +304,7 @@ function getGroupMembers()
 		ListMsg = ListMsg .. groupMembers .. "\n";
 		return ListMsg;
 	end;
+	UI.Alert('307')
 	--The deafault case is the mod's broadcast
 	return "Broadcast";
 end
