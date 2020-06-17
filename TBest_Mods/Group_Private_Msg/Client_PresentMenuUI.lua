@@ -468,9 +468,9 @@ function RefreshChat()
 	if(skipRefresh)then print('skipRefresh chat') return end;
 	print("RefreshChat() called")
 	--Update the members of the current selected group.
-	Ui.Alert('471')
+	UI.Alert('471')
 	GroupMembersNames.SetText(getGroupMembers());
-	Ui.Alert('473')
+	UI.Alert('473')
 
 	--Remove old elements todo
 	DestroyOldUIelements(ChatMsgContainerArray)
@@ -497,7 +497,7 @@ function RefreshChat()
 			end;
 		end
 	end
-	Ui.Alert('500')
+	UI.Alert('500')
 
 	if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then
 		local startIndex = 1;
