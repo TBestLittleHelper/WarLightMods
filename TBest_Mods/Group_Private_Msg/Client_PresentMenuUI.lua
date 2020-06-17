@@ -281,9 +281,10 @@ function ChatGroupSelectedButton(group)
 end
 
 function getGroupMembers()	
-	PlayerGameData = Mod.PlayerGameData;
+	UI.Alert('284')
+	local PlayerGameData = Mod.PlayerGameData;
 	print(ChatGroupSelectedID)
-	UI.Alert('289')
+	UI.Alert('287')
 	if (ChatGroupSelectedID ~= nil) then		
 		UI.Alert(ChatGroupSelected)
 		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
