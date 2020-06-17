@@ -62,7 +62,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	
 	--List the members of the current selected group.
 	UI.Alert('63')
-	local text = getError()
+	GroupMembersNames = getError()
 	
 	--GroupMembersNames = UI.CreateLabel(rootParent).SetText(getGroupMembers);
 	UI.Alert('65')
