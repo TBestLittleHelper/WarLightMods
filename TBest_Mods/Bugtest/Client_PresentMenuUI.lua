@@ -279,7 +279,7 @@ function ChatGroupSelectedButton(group)
 end
 
 function getGroupMembers()	
-	local PlayerGameData = Mod.PlayerGameData;
+	PlayerGameData = Mod.PlayerGameData;
 	if (ChatGroupSelectedID ~= nil) then		
 		local groupMembers = PlayerGameData.Chat[ChatGroupSelectedID].GroupName .. " has the following members:  ";
 		local playerID;
@@ -475,7 +475,7 @@ function RefreshChat()
 	
 	local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout);
 	
-	PlayerGameData = Mod.PlayerGameData;	
+	local PlayerGameData = Mod.PlayerGameData;	
 	local ChatArrayIndex = nil;
 	
 	--If there are no past chat private or no group selected display the example
