@@ -1,5 +1,7 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
-	PlayerGameData = Mod.PlayerGameData;
+    PlayerGameData = Mod.PlayerGameData;
+    PlayerGameData = {}
+    PlayerGameData.Data = '1'
 	GroupMembersNames = UI.CreateLabel(rootParent) 
 	GroupMembersNames.SetText(getGroupMembers())
 end
