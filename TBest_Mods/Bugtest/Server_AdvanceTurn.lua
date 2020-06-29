@@ -181,11 +181,11 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			--Subtract gold cost if commerce 
 			--First 6 armies each turn cost 1 gold, next X cost 2 gold, next X cost 3 gold, etc.
 			if (game.Settings.CommerceGame) then
-				local goldHave = game.LatestStanding.NumResources(game.Us.ID, WL.ResourceType.Gold);
-				local CommerceArmyCostMultiplier = game.Settings.CommerceArmyCostMultiplier;
+				local goldHave = game.ServerGame.LatestStanding.NumResources(game.Us.ID, WL.ResourceType.Gold);
+				local CommerceArmyCostMultiplier = game.ServerGame.Settings.CommerceArmyCostMultiplier;
 				local goldSpent = 0;
 				local CurrentMultiplier = 1;
-				--TODO make this not be a for loop
+				--TODO make this not be a for loop 
 				for i=1, i < order.NumArmies do 
 					goldSpent = goldSpent + CurrentMultiplier;
 					if (CommerceArmyCostMultiplier ~= 0 )then
