@@ -4,6 +4,10 @@ function Client_SaveConfigureUI(alert)
 	Mod.Settings.ModBetterCitiesEnabled= ModBetterCitiesEnabled 
 	Mod.Settings.ModWinningConditionsEnabled= ModWinningConditionsEnabled 
 	
+	Mod.Settings.SafeStartNumTurns = SafeStartNumberInputField;
+	if (SafeStartNumberInputField > 0 )then 
+		Mod.Settings.ModSafeStartEnabled =true
+	else Mod.Settings.ModSafeStartEnabled =false end;
 
 	if (ModBetterCitiesEnabled) then SaveModBetterCities() end
 	if (ModWinningConditionsEnabled)then SaveModWinCon(alert) end

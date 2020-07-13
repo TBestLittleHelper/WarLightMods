@@ -6,6 +6,7 @@ function Client_PresentConfigureUI(rootParent)
 	ModDiplomacyEnabled = Mod.Settings.ModDiplomacyEnabled
 	ModBetterCitiesEnabled = Mod.Settings.ModBetterCitiesEnabled
 	ModWinningConditionsEnabled = Mod.Settings.ModWinningConditionsEnabled
+	SafeStartEnabled = Mod.Settings.ModSafeStartEnabled
 
 	if ModGiftGoldEnabled == nil then
 		ModGiftGoldEnabled = false
@@ -19,6 +20,9 @@ function Client_PresentConfigureUI(rootParent)
 	if ModWinningConditionsEnabled == nil then
 		ModWinningConditionsEnabled = false
 	end
+	if SafeStartEnabled == nil then 
+		SafeStartEnabled = false
+	end
 
 	UI.CreateLabel(rootParent).SetText("Turn on/off major individual parts of the modpack.")
 
@@ -30,6 +34,20 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[4] = UI.CreateVerticalLayoutGroup(rootParent) --Used for BetterCities Mod
 	horzlist[5] = UI.CreateHorizontalLayoutGroup(rootParent)
 	horzlist[6] = UI.CreateVerticalLayoutGroup(rootParent) --Used for WinCon mod
+	horzlist[7] = UI.CreateVerticalLayoutGroup(rootParent)
+
+	
+	--Safe Start
+	local turnsInitial = Mod.Settings.SafeStartNumTurns;
+	if turnsInitial == nil then turnsInitial = 10; end
+    
+    local horz = UI.CreateHorizontalLayoutGroup(horzlist[7]);
+	UI.CreateLabel(horz).SetText("Cannot attack other players for this many turns");
+    SafeStartNumberInputField = UI.CreateNumberInputField(horz)
+		.SetSliderMinValue(0)
+		.SetSliderMaxValue(30)
+		.SetValue(turnsInitial);
+end
 
 
 	--Instructions text

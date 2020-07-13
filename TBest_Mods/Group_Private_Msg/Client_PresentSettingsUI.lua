@@ -1,5 +1,8 @@
 function Client_PresentSettingsUI(rootParent)
 	vert = UI.CreateVerticalLayoutGroup(rootParent);
+	if (Mod.Settings.ModSafeStartEnabled)then 
+		UI.CreateLabel(vert).SetText('Cannot attack other players for the first ' .. Mod.Settings.SafeStartNumTurns .. ' turns');
+	end
 	if (Mod.Settings.ModGiftGoldEnabled) then 
 		UI.CreateLabel(vert).SetText('Gift Gold Mod is on');
 	end

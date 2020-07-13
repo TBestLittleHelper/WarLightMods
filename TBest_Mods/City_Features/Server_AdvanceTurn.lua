@@ -65,8 +65,9 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] -1;
 			terrMod.SetStructuresOpt = structure;
 			--Add the deploy
-			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + order.NumArmies;
+			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + (order.NumArmies *2);
 			NewOrders[1]=terrMod;
+			--TODO make this not be free in commerce games
 			--Add the deploy order to the game and skip the original order.
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deploy " .. terrMod.SetArmiesTo .. " in " .. game.Map.Territories[order.DeployOn].Name .. " using local workers. The city now has less resources.", {}, NewOrders));
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);			

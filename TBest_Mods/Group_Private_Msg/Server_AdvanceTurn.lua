@@ -17,6 +17,10 @@ end;
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	orderSkiped = false;
+	if (Mod.Settings.SafeStartEnabled)then
+		SafeStart_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
+		if (orderSkiped)then return end;
+	end;
 
 	if (Mod.Settings.ModDiplomacyEnabled)then
 		Diplomacy_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder);
@@ -173,11 +177,30 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] -1;
 			terrMod.SetStructuresOpt = structure;
 			--Add the deploy
-			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + order.NumArmies;
+			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + order.NumArmies *2;
 			NewOrders[1]=terrMod;
 			--Add the deploy order to the game and skip the original order.
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deploy " .. terrMod.SetArmiesTo .. " in " .. game.Map.Territories[order.DeployOn].Name .. " using local workers. The city now has less resources.", {}, NewOrders));
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);		
+			--Subtract gold cost if commerce 
+			--First 6 armies each turn cost 1 gold, next X cost 2 gold, next X cost 3 gold, etc.
+			if (game.Settings.CommerceGame) then
+				local goldHave = game.LatestStanding.NumResources(game.Us.ID, WL.ResourceType.Gold);
+				local CommerceArmyCostMultiplier = game.Settings.CommerceArmyCostMultiplier;
+				local goldSpent = 0;
+				local CurrentMultiplier = 1;
+				--TODO make this not be a for loop 
+				for i=1, i < order.NumArmies do 
+					goldSpent = goldSpent + CurrentMultiplier;
+					if (CommerceArmyCostMultiplier ~= 0 )then
+						if (i%CommerceArmyCostMultiplier == 0) then
+							CurrentMultiplier = CurrentMultiplier + 1;
+						end
+					end
+				end;
+				--TODO test
+				game.ServerGame.SetPlayerResource(order.PlayerID, WL.ResourceType.Gold, goldHave - goldSpent);
+			end;
 			orderSkiped = true;	
 		end	
 		return;
@@ -606,4 +629,31 @@ function getterrid(game,name)
 		end
 	end
 	return -1;
+end
+
+
+--SafeStart
+--https://github.com/FizzerWL/ExampleMods/blob/master/SafeStartMod/Server_AdvanceTurn.lua
+function SafeStart_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
+	--[[if (order.proxyType == 'GameOrderAttackTransfer' and order.PlayerID == 4569) then
+		print('NumTurns=' .. game.Game.NumberOfTurns .. ' Mod.Settings.NumTurns=' .. tostring(Mod.Settings.NumTurns) .. ' From=' .. game.Map.Territories[order.From].Name .. ' to=' .. game.Map.Territories[order.To].Name .. ' IsAttack=' .. tostring(result.IsAttack) .. ' DestinationOwner=' .. tostring(game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID));
+	end ]]--
+
+    if (game.Game.NumberOfTurns < Mod.Settings.SafeStartNumTurns  -- are we at the start of the game, within our defined range?  (without this check, we'd affect the entire game, not just the start)
+		and order.proxyType == 'GameOrderAttackTransfer'  --is this an attack/transfer order?  (without this check, we'd stop deployments or cards)
+		and result.IsAttack  --is it an attack? (without this check, transfers wouldn't be allowed within your own territory or to teammates)
+		and not IsDestinationNeutral(game, order)) then --is the destination owned by neutral? (without this check we'd stop people from attacking neutrals)
+
+		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage); --skip it
+		orderSkiped = true;
+		local msg = 'Safe start mod skipped attack to ' .. game.Map.Territories[order.To].Name .. ' from ' .. game.Map.Territories[order.From].Name;
+		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, msg, {}, {}));
+	end
+
+end
+
+function IsDestinationNeutral(game, order)
+	local terrID = order.To; --The order has "To" and "From" which are territory IDs
+	local terrOwner = game.ServerGame.LatestTurnStanding.Territories[terrID].OwnerPlayerID; --LatestTurnStanding always shows the current state of the game.
+	return terrOwner == WL.PlayerID.Neutral;
 end
