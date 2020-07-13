@@ -47,7 +47,7 @@ function Client_PresentConfigureUI(rootParent)
 		.SetSliderMinValue(0)
 		.SetSliderMaxValue(30)
 		.SetValue(turnsInitial);
-end
+
 
 
 	--Instructions text
