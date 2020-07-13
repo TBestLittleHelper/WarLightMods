@@ -17,7 +17,7 @@ end;
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	orderSkiped = false;
-	if (Mod.Settings.SafeStartEnabled)then
+	if (Mod.Settings.ModSafeStartEnabled)then
 		SafeStart_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 		if (orderSkiped)then return end;
 	end;
