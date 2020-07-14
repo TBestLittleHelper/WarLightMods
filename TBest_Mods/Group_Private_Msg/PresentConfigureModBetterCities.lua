@@ -110,7 +110,7 @@ function PresentModBetterCitiesSettings()
     --Instructions text
 	text1 =
 	UI.CreateLabel(vertlistBetterCities[1]).SetText(
-	"IMPORTANT: When using this mod it's strongely recomended that you make price to build cities extremely exspensive to the point where players can't build cities using gold."
+	"IMPORTANT: When using this mod it's strongely recomended that you make the price to build cities extremely exspensiv, to the point where players can't build cities using gold. Or just turn of the the option under army settings"
 )
 text2 =
 	UI.CreateLabel(vertlistBetterCities[2]).SetText(
@@ -189,6 +189,6 @@ text3 =
 
 	CityDeployOnlyToggle =
 		UI.CreateCheckBox(vertlistBetterCities[23]).SetText(
-		"All army deployments not made in a city of 1 or greater are skipped. Make sure to not create games that can get stuck!"
+		"All army deployments NOT made in a city of 1 or greater are skipped. Make sure to avoid creating games that can get stuck!"
 	).SetIsChecked(initialArmyDeployment)
 end

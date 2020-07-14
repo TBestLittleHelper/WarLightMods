@@ -2,11 +2,13 @@ require("PresentConfigureModBetterCities")
 require("PresentConfigureModWinCon")
 
 function Client_PresentConfigureUI(rootParent)
+	if (Mod.Settings.Version ~= 1)then return end;
+
 	ModGiftGoldEnabled = Mod.Settings.ModGiftGoldEnabled
 	ModDiplomacyEnabled = Mod.Settings.ModDiplomacyEnabled
 	ModBetterCitiesEnabled = Mod.Settings.ModBetterCitiesEnabled
 	ModWinningConditionsEnabled = Mod.Settings.ModWinningConditionsEnabled
-	SafeStartEnabled = Mod.Settings.ModSafeStartEnabled
+	local turnsInitial = Mod.Settings.SafeStartNumTurns;
 
 	if ModGiftGoldEnabled == nil then
 		ModGiftGoldEnabled = false
@@ -38,16 +40,16 @@ function Client_PresentConfigureUI(rootParent)
 
 	
 	--Safe Start
-	local turnsInitial = Mod.Settings.SafeStartNumTurns;
-	if turnsInitial == nil then turnsInitial = 10; end
-    
+	if turnsInitial == nil then turnsInitial = 0; end    
     local horz = UI.CreateHorizontalLayoutGroup(horzlist[7]);
-	UI.CreateLabel(horz).SetText("Cannot attack other players for this many turns");
+	UI.CreateLabel(horz).SetText("Safe Start lasts for this many turns");
     SafeStartNumberInputField = UI.CreateNumberInputField(horz)
 		.SetSliderMinValue(0)
 		.SetSliderMaxValue(30)
 		.SetValue(turnsInitial);
-
+	
+	local horz = UI.CreateHorizontalLayoutGroup(horzlist[7]);
+	UI.CreateLabel(horz).SetText("BETA! Diplomacy is still under dev and WILL be turned off (you can see the settings, but they won't save). I strongely recomend you test your templates in SingelPlayer first. Please report any bugs.");
 
 
 	--Instructions text

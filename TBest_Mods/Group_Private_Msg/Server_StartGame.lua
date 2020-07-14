@@ -1,6 +1,8 @@
 require("Utilities")
 
 function Server_StartGame(game, standing)		
+	if (Mod.Settings.Version ~= 1)then return end;
+
 	--TODO we can move stuff here around better so we don't call unneeded things
 	publicGameData = Mod.PublicGameData
 	playerGameData = Mod.PlayerGameData;
@@ -44,10 +46,11 @@ function playerGameDataSetup(game, standing)
 end
 function broadCastGroupSetup(game)
 	publicGameData.Chat.BroadcastGroup = {};
-	publicGameData.Chat.BroadcastGroup[1] = "When a game ends, all chat messages will be made public. Also, check out settings and tweek it to your liking."
-	--publicGameData.Chat.BroadcastGroup[1].Sender = 0; --this might be someting we add in the future
+	publicGameData.Chat.BroadcastGroup[1] = "When a game ends, all chat messages can be made public. Also, check out settings and tweek it to your liking."
 	publicGameData.Chat.BroadcastGroup[2] = "Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!"
-	publicGameData.Chat.BroadcastGroup.NumChat = 2
+	publicGameData.Chat.BroadcastGroup[3] = "BETA! Please report any bugs and feedback to TBest. Not everything has been tested yet, so I aplogize for any issues you may run into"
+
+	publicGameData.Chat.BroadcastGroup.NumChat = 3
 	
 end
 function StartGameWinCon(game, standing) 

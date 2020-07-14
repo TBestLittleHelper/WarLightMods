@@ -2,6 +2,8 @@ require ('Server_GameCustomMessage');
 require('Utilities');
 
 function Server_AdvanceTurn_Start(game, addNewOrder)
+	if (Mod.Settings.Version ~= 1)then return end;
+
 	if (Mod.Settings.ModDiplomacyEnabled)then
 		--Remember in a global variable all alliances that are breaking this turn
 		AlliancesBreakingThisTurn = {};
@@ -16,6 +18,8 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 end;
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
+	if (Mod.Settings.Version ~= 1)then return end;
+
 	orderSkiped = false;
 	if (Mod.Settings.ModSafeStartEnabled)then
 		SafeStart_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
@@ -38,6 +42,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	end;
 end;
 function Server_AdvanceTurn_End (game, addNewOrder)	
+	if (Mod.Settings.Version ~= 1)then return end;
+
 	--Add a turn 'chat' msg to show that a turn advanced in chat
 	TurnDivider(game.Game.NumberOfTurns)
 
@@ -179,27 +185,14 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			--Add the deploy
 			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + order.NumArmies *2;
 			NewOrders[1]=terrMod;
+			--If not a commerce game, skip the original order and create a new one. 
 			--Add the deploy order to the game and skip the original order.
-			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deploy " .. terrMod.SetArmiesTo .. " in " .. game.Map.Territories[order.DeployOn].Name .. " using local workers. The city now has less resources.", {}, NewOrders));
-			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);		
-			--Subtract gold cost if commerce 
-			--First 6 armies each turn cost 1 gold, next X cost 2 gold, next X cost 3 gold, etc.
+			if (game.Settings.CommerceGame == false)then
+				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deploy " .. order.NumArmies .. " in " .. game.Map.Territories[order.DeployOn].Name .. " using local city resources.", {}, NewOrders));
+			end;
+			--We want to keep the gold cost if commerce. Instead of skipping the order, we keep the original too.
 			if (game.Settings.CommerceGame) then
-				local goldHave = game.LatestStanding.NumResources(game.Us.ID, WL.ResourceType.Gold);
-				local CommerceArmyCostMultiplier = game.Settings.CommerceArmyCostMultiplier;
-				local goldSpent = 0;
-				local CurrentMultiplier = 1;
-				--TODO make this not be a for loop 
-				for i=1, i < order.NumArmies do 
-					goldSpent = goldSpent + CurrentMultiplier;
-					if (CommerceArmyCostMultiplier ~= 0 )then
-						if (i%CommerceArmyCostMultiplier == 0) then
-							CurrentMultiplier = CurrentMultiplier + 1;
-						end
-					end
-				end;
-				--TODO test
-				game.ServerGame.SetPlayerResource(order.PlayerID, WL.ResourceType.Gold, goldHave - goldSpent);
+				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deployed an extra " .. order.NumArmies .. " in " .. game.Map.Territories[order.DeployOn].Name .. " using local city resources.", {}, NewOrders))
 			end;
 			orderSkiped = true;	
 		end	

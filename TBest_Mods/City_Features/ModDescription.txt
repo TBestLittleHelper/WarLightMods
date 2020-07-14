@@ -1,1 +1,1 @@
-Several enchantments and new features for cities. For example, cities can grow, built using cards, be bombed, provide defensive bonuses and more!
+Adds a new way to chat in the game as well as mod-compatabilety for the selected mods!
