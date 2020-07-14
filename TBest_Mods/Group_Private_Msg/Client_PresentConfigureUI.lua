@@ -2,7 +2,6 @@ require("PresentConfigureModBetterCities")
 require("PresentConfigureModWinCon")
 
 function Client_PresentConfigureUI(rootParent)
-	if (Mod.Settings.Version ~= 1)then return end;
 
 	ModGiftGoldEnabled = Mod.Settings.ModGiftGoldEnabled
 	ModDiplomacyEnabled = Mod.Settings.ModDiplomacyEnabled
