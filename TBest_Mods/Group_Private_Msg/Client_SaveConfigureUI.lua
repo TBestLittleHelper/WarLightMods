@@ -1,8 +1,8 @@
 function Client_SaveConfigureUI(alert)
 	Mod.Settings.Version = 1;
 	Mod.Settings.ModGiftGoldEnabled= ModGiftGoldEnabled  
-	--Mod.Settings.ModDiplomacyEnabled= ModDiplomacyEnabled
-	Mod.Settings.ModDiplomacyEnabled= false;
+	Mod.Settings.ModDiplomacyEnabled= ModDiplomacyEnabled
+	--TODO Mod.Settings.ModDiplomacyEnabled= false;
 
 	Mod.Settings.ModBetterCitiesEnabled= ModBetterCitiesEnabled 
 	Mod.Settings.ModWinningConditionsEnabled= ModWinningConditionsEnabled 

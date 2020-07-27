@@ -1,5 +1,6 @@
 --https://github.com/FizzerWL/ExampleMods/tree/master/GiftGoldMod
 require('Utilities');
+--TODO color buttons
 
 function GiftGoldMenu(rootParent, setMaxSize, setScrollable, game, close)
 	Game = game;

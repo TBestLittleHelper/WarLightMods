@@ -78,6 +78,7 @@ function Diplomacy_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, 
 
 			--Insert a message into player data for the target so that they know to alert the player.
 			local ourPlayerName = game.Game.Players[allianceBreak.OurPlayerID].DisplayName(nil, false);
+			print(ourPlayerName .. ' has broken their alliance with' .. allianceBreak.OtherPlayerID);
 			AlertPlayer(allianceBreak.OtherPlayerID, ourPlayerName .. ' has broken their alliance with you' , game);
 		end
 	end
@@ -99,7 +100,7 @@ function Diplomacy_Server_AdvanceTurn_End(game, addNewOrder)
 end
 
 function AlertPlayer(playerID, msg, game)
-	if (game.Game.players[playerID].IsAI)then return end;
+	if (game.Game.Players[playerID].IsAI)then return end;
 
 	local playerData = Mod.PlayerGameData;
 	if (playerData[playerID] == nil) then
@@ -513,6 +514,7 @@ end
 function WinCon_Server_AdvanceTurn_End (game,addNewOrder)
 
 	if (WinConGameWon)then return end;
+	if (Mod.Settings.terrcondition == nil)then return end;
 
 	for _,terr in pairs(game.ServerGame.LatestTurnStanding.Territories)do
 		if(terr.OwnerPlayerID ~= WL.PlayerID.Neutral and game.ServerGame.Game.Players[terr.OwnerPlayerID].IsAI == false)then

@@ -1,4 +1,5 @@
 require("Utilities")
+--TODO make a Setup.lua file?
 
 function Server_StartGame(game, standing)		
 	if (Mod.Settings.Version ~= 1)then return end;
@@ -40,6 +41,14 @@ function playerGameDataSetup(game, standing)
 			playerGameData[pid.ID].Diplo.PendingProposals = {}			
 			playerGameData[pid.ID].WinCon = {}; --For WinCon mod
 			playerGameData[pid.ID].WinCon.HoldTerritories = {};
+
+			--Standard settings
+			PublicGameData[pid.ID].AlertUnreadChat = true;
+			PublicGameData[pid.ID].EachGroupButton =  true; 
+			PublicGameData[pid.ID].NumPastChat = 7;
+			PublicGameData[pid.ID].SizeX = 500;
+			PublicGameData[pid.ID].SizeY = 500;
+		
 		end
 	end
 

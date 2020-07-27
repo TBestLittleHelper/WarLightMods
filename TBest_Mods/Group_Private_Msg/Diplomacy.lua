@@ -19,8 +19,11 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 	if (#alliances == 0) then
 		UI.CreateLabel(vert).SetText("No alliances are currently in effect");
 	else
-		--Render all alliances that involve us first
-		local ourAlliances = filter(alliances, function(alliance) return game.Us ~= nil and (alliance.PlayerOne == game.Us.ID or alliance.PlayerTwo == game.Us.ID) end);
+		--Render all alliances that involve the selected player. We start out by selecting ourselves. 
+		local selectedPlayerID = game.Us.ID;
+		local ourAlliances = filter(alliances, function(alliance) return game.Us ~= nil and (alliance.PlayerOne == selectedPlayerID or alliance.PlayerTwo == game.Us.ID) end);
+		UI.CreateLabel(vert).SetText("Players you have an alliances with. Click on a name to break the alliance.");
+
 		for _,alliance in pairs(ourAlliances) do
 			local otherPlayerID
 			if alliance.PlayerOne == game.Us.ID then
@@ -32,8 +35,9 @@ function DiplomacyMenu(rootParent, setMaxSize, setScrollable, game, close)
 
 			
 			local horz = UI.CreateHorizontalLayoutGroup(vert);
-			UI.CreateLabel(horz).SetText('You are allied with ' .. otherPlayerName);
-			UI.CreateButton(horz).SetText("Break").SetOnClick(function() 
+			--UI.CreateLabel(horz).SetText('You are allied with ' .. otherPlayerName);
+			local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor
+			UI.CreateButton(horz).SetText(otherPlayerName).SetColor(color).SetOnClick(function() 
 				BreakAlliance(otherPlayerID, otherPlayerName);
 			end);
 		end
@@ -75,7 +79,6 @@ function CreateProposeDialog(rootParent, setMaxSize, setScrollable, game, close)
 	TargetPlayerID = nil;
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent);
-
 	
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
 	UI.CreateLabel(row1).SetText("Propose an alliance with this player: ");
@@ -93,18 +96,16 @@ function CreateProposeDialog(rootParent, setMaxSize, setScrollable, game, close)
 		payload.Message = "Propose";
 		payload.TargetPlayerID = TargetPlayerID;
 
-
 		Game.SendGameCustomMessage("Proposing alliance...", payload, function(returnValue) 
 			UI.Alert("Proposal sent!");
 			close(); --Close the propose dialog since we're done with it
 		end);
 	end);
-
-
 end
 
 function TargetPlayerClicked()
 	local options = map(filter(Game.Game.Players, IsPotentialTarget), PlayerButton);
+	--TODO if no option, alert
 	UI.PromptFromList("Select the player you'd like to propose an alliance with", options);
 end
 
@@ -115,7 +116,7 @@ function IsPotentialTarget(player)
 	if (player.State ~= WL.GamePlayerState.Playing) then return false end; --skip players not alive anymore, or that declined the game.
 
 	if (Game.Settings.SinglePlayer) then return true end; --in single player, allow proposing with everyone
-
+	--TODO filter exsisting allies
 	return not player.IsAI; --In multi-player, never allow proposing with an AI.
 end
 
@@ -130,11 +131,9 @@ function PlayerButton(player)
 	return ret;
 end
 
-
 function DoProposalPrompt(game, proposal) 
     local otherPlayer = game.Game.Players[proposal.PlayerOne].DisplayName(nil, false);
     UI.PromptFromList(otherPlayer .. ' has proposed an alliance with you.  Do you accept?', { AcceptProposalBtn(game, proposal), DeclineProposalBtn(game, proposal) });
-
 end
 function AcceptProposalBtn(game, proposal)
 	local ret = {};
@@ -148,7 +147,6 @@ function AcceptProposalBtn(game, proposal)
 	end
 	return ret;
 end
-
 
 function DeclineProposalBtn(game, proposal)
 	local ret = {};
