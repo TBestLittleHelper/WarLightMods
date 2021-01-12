@@ -142,10 +142,7 @@ function AddOrdersConfirmes()
 			if (order.proxyType == "GameOrderAttackTransfer") then
 				if (Game.Us.ID == standing.Territories[order.From].OwnerPlayerID) then --from us 
 					if (Game.Us.ID == standing.Territories[order.To].OwnerPlayerID) then -- to us
-						if (order.ByPercent == true) then 
-							newOrder = WL.GameOrderAttackTransfer.Create(Game.Us.ID, order.From, order.To,3, true, order.NumArmies, false)
-						else newOrder = WL.GameOrderAttackTransfer.Create(Game.Us.ID, order.From, order.To,3, false, order.NumArmies, false)end;
-
+							newOrder = WL.GameOrderAttackTransfer.Create(Game.Us.ID, order.From, order.To,3, order.ByPercent, order.NumArmies, false)	
 						table.insert(orderTabel, newOrder);
 					end;
 				end;
