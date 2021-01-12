@@ -1,3 +1,3 @@
 Fixses tedious work in LocalDeployment games with the press of a button!
 
-{Adds past deployments and transfears}
+{Adds past deployments and/or transfears}

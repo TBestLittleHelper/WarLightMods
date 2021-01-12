@@ -17,11 +17,11 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	end
 
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
-	addOrders = UI.CreateButton(row1).SetText("Add last turns deployment and transfers").SetOnClick(AddOrdersHelper);
+	addOrders = UI.CreateButton(row1).SetText("Add last turns deployment and transfers").SetOnClick(AddOrdersHelper).SetColor("#00ff05");
 	local row2 = UI.CreateHorizontalLayoutGroup(vert);
-	addDeployOnly = UI.CreateButton(row2).SetText("Add last turns deployment only").SetOnClick(AddDeployHelper);
+	addDeployOnly = UI.CreateButton(row2).SetText("Add last turns deployment only").SetOnClick(AddDeployHelper).SetColor("#00ff05");
 	local row3 =  UI.CreateHorizontalLayoutGroup(vert);
-	clearOrders = UI.CreateButton(row3).SetText("Clear Orders").SetOnClick(clearOrdersFunction);
+	clearOrders = UI.CreateButton(row3).SetText("Clear Orders").SetOnClick(clearOrdersFunction).SetColor("#0000FF");
 end
 
 function clearOrdersFunction()
@@ -142,7 +142,10 @@ function AddOrdersConfirmes()
 			if (order.proxyType == "GameOrderAttackTransfer") then
 				if (Game.Us.ID == standing.Territories[order.From].OwnerPlayerID) then --from us 
 					if (Game.Us.ID == standing.Territories[order.To].OwnerPlayerID) then -- to us
-						newOrder = WL.GameOrderAttackTransfer.Create(Game.Us.ID, order.From, order.To,3, false, order.NumArmies, false)
+						if (order.ByPercent == true) then 
+							newOrder = WL.GameOrderAttackTransfer.Create(Game.Us.ID, order.From, order.To,3, true, order.NumArmies, false)
+						else newOrder = WL.GameOrderAttackTransfer.Create(Game.Us.ID, order.From, order.To,3, false, order.NumArmies, false)end;
+
 						table.insert(orderTabel, newOrder);
 					end;
 				end;
@@ -215,13 +218,3 @@ function getDistHelper(data)
 	print('got Distribution');
 	Distribution = data;
 end;
-
-function Dump(obj)
-	if obj.proxyType ~= nil then
-		DumpProxy(obj);
-	elseif type(obj) == 'table' then
-		DumpTable(obj);
-	else
-		print('Dump ' .. type(obj));
-	end
-end
