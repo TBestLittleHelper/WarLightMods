@@ -6,17 +6,17 @@ function updateGame( standing,game,FEN )
 		if unit ~= 'E' then print(unitToUnitName[string.upper(unit)] .. ' at ' .. game.Map.Territories[territory.ID].Name) end;
 		local armies = unitToUnitValue[string.upper(unit)]
 		if (armies == 10)then
-			--TODO make something uniqe for the king?
+			--TODO make something unique for the king?
 			territory.NumArmies = WL.Armies.Create(armies);
 		elseif (armies == 0)then
-			--If zero armies, make nutral
+			--If zero armies, make neutral
 			territory.NumArmies = WL.Armies.Create(armies);
 			territory.OwnerPlayerID = 0;
 		else
 			--Set correct amount of armies
 			territory.NumArmies = WL.Armies.Create(armies);
 		end;
-		--If Unit is uppercase, it's a white pice. Else it's a black pice
+		--If Unit is uppercase, it's a white piece. Else it's a black piece
 		if (unit == string.upper(unit) and unit ~= 'E')then
 			territory.OwnerPlayerID = PublicGameData.whitePlayerID;
 		elseif (unit ~= 'E') then
