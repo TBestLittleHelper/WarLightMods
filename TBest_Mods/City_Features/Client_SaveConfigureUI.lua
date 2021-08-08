@@ -166,7 +166,6 @@ function SaveModWinCon(alert)
 end
 function InRange(setting)
 
-
 	if(setting>100000)then
 		Alert("Numbers can't be higher then 100000");
 	end
