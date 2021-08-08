@@ -154,7 +154,7 @@ function AddOrdersConfirmes()
 end;
 
 function AddDeployHelper()
-	standing = Game.LatestStanding; --used to make sure we can make the depoly/transfear
+	standing = Game.LatestStanding; --used to make sure we can make the deploy/transfer
 	LastTurn = Game.Orders
 
 	--can we get rid of this Call?
