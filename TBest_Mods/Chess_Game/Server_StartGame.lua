@@ -27,7 +27,7 @@ function Server_StartGame(game, standing)
 		end;
 	end
 
-	--Set up a reffrece table, that connects every square (like 'E5') to a territory ID
+	--Set up a reference table, that connects every square (like 'E5') to a territory ID
 	local boardSqrToTerrID = {};
 	for letter, number in pairs (letterToNumber) do
 		for i=8,1,-1 do 
