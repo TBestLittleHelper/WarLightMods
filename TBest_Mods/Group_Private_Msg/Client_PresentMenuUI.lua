@@ -467,7 +467,7 @@ function RefreshChat()
 	--Update the members of the current selected group.
 	GroupMembersNames.SetText(getGroupMembers());
 
-	--Remove old elements todo
+	--Remove old elements
 	DestroyOldUIelements(ChatMsgContainerArray)
 	
 	rowChatRecived = UI.CreateVerticalLayoutGroup(ChatContainer); 
