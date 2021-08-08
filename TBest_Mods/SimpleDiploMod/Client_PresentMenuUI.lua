@@ -13,14 +13,14 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game)
 	end
 
 	local row1 = UI.CreateHorizontalLayoutGroup(vert);
-	UI.CreateLabel(row1).SetText("Decler war on this player: ");
+	UI.CreateLabel(row1).SetText("Declare war on this player: ");
 	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked);
 	
 end
 
 function TargetPlayerClicked()
 	local options = map(Game.Game.Players, PlayerButton);
-	UI.PromptFromList("Select the player you'd like to declere war on", options);
+	UI.PromptFromList("Select the player you'd like to declare war on", options);
 end
 function PlayerButton(player)
 	local name = player.DisplayName(nil, false);
@@ -39,9 +39,9 @@ function CheckCreateFinalStep()
 	if (SubmitBtn == nil) then
 
 		local row3 = UI.CreateHorizontalLayoutGroup(vert);
-		UI.CreateLabel(row3).SetText("How many turns would you like to declere war for?");
+		UI.CreateLabel(row3).SetText("How many turns would you like to declare war for?");
 
-		SubmitBtn = UI.CreateButton(vert).SetText("Declere War").SetOnClick(SubmitClicked);
+		SubmitBtn = UI.CreateButton(vert).SetText("Declare War").SetOnClick(SubmitClicked);
 		NumTurnInput = UI.CreateNumberInputField(row3).SetSliderMinValue(1);
 
 	end
