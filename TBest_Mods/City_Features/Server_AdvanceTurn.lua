@@ -4,10 +4,6 @@ require('Utilities');
 function Server_AdvanceTurn_Start(game, addNewOrder)
 	if (Mod.Settings.Version ~= 1)then return end;
 
-	if (Mod.Settings.ModDiplomacyEnabled)then
-		--Remember in a global variable all alliances that are breaking this turn
-		AlliancesBreakingThisTurn = {};
-	end;
 	if (Mod.Settings.ModBetterCitiesEnabled)then
 		BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 	end;
@@ -26,11 +22,6 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		if (orderSkiped)then return end;
 	end;
 
-	if (Mod.Settings.ModDiplomacyEnabled)then
-		Diplomacy_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder);
-		if (orderSkiped)then return end;
-	end;
-	
 	if (Mod.Settings.ModBetterCitiesEnabled)then
 		BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder);
 		if (orderSkiped)then return end;
@@ -41,61 +32,15 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		if (orderSkiped)then return end;
 	end;
 end;
-function Server_AdvanceTurn_End (game, addNewOrder)	
+function Server_AdvanceTurn_End (game, addNewOrder)
 	if (Mod.Settings.Version ~= 1)then return end;
 
 	--Add a turn 'chat' msg to show that a turn advanced in chat
 	TurnDivider(game.Game.NumberOfTurns)
 
-	if (Mod.Settings.ModDiplomacyEnabled)then	
-		Diplomacy_Server_AdvanceTurn_End(game, addNewOrder)
-	end;
 	if (Mod.Settings.ModWinningConditionsEnabled)then
 		WinCon_Server_AdvanceTurn_End (game,addNewOrder)
 	end;
-end
-
---Diplomacy mod functions
-function Diplomacy_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
-    if (order.proxyType == 'GameOrderAttackTransfer' and result.IsAttack) then
-		--Check if the players are allied
-		if (PlayersAreAllied(game, game.ServerGame.LatestTurnStanding.Territories[order.From].OwnerPlayerID, game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID)) then
-			skipThisOrder(WL.ModOrderControl.Skip);
-			orderSkiped = true;
-		end
-	elseif (order.proxyType == 'GameOrderCustom' and startsWith(order.Payload, 'Diplomacy2_')) then
-		local payloadSplit = split(order.Payload, '_'); 
-		local msg = payloadSplit[2];
-		if (msg == 'BreakAlliance') then
-			local allianceBreak = {};
-			allianceBreak.OurPlayerID = order.PlayerID;
-			allianceBreak.OtherPlayerID = tonumber(payloadSplit[3]);
-			AlliancesBreakingThisTurn[#AlliancesBreakingThisTurn + 1] = allianceBreak;
-
-			--Don't show the break order here. Instead, we'll insert it ourselves at the bottom in Server_AdvanceTurn_End
-			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
-			orderSkiped = true;
-
-			--Insert a message into player data for the target so that they know to alert the player.
-			local ourPlayerName = game.Game.Players[allianceBreak.OurPlayerID].DisplayName(nil, false);
-			AlertPlayer(allianceBreak.OtherPlayerID, ourPlayerName .. ' has broken their alliance with you' , game);
-		end
-	end
-end
-function Diplomacy_Server_AdvanceTurn_End(game, addNewOrder)
-	--break any alliances that we saw break orders for	
-	local gameData = Mod.PublicGameData;
-	for _, allianceBreak in pairs(AlliancesBreakingThisTurn) do
-
-		gameData.Alliances = filter(gameData.Alliances or {}, function(alliance) return not AllianceMatchesPlayers(alliance, allianceBreak.OurPlayerID, allianceBreak.OtherPlayerID) end);
-
-		--Add an order so everyone is aware of the breakage
-		local ourPlayerName = game.Game.Players[allianceBreak.OurPlayerID].DisplayName(nil, false);
-		local otherPlayerName = game.Game.Players[allianceBreak.OtherPlayerID].DisplayName(nil, false);
-		local msg = ourPlayerName .. ' broke alliance with ' .. otherPlayerName;
-		addNewOrder(WL.GameOrderEvent.Create(allianceBreak.OurPlayerID, msg));
-	end
-	Mod.PublicGameData = gameData;
 end
 
 function AlertPlayer(playerID, msg, game)
@@ -124,25 +69,25 @@ function PlayersAreAllied(game, playerOne, playerTwo)
 end
 
 --Better Cities functions
-function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder) 
+function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 	if (Mod.Settings.CityGrowth == false)then return end; --City growth is off
 
 	--The turns cities can grow.
 	if ((game.Game.NumberOfTurns+1) % Mod.Settings.CityGrowthFrequency == 0) then
 		local cityCap = Mod.Settings.CityGrowthCap;
 		local cityGrowth = Mod.Settings.CityGrowthPower;
-	
+
 		local standing = game.ServerGame.LatestTurnStanding;
 		local CurrentIndex=1;
 		local NewOrders={};
-		
+
 		--As of now WarZone only has one type of structure.
 		local structure = {}
 		local Cities = WL.StructureType.City
 		for _, territory in pairs(standing.Territories) do
 			--Can be 0, if a territory has been bombed. We don't want that city to grow.
 			if not(territory.Structures == nil or territory.Structures[WL.StructureType.City] == 0) then
-				local terrMod = WL.TerritoryModification.Create(territory.ID);		
+				local terrMod = WL.TerritoryModification.Create(territory.ID);
 				structure[Cities] = territory.Structures[WL.StructureType.City] +cityGrowth;
 				if (structure[Cities] <= cityCap) then
 					terrMod.SetStructuresOpt   = structure
@@ -150,33 +95,33 @@ function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 					CurrentIndex=CurrentIndex+1;
 				end
 			end
-		end					
+		end
 		addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,"Smaller cities have grown",nil,NewOrders));
 	end
 end
 function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	if (order.proxyType == 'GameOrderDeploy') then
-		--if city is already destroyed (0) or is not present (nil), return or skip according to Mod.Settings	
+		--if city is already destroyed (0) or is not present (nil), return or skip according to Mod.Settings
 		if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures == nil) then
 			--If mod settings say city deploy only, skip. Else return
-			if (Mod.Settings.CityDeployOnly)then 
+			if (Mod.Settings.CityDeployOnly)then
 				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 				orderSkiped = true;
-			end;	
-			return;			
-		else if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] == 0) then					
-				if (Mod.Settings.CityDeployOnly)then 
+			end;
+			return;
+		else if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] == 0) then
+				if (Mod.Settings.CityDeployOnly)then
 					skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 					orderSkiped = true;
-				end;	
+				end;
 				return;
 			end;
-		end;	
-		
-		--Extra armies when deploying in city, but a city is reduced. 
+		end;
+
+		--Extra armies when deploying in city, but a city is reduced.
 		if (Mod.Settings.CommerceFreeCityDeploy == true) then
-			local NewOrders={};	
-			local terrMod = WL.TerritoryModification.Create(order.DeployOn);	
+			local NewOrders={};
+			local terrMod = WL.TerritoryModification.Create(order.DeployOn);
 			--Reduce structure/cities by 1.
 			local structure = {}
 			local Cities = WL.StructureType.City
@@ -185,7 +130,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			--Add the deploy
 			terrMod.SetArmiesTo  = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].NumArmies.NumArmies + order.NumArmies *2;
 			NewOrders[1]=terrMod;
-			--If not a commerce game, skip the original order and create a new one. 
+			--If not a commerce game, skip the original order and create a new one.
 			--Add the deploy order to the game and skip the original order.
 			if (game.Settings.CommerceGame == false)then
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deploy " .. order.NumArmies .. " in " .. game.Map.Territories[order.DeployOn].Name .. " using local city resources.", {}, NewOrders));
@@ -194,21 +139,21 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			if (game.Settings.CommerceGame) then
 				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,"Deployed an extra " .. order.NumArmies .. " in " .. game.Map.Territories[order.DeployOn].Name .. " using local city resources.", {}, NewOrders))
 			end;
-			orderSkiped = true;	
-		end	
+			orderSkiped = true;
+		end
 		return;
 	end
-	--Give a X% def. bonus per city on defending territory 
+	--Give a X% def. bonus per city on defending territory
 	if (order.proxyType == 'GameOrderAttackTransfer' and Mod.Settings.CityWallsActive == true)  then
 		if (result.IsAttack) then
-			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then	
+			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then
 				if (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] > 0) then
 					local DefBonus = game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] * Mod.Settings.DefPower;
 					local attackersKilled = result.AttackingArmiesKilled.NumArmies +  result.AttackingArmiesKilled.NumArmies * DefBonus
-					
+
 					--Minimum kill 1 attacking army
 					if(attackersKilled == 0) then
-						attackersKilled = 1					
+						attackersKilled = 1
 					--Max armies lost is equal to actualArmies
 					elseif (result.ActualArmies.NumArmies - attackersKilled < 0) then
 						attackersKilled = result.ActualArmies.NumArmies;
@@ -218,9 +163,9 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 						--round up, always
 						attackersKilled = math.ceil(attackersKilled);
 					end
-					
+
 					--Write to GameOrderResult	 (result)
-					local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled) 
+					local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled)
 					result.AttackingArmiesKilled = NewAttackingArmiesKilled
 					local msg = "The city has " .. tostring(DefBonus*100) .. "% fortification bonus";
 					addNewOrder(WL.GameOrderEvent.Create(game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID,msg,{order.PlayerID}));
@@ -230,7 +175,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 		end
 		return;
 	end;
-		
+
 	--Bomb cards reduces cities by the given X strength.
 	if(order.proxyType == 'GameOrderPlayCardBomb' and Mod.Settings.BombcardActive == true) then
 		if not(game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
@@ -238,7 +183,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
 				return;
 			end
-			
+
 			local structure = {}
 			local NewOrders={};
 			local Cities = WL.StructureType.City
@@ -249,19 +194,19 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 				structure[Cities] = 0;
 				msg = "The City is destroyed! It is now a ruin and won't grow before it's been rebuilt."
 			end
-			local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
+			local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
-			
-			--Add the new order event. Discard the card played. Skip the normal card effect.		
+
+			--Add the new order event. Discard the card played. Skip the normal card effect.
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{},NewOrders));
-			addNewOrder(WL.GameOrderDiscard.Create(order.PlayerID, order.CardInstanceID));			
+			addNewOrder(WL.GameOrderDiscard.Create(order.PlayerID, order.CardInstanceID));
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 			orderSkiped = true;
 		end
 		return;
 	end;
-		
+
 	--If we blockade or emergency blockade on a city we own. We build on that city
 	if(order.proxyType == 'GameOrderPlayCardBlockade' or order.proxyType == 'GameOrderPlayCardAbandon') then
 		if (Mod.Settings.BlockadeBuildCityActive == false) then return end;
@@ -271,30 +216,30 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].OwnerPlayerID ~= order.PlayerID) then
 				return;
 			end;
-			--A city at size zero won't grow by itself. 
+			--A city at size zero won't grow by itself.
 			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
 				return;
 			end;
-			
-			
+
+
 			local structure = {}
 			local NewOrders={};
 			local Cities = WL.StructureType.City
 			structure[Cities] = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] +Mod.Settings.BlockadePower;
 			local msg = "The City's defenses have been increased!";
-			local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
+			local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);
 			terrMod.SetStructuresOpt   = structure
 			NewOrders[1]=terrMod;
-			
+
 			--Add the new order event. Discard the card played. This skips the normal card effect.
 			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{},NewOrders));
-			addNewOrder(WL.GameOrderDiscard.Create(order.PlayerID, order.CardInstanceID));			
-			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);		
+			addNewOrder(WL.GameOrderDiscard.Create(order.PlayerID, order.CardInstanceID));
+			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 			orderSkiped = true;
 			return;
-		end		
+		end
 	end
-	
+
 	--EMB card setting
 	if(order.proxyType == 'GameOrderPlayCardAbandon' and Mod.Settings.EMBActive == true) then
 		--This check should not be needed for EMB, but we have it anyway as it may increase mod compatibility
@@ -304,24 +249,24 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 		end;
 		--Check for nil on latestTurnStanding. This is for founding a new city, so has to be nil
 		if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures ~= nil)then return;end;
-		
+
 		local structure = {}
 		local NewOrders={};
-		local Cities = WL.StructureType.City 
+		local Cities = WL.StructureType.City
 		structure[Cities] = Mod.Settings.EMBPower
-			
+
 		local msg = "A new city has been founded!";
-		local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);	
+		local terrMod = WL.TerritoryModification.Create(order.TargetTerritoryID);
 		terrMod.SetStructuresOpt   = structure
-		NewOrders[1]=terrMod;	
-		
+		NewOrders[1]=terrMod;
+
 		--Add the new order event. Discard the card played. This skips the normal card effect.
 		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,msg,{},NewOrders));
-		addNewOrder(WL.GameOrderDiscard.Create(order.PlayerID, order.CardInstanceID));			
-		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);		
+		addNewOrder(WL.GameOrderDiscard.Create(order.PlayerID, order.CardInstanceID));
+		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage);
 		orderSkiped = true;
 		return;
-	end	
+	end
 end
 
 --WinCon functions
@@ -508,11 +453,12 @@ function WinCon_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, add
 			end
 		end
 	end
-	
+
 end
 function WinCon_Server_AdvanceTurn_End (game,addNewOrder)
 
 	if (WinConGameWon)then return end;
+	if (Mod.Settings.terrcondition == nil)then return end;
 
 	for _,terr in pairs(game.ServerGame.LatestTurnStanding.Territories)do
 		if(terr.OwnerPlayerID ~= WL.PlayerID.Neutral and game.ServerGame.Game.Players[terr.OwnerPlayerID].IsAI == false)then
