@@ -1,1 +1,1 @@
-Adds a new way to chat in the game as well as mod-compatabilety for the selected mods!
+Adds a new way to chat in the game as well as mod-compatibility for the selected mods!
