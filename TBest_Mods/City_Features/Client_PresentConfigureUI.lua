@@ -1,5 +1,4 @@
 require("PresentConfigureModBetterCities")
-require("PresentConfigureModWinCon")
 
 function Client_PresentConfigureUI(rootParent)
 
