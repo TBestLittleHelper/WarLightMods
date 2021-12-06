@@ -35,6 +35,7 @@ function playerGameDataSetup(game, standing)
 	for _,pid in pairs(game.ServerGame.Game.Players)do
 		if(pid.IsAI == false)then
 			playerGameData[pid.ID] = {};
+			publicGameData[pid.ID] = {};
 			playerGameData[pid.ID].Chat = {}; -- For the chat function
 			playerGameData[pid.ID].Diplo = {}; -- For the diplo function
 			--TODO more diplo stuff
@@ -43,11 +44,12 @@ function playerGameDataSetup(game, standing)
 			playerGameData[pid.ID].WinCon.HoldTerritories = {};
 
 			--Standard settings
-			PublicGameData[pid.ID].AlertUnreadChat = true;
-			PublicGameData[pid.ID].EachGroupButton =  true; 
-			PublicGameData[pid.ID].NumPastChat = 7;
-			PublicGameData[pid.ID].SizeX = 500;
-			PublicGameData[pid.ID].SizeY = 500;
+			
+			publicGameData[pid.ID].AlertUnreadChat = true;
+			publicGameData[pid.ID].EachGroupButton =  true; 
+			publicGameData[pid.ID].NumPastChat = 7;
+			publicGameData[pid.ID].SizeX = 500;
+			publicGameData[pid.ID].SizeY = 500;
 		
 		end
 	end
