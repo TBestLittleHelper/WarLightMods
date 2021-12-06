@@ -9,20 +9,16 @@ function playerGameDataSetup(game, standing)
 	--Set the mod boolean flag to be enabled
 	publicGameData = Mod.PublicGameData
 	publicGameData.GameFinalized = false;
-	publicGameData.Diplo = {};
 	publicGameData.Chat = {};
 	broadCastGroupSetup(game);
 	Mod.PublicGameData = publicGameData;
-	
+
 	playerGameData = Mod.PlayerGameData;
-	
+
 	for _,pid in pairs(game.ServerGame.Game.Players)do
 		if(pid.IsAI == false)then
 			playerGameData[pid.ID] = {};
 			playerGameData[pid.ID].Chat = {}; -- For the chat function
-			playerGameData[pid.ID].Diplo = {}; -- For the diplo function
-			--TODO more diplo stuff
-			playerGameData[pid.ID].Diplo.PendingProposals = {}			
 			playerGameData[pid.ID].WinCon = {}; --For WinCon mod
 			playerGameData[pid.ID].WinCon.HoldTerritories = {};
 		end
@@ -38,7 +34,7 @@ function broadCastGroupSetup(game)
 	publicGameData.Chat.BroadcastGroup[2] = "Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!"
 	publicGameData.Chat.BroadcastGroup.NumChat = 2
 end
-function StartGameWinCon(game, standing) 
+function StartGameWinCon(game, standing)
 	local playerGameData = Mod.PlayerGameData;
 	for _,pid in pairs(game.ServerGame.Game.Players)do
 		if(pid.IsAI == false)then
