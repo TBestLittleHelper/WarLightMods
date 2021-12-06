@@ -2,21 +2,18 @@ function Client_PresentSettingsUI(rootParent)
 	if (Mod.Settings.Version ~= 1)then return end;
 
 	vert = UI.CreateVerticalLayoutGroup(rootParent);
-	if (Mod.Settings.ModSafeStartEnabled)then 
+	if (Mod.Settings.ModSafeStartEnabled)then
 		UI.CreateLabel(vert).SetText('Cannot attack other players for the first ' .. Mod.Settings.SafeStartNumTurns .. ' turns');
 	end
-	if (Mod.Settings.ModGiftGoldEnabled) then 
+	if (Mod.Settings.ModGiftGoldEnabled) then
 		UI.CreateLabel(vert).SetText('Gift Gold Mod is on');
 	end
-	if (Mod.Settings.ModDiplomacyEnabled) then
-		UI.CreateLabel(vert).SetText('Dimplomacy is on');
-	end;
 	if (Mod.Settings.ModBetterCitiesEnabled)then
 		UI.CreateLabel(vert).SetText('Better Cities is on');
 		ModBetterCitiesPresentSettings(rootParent);
 	end;
 	if (Mod.Settings.ModWinningConditionsEnabled)then
-		UI.CreateLabel(vert).SetText('Winning Conditions is on');
+		UI.CreateLabel(vert).SetText('Winning Conditions is on. INFO : This setting will be removed from the mod soon');
 		ModWinConPresentSettings(rootParent);
 	end;
 end;
