@@ -3,9 +3,9 @@ function Client_SaveConfigureUI(alert)
 	Mod.Settings.ModGiftGoldEnabled= ModGiftGoldEnabled
 	--Mod.Settings.ModDiplomacyEnabled= ModDiplomacyEnabled
 	Mod.Settings.ModDiplomacyEnabled= false;
+	Mod.Settings.ModWinningConditionsEnabled= false;
 
 	Mod.Settings.ModBetterCitiesEnabled= ModBetterCitiesEnabled
-	Mod.Settings.ModWinningConditionsEnabled= ModWinningConditionsEnabled
 
 	Mod.Settings.SafeStartNumTurns = SafeStartNumberInputField.GetValue();
 	if (Mod.Settings.SafeStartNumTurns > 0 )then
@@ -14,7 +14,6 @@ function Client_SaveConfigureUI(alert)
 	end;
 
 	if (ModBetterCitiesEnabled) then SaveModBetterCities() end
-	if (ModWinningConditionsEnabled)then SaveModWinCon(alert) end
 end
 
 function SaveModBetterCities()

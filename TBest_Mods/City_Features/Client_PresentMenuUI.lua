@@ -168,6 +168,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	if (Mod.Settings.ModWinningConditionsEnabled)then
 		UI.CreateButton(ChatButtonContainer).SetColor("#0000ff").SetText("Winning Conditions").SetOnClick(function()
 		ClientGame.CreateDialog(PresentMenuWinCon);
+		UI.Alert("This part of the mod has been removed from the latest version (new games). Hopefully you can finish the current game with no issues")
 		close();--Close this dialog.
 		end);
 	end
