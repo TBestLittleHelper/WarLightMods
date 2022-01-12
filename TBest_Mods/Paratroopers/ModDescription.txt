@@ -1,0 +1,1 @@
+Allows players to attack any territory on the map with paratroopers. Paratroppers can not capture a territory. Each troop cost 2 income from the players next turn.
