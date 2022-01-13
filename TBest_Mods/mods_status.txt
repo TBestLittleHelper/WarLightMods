@@ -7,7 +7,6 @@ CityFeatures : Armies far away from a city suffers from 'low moral'
 CityFeatures : Deploylimit on a city equal to city size
 Order delay : only delay 1 order (each)
 Mafia Mod : Play Mafia in WZ
-Paratrooper card (arilift) ✅
 Cost of an empire : Each territory costs 1 income
 
 #Testing/WIP
@@ -18,7 +17,7 @@ Disttribution Mod : What territories can be picked
 no-self-sanc [Demo mod, not going to ask for approved]
 ZombieHorde
 LocalDeployment Helper
-
+Paratrooper card (arilift)
 
 
 #Public + Approved
