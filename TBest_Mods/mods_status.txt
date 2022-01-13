@@ -2,12 +2,13 @@
 MirrorPicker
 RandomTemplate
 We respect your privacy : shows random info about players
-CityFeatures : commanders can't leave a city.  
-CityFeatures : Armies far away from a city suffers from 'low moral' 
+CityFeatures : commanders can't leave a city.
+CityFeatures : Armies far away from a city suffers from 'low moral'
 CityFeatures : Deploylimit on a city equal to city size
 Order delay : only delay 1 order (each)
 Mafia Mod : Play Mafia in WZ
-Paratrooper card (arilift)
+Paratrooper card (arilift) ✅
+Cost of an empire : Each territory costs 1 income
 
 #Testing/WIP
 Group Chat Mod
@@ -23,5 +24,5 @@ LocalDeployment Helper
 #Public + Approved
 Lotto Mod
 BonusValue QuickOverrider
-City_Features 
+City_Features
 
