@@ -42,6 +42,20 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	.SetColor('#880085')
 	.SetOnClick(TargetTerritoryClicked);
 
+	--Input number of paratroopers
+	local row3 = UI.CreateHorizontalLayoutGroup(vert);
+	UI.CreateLabel(row3).SetText("Troops");
+	NumArmiesInput = UI.CreateNumberInputField(row3).SetSliderMinValue(1);
+
+	--Max is half of current income. Income check is done ServerSide and orders might get skipped if player can't afford them.
+	local maxArmies = math.floor(0.5 * Game.Game.Players[playerID].Income(0, Game.LatestStanding , false, false).Total);
+	if (maxArmies < 5) then maxArmies = 5 end;
+	NumArmiesInput.SetSliderMaxValue(maxArmies).SetValue(maxArmies);
+
+	local row4 = UI.CreateHorizontalLayoutGroup(vert);
+	SubmitBtn = UI.CreateButton(row4).SetText("Confirm").SetOnClick(SubmitClicked);
+
+
 end;
 
 
@@ -65,31 +79,6 @@ function TerritoryClicked(terrDetails)
 		CheckCreateFinalStep();
 	end
 end
-
-function CheckCreateFinalStep()
-
-	if (SelectedTerritory == nil) then return; end;
-
-	if (SubmitBtn == nil) then
-
-		local row3 = UI.CreateHorizontalLayoutGroup(vert);
-		local row4 = UI.CreateHorizontalLayoutGroup(vert);
-
-
-		UI.CreateLabel(row3).SetText("Troops");
-		NumArmiesInput = UI.CreateNumberInputField(row3).SetSliderMinValue(1);
-		SubmitBtn = UI.CreateButton(row4).SetText("Confirm").SetOnClick(SubmitClicked);
-
-
-	end
-
-	--Max is half of current income. Income check is done serverSide and orders might get skipped if player can't afford them.
-	local maxArmies = math.floor(0.5 * Game.Game.Players[playerID].Income(0, Game.LatestStanding , false, false).Total);
-	if (maxArmies < 5) then maxArmies = 5 end;
-
-	NumArmiesInput.SetSliderMaxValue(maxArmies).SetValue(maxArmies);
-end
-
 
 function SubmitClicked()
 	if (SelectedTerritory == nil) then return; end;
