@@ -25,12 +25,10 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			return;
 		end;
 
-
 		local armiesOnTerritory = game.ServerGame.LatestTurnStanding.Territories[targetTerritoryID].NumArmies.NumArmies;
 
 		if (numArmies < 0) then numArmies = 0 end;
 		if (numArmies > armiesOnTerritory) then numArmies = armiesOnTerritory end;
-
 
 		--Remove armies from the target territory
 		local removeFromSource = WL.TerritoryModification.Create(targetTerritoryID);
