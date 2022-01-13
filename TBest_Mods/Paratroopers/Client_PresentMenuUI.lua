@@ -76,7 +76,6 @@ function TerritoryClicked(terrDetails)
 		--Territory was clicked
 		PlayCardButtn.SetText("Selected territory: " .. terrDetails.Name);
 		SelectedTerritory = terrDetails;
-		CheckCreateFinalStep();
 	end
 end
 
