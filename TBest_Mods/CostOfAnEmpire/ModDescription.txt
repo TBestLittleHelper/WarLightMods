@@ -1,0 +1,2 @@
+For every two territories owned, a player's income is reduced by 1.
+(100 territories, means that the income is reduced by 50)
