@@ -66,8 +66,6 @@ function TargetTerritoryClicked()
 end
 
 function TerritoryClicked(terrDetails)
-	PlayCardButtn.SetInteractable(true);
-
 	if (terrDetails == nil) then
 		--The click request was cancelled.   Return to our default state.
 		PlayCardButtn.SetText("Send Paratroopers");
