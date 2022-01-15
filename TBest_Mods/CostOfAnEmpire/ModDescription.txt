@@ -1,2 +1,4 @@
-For every two territories owned, a player's income is reduced by 1.
-(100 territories, means that the income is reduced by 50)
+For every territory owned, a player's income is reduced.
+First 75 territories are a city-state cost        [ 0 -   75] * 0.5
+Next 75 territories are a kingdom cost            [ 75 - 150] * 0.8
+Everything over 150 territories is an Empire cost [ 150++ ]   * 1
