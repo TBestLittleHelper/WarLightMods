@@ -1,10 +1,4 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
-	--If the client is using an outdated game version, ask them to update
-	if (WL == nil) then
-		UI.Alert("You must update your app to the latest version to use this mod")
-		return
-	end
-
 	--If a spectator, just alert then return
 	if (game.Us == nil and Mod.PublicGameData.GameFinalized == false) then
 		UI.Alert("You can't do anything as a spectator.")
