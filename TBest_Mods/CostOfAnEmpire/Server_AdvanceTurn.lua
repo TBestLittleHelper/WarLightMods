@@ -40,7 +40,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		if (territoriesOwned > 0) then
 			local incomeMod =
 				WL.IncomeMod.Create(playerID, math.floor(costOfACityState * territoriesOwned), " Cost of a citystate")
-			addNewOrder(WL.GameOrderEvent.Create(playerID, "Cost of an empire", nil, {}, nil, {incomeMod}))
+			addNewOrder(WL.GameOrderEvent.Create(playerID, "Cost of a city state", nil, {}, nil, {incomeMod}))
 		end
 	end
 end
