@@ -8,6 +8,9 @@ CityFeatures : Deploylimit on a city equal to city size
 Order delay : only delay 1 order (each)
 Mafia Mod : Play Mafia in WZ
 
+
+Mod Name - WZ Update
+
 #Testing/WIP
 Group Chat Mod
 Disttribution Mod : What territories can be picked
@@ -16,7 +19,7 @@ Disttribution Mod : What territories can be picked
 Cost of an empire : Each territory costs income
 no-self-sanc [Demo mod, not going to ask for approved]
 LocalDeployment Helper
-Paratrooper card (arilift)
+Paratroopers - 5.17
 ZombieHorde
 
 
