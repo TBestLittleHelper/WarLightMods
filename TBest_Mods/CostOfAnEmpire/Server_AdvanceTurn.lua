@@ -21,28 +21,20 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		--Next 75 territories are a kingdom cost [ 75 - 150]
 		--Everything over 75 is an Empire cost [ 150+ ]
 
-		if (territoriesOwned > 150) then
-			local incomeMod =
-				WL.IncomeMod.Create(playerID, math.floor(costOfAnEmpire * (territoriesOwned - 150)), " Cost of an empire")
-			addNewOrder(WL.GameOrderEvent.Create(playerID, "Cost of an empire", nil, {}, nil, {incomeMod}))
-
-			territoriesOwned = territoriesOwned - 75
-		end
+		local cost = math.floor(costOfACityState * territoriesOwned)
+		local msg = "Cost of a city-state for " .. territoriesOwned .. " territories"
 
 		if (territoriesOwned > 75) then
-			local incomeMod =
-				WL.IncomeMod.Create(playerID, math.floor(costOfAKingdom * (territoriesOwned - 75)), " Cost of a kingdom")
-			addNewOrder(WL.GameOrderEvent.Create(playerID, "Cost of a kingdom", nil, {}, nil, {incomeMod}))
-
-			territoriesOwned = territoriesOwned - 75
+			msg = "Cost of a kingdom for " .. territoriesOwned .. " territories"
+			cost = cost + math.floor(costOfAKingdom * (territoriesOwned - 75))
 		end
 
-		if (territoriesOwned > 0) then
-			local incomeMod =
-				WL.IncomeMod.Create(playerID, math.floor(costOfACityState * territoriesOwned), " Cost of a citystate")
-			addNewOrder(WL.GameOrderEvent.Create(playerID, "Cost of a city state", nil, {}, nil, {incomeMod}))
+		if (territoriesOwned > 150) then
+			msg = "Cost of an empire for " .. territoriesOwned .. " territories"
+			cost = cost + math.floor(costOfAnEmpire * (territoriesOwned - 150))
 		end
+
+		local incomeMod = WL.IncomeMod.Create(playerID, cost, msg)
+		addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil, {incomeMod}))
 	end
 end
-
---TODO refactor to only be one addNewOrder?
