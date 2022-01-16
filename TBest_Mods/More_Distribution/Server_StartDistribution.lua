@@ -2,7 +2,7 @@ require ('Utilities');
 
 --NOTE: A pickable territory has the OwnerPlayerID = -2, a non-pickable territory has OwnerPlayerID = 0;
 function Server_StartDistribution(Game, standing)
-	--If it is custom senraio, return
+	--If it is custom senario, return
 	-- 0 full dist,-1 warlords, -2, cities, -3 custom, 1+ MapMaker Dist
 	if (Game.Settings.DistributionModeID == -3)then return end;
 	if (Game.Settings.DistributionModeID > 0)then return end;
