@@ -1,11 +1,10 @@
 require("PresentConfigureModBetterCities")
 
 function Client_PresentConfigureUI(rootParent)
-
 	ModGiftGoldEnabled = Mod.Settings.ModGiftGoldEnabled
 	ModBetterCitiesEnabled = Mod.Settings.ModBetterCitiesEnabled
 	ModWinningConditionsEnabled = Mod.Settings.ModWinningConditionsEnabled
-	local turnsInitial = Mod.Settings.SafeStartNumTurns;
+	local turnsInitial = Mod.Settings.SafeStartNumTurns
 
 	if ModGiftGoldEnabled == nil then
 		ModGiftGoldEnabled = false
@@ -29,39 +28,32 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[3] = UI.CreateHorizontalLayoutGroup(rootParent)
 	horzlist[4] = UI.CreateVerticalLayoutGroup(rootParent) --Used for BetterCities Mod
 	horzlist[5] = UI.CreateHorizontalLayoutGroup(rootParent)
-	horzlist[6] = UI.CreateVerticalLayoutGroup(rootParent) --Used for WinCon mod
-
 
 	--Safe Start
-	if turnsInitial == nil then turnsInitial = 0; end
-    local horz = UI.CreateHorizontalLayoutGroup(horzlist[7]);
-	UI.CreateLabel(horz).SetText("Safe Start lasts for this many turns");
-    SafeStartNumberInputField = UI.CreateNumberInputField(horz)
-		.SetSliderMinValue(0)
-		.SetSliderMaxValue(30)
-		.SetValue(turnsInitial);
-
+	if turnsInitial == nil then
+		turnsInitial = 0
+	end
+	local horz = UI.CreateHorizontalLayoutGroup(horzlist[7])
+	UI.CreateLabel(horz).SetText("Safe Start lasts for this many turns")
+	SafeStartNumberInputField =
+		UI.CreateNumberInputField(horz).SetSliderMinValue(0).SetSliderMaxValue(30).SetValue(turnsInitial)
 
 	--Instructions text
 	showOptionsToggle =
 		UI.CreateCheckBox(horzlist[0]).SetText("Show Options").SetIsChecked(true).SetOnValueChanged(ShowOptions)
-	ShowOptions();
+	ShowOptions()
 end
 
 function ShowOptions()
 	if (GiftGoldCheckBox ~= nil) then
 		UI.Destroy(GiftGoldCheckBox)
 		UI.Destroy(BetterCitiesCheckBox)
-		if (vertlistBetterCities ~= nil)then
-			for i=0,25,1 do UI.Destroy(vertlistBetterCities[i]) end
-			vertlistBetterCities = nil;
-		end;
-		UI.Destroy(WinningConditionsCheckBox)
-		if (vertlistWinCon ~= nil)then
-			for i=0,25,1 do UI.Destroy(vertlistWinCon[i]) end
-			vertlistWinCon = nil;
-		end;
-
+		if (vertlistBetterCities ~= nil) then
+			for i = 0, 25, 1 do
+				UI.Destroy(vertlistBetterCities[i])
+			end
+			vertlistBetterCities = nil
+		end
 		GiftGoldCheckBox = nil
 	else
 		GiftGoldCheckBox =
@@ -73,12 +65,12 @@ function ShowOptions()
 			SaveConfig
 		)
 		WinningConditionsCheckBox =
-			UI.CreateCheckBox(horzlist[5]).SetText("Winning Conditions have been removed from this mod").SetIsChecked(ModWinningConditionsEnabled).SetOnValueChanged(
-			SaveConfig
-		)
+			UI.CreateCheckBox(horzlist[5]).SetText("Winning Conditions have been removed from this mod").SetIsChecked(
+			ModWinningConditionsEnabled
+		).SetOnValueChanged(SaveConfig)
 
 		--Call saveconfig to display any child settings
-		SaveConfig();
+		SaveConfig()
 	end
 end
 
@@ -89,28 +81,19 @@ function SaveConfig()
 	ModWinningConditionsEnabled = false
 
 	if (ModBetterCitiesEnabled) then
-		if (vertlistBetterCities == nil)then
+		if (vertlistBetterCities == nil) then
 			vertlistBetterCities = {}
-			for i=0,25,1 do vertlistBetterCities[i] = UI.CreateHorizontalLayoutGroup(horzlist[4]) end
+			for i = 0, 25, 1 do
+				vertlistBetterCities[i] = UI.CreateHorizontalLayoutGroup(horzlist[4])
+			end
 			PresentModBetterCitiesSettings()
 		end
 	else
-		if (vertlistBetterCities ~= nil)then
-			for i=0,25,1 do UI.Destroy(vertlistBetterCities[i]) end
-			vertlistBetterCities = nil;
-		end;
-	end
-
-	if (ModWinningConditionsEnabled) then
-		if (vertlistWinCon == nil)then
-			vertlistWinCon = {}
-			--for i=0,25,1 do vertlistWinCon[i] = UI.CreateHorizontalLayoutGroup(horzlist[6]) end
-			--PresentModWinConSettings()
+		if (vertlistBetterCities ~= nil) then
+			for i = 0, 25, 1 do
+				UI.Destroy(vertlistBetterCities[i])
+			end
+			vertlistBetterCities = nil
 		end
-	else
-		if (vertlistWinCon ~= nil)then
-			for i=0,25,1 do UI.Destroy(vertlistWinCon[i]) end
-			vertlistWinCon = nil;
-		end;
 	end
 end
