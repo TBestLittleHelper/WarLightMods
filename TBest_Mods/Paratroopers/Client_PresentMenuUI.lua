@@ -57,7 +57,6 @@ end
 function TargetTerritoryClicked()
 	UI.InterceptNextTerritoryClick(TerritoryClicked)
 	PlayCardButtn.SetText("Please click on a territory.  If needed, you can move this dialog out of the way.")
-	PlayCardButtn.SetInteractable(false)
 end
 
 function TerritoryClicked(terrDetails)
