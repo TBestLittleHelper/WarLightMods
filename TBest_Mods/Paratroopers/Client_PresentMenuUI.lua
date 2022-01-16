@@ -1,6 +1,6 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	--If the client is using an outdated game version, ask them to update
-	if (WL.IsVersionOrHigher == nil) then
+	if (WL == nil) then
 		UI.Alert("You must update your app to the latest version to use this mod")
 		return
 	end
@@ -26,7 +26,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	--Info graphic
 	local row1 = UI.CreateHorizontalLayoutGroup(vert)
-
+	--TODO pick a better color for this button
 	PlayCardInfo =
 		UI.CreateButton(row1).SetText(
 		"Paratroopers can attack any territory on the map, but never capture it. Each troop cost 2 income"
