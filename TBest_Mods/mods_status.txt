@@ -2,11 +2,13 @@
 MirrorPicker
 RandomTemplate
 We respect your privacy : shows random info about players
-CityFeatures : commanders can't leave a city.
-CityFeatures : Armies far away from a city suffers from 'low moral'
-CityFeatures : Deploylimit on a city equal to city size
+CityFeatures  : Commanders can't leave a city.
+CityFeatures  : Armies far away from a city suffers from 'low moral'
+CityFeatures  : Deploylimit on a city equal to city size
+City_Features : Link territory in chat
 Order delay : only delay 1 order (each)
 Mafia Mod : Play Mafia in WZ
+Undo turn / Reverse Time warp : Go back to previous turn's standing
 
 
 Mod Name - WZ Update
