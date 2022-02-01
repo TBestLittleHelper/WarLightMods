@@ -5,12 +5,22 @@ require("Utilities")
 --addNewOrder: A function that you can call to add a GameOrder to the start of the turn. You may call this function multiple times if you wish to add multiple orders. Pass a single GameOrder as the first argument to this function. Optionally, you can also pass "true" as a second argument to this function to make your new order get skipped if the order this hook was called on gets skipped, either by your mod or another mod. This second argument was added in 5.17.0.
 
 function Server_AdvanceTurn_Start(game, addNewOrder)
+	oldVersion = false
+	if (Mod.Settings.Version ~= 2) then
+		oldVersion = true
+		return
+	end
+
 	if (Mod.Settings.ModBetterCitiesEnabled) then
 		BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 	end
 end
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
+	if (oldVersion) then
+		return
+	end
+
 	orderSkiped = false
 	if (Mod.Settings.ModSafeStartEnabled) then
 		SafeStart_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
@@ -27,6 +37,10 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	end
 end
 function Server_AdvanceTurn_End(game, addNewOrder)
+	if (oldVersion) then
+		return
+	end
+
 	--Add a turn 'chat' msg to show that a turn advanced in chat
 	TurnDivider(game.Game.NumberOfTurns)
 end

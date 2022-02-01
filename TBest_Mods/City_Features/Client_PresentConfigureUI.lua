@@ -3,7 +3,6 @@ require("PresentConfigureModBetterCities")
 function Client_PresentConfigureUI(rootParent)
 	ModGiftGoldEnabled = Mod.Settings.ModGiftGoldEnabled
 	ModBetterCitiesEnabled = Mod.Settings.ModBetterCitiesEnabled
-	ModWinningConditionsEnabled = Mod.Settings.ModWinningConditionsEnabled
 	local turnsInitial = Mod.Settings.SafeStartNumTurns
 
 	if ModGiftGoldEnabled == nil then
@@ -11,9 +10,6 @@ function Client_PresentConfigureUI(rootParent)
 	end
 	if ModBetterCitiesEnabled == nil then
 		ModBetterCitiesEnabled = false
-	end
-	if ModWinningConditionsEnabled == nil then
-		ModWinningConditionsEnabled = false
 	end
 	if SafeStartEnabled == nil then
 		SafeStartEnabled = false
@@ -28,12 +24,13 @@ function Client_PresentConfigureUI(rootParent)
 	horzlist[3] = UI.CreateHorizontalLayoutGroup(rootParent)
 	horzlist[4] = UI.CreateVerticalLayoutGroup(rootParent) --Used for BetterCities Mod
 	horzlist[5] = UI.CreateHorizontalLayoutGroup(rootParent)
+	horzlist[6] = UI.CreateHorizontalLayoutGroup(rootParent)
 
 	--Safe Start
 	if turnsInitial == nil then
 		turnsInitial = 0
 	end
-	local horz = UI.CreateHorizontalLayoutGroup(horzlist[7])
+	local horz = UI.CreateHorizontalLayoutGroup(horzlist[6])
 	UI.CreateLabel(horz).SetText("Safe Start lasts for this many turns")
 	SafeStartNumberInputField =
 		UI.CreateNumberInputField(horz).SetSliderMinValue(0).SetSliderMaxValue(30).SetValue(turnsInitial)
@@ -64,11 +61,6 @@ function ShowOptions()
 			UI.CreateCheckBox(horzlist[3]).SetText("Better Cities").SetIsChecked(ModBetterCitiesEnabled).SetOnValueChanged(
 			SaveConfig
 		)
-		WinningConditionsCheckBox =
-			UI.CreateCheckBox(horzlist[5]).SetText("Winning Conditions have been removed from this mod").SetIsChecked(
-			ModWinningConditionsEnabled
-		).SetOnValueChanged(SaveConfig)
-
 		--Call saveconfig to display any child settings
 		SaveConfig()
 	end
@@ -77,8 +69,6 @@ end
 function SaveConfig()
 	ModGiftGoldEnabled = GiftGoldCheckBox.GetIsChecked()
 	ModBetterCitiesEnabled = BetterCitiesCheckBox.GetIsChecked()
-	--TODO We won't make new games with this feature. Will be removed soon.
-	ModWinningConditionsEnabled = false
 
 	if (ModBetterCitiesEnabled) then
 		if (vertlistBetterCities == nil) then

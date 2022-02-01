@@ -1,5 +1,5 @@
 function Client_PresentSettingsUI(rootParent)
-	if (Mod.Settings.Version ~= 1) then
+	if (Mod.Settings.Version ~= 2) then
 		return
 	end
 
