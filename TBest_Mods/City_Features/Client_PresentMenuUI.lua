@@ -2,7 +2,7 @@ require("Utilities")
 require("Giftgold")
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
-	if (Mod.Settings.Version ~= 1) then
+	if (Mod.Settings.Version ~= 2) then
 		return
 	end
 
