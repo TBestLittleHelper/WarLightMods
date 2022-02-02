@@ -78,7 +78,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 				DestroyOldUIelements(ChatMsgContainerArray)
 			end
 			skipRefresh = true
-			ClientGame.CreateDialog(CreateEditDialog)
+			print("CreateGroupEditDialog")
+			ClientGame.CreateDialog(CreateGroupEditDialog)
 			close() --Close this dialog.
 		end
 	)
@@ -319,7 +320,7 @@ function getGroupMembers()
 	return "Broadcast"
 end
 
-function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
+function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	setMaxSize(420, 330)
 	TargetPlayerID = nil
 	TargetGroupID = nil
@@ -343,7 +344,6 @@ function CreateEditDialog(rootParent, setMaxSize, setScrollable, game, close)
 	if (next(PlayerGameData.Chat) ~= nil) then
 		ChatGroupBtn = UI.CreateButton(row2).SetText("Pick an existing group").SetOnClick(ChatGroupClicked)
 	end
-
 	--Add a player to a group
 	UI.CreateButton(row2).SetText("Add Player").SetColor("#00ff05").SetOnClick(
 		function()
