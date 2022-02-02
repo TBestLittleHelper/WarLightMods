@@ -1,6 +1,6 @@
 function Client_SaveConfigureUI(alert)
 	Mod.Settings.Version = 2
-	
+
 	Mod.Settings.ModGiftGoldEnabled = ModGiftGoldEnabled
 	Mod.Settings.ModBetterCitiesEnabled = ModBetterCitiesEnabled
 
