@@ -31,7 +31,7 @@ function PresentModBetterCitiesSettings()
 	--Commerce city deployment
 	initialCommerceFree = Mod.Settings.CommerceFreeCityDeploy
 	initialArmyDeployment = Mod.Settings.CityDeployOnly
-	--Block and EMB card
+	--Block and EMB (emergency blocade) card
 	initialBuildCityActive = Mod.Settings.CapitalsActive
 	initialBlockCityActive = Mod.Settings.BlockadeBuildCityActive
 	initialBlockadePower = Mod.Settings.BlockadePower
@@ -44,7 +44,7 @@ function PresentModBetterCitiesSettings()
 		initialCityWalls = true
 	end
 	if initialDefPower == nil then
-		initialDefPower = 25
+		initialDefPower = 30
 	end
 
 	if initialCityGrowth == nil then
@@ -56,15 +56,15 @@ function PresentModBetterCitiesSettings()
 	if initialCityGrowthPower == nil then
 		initialCityGrowthPower = 1
 	end
-	if initialCityGrowthFrequency == nil then 
+	if initialCityGrowthFrequency == nil then
 		initialCityGrowthFrequency = 5
-	end;
+	end
 
 	if initialBombcardActive == nil then
 		initialBombcardActive = true
 	end
 	if initialBombcardPower == nil then
-		initialBombcardPower = 2
+		initialBombcardPower = 1
 	end
 
 	if initialCustomSenarioCapitals == nil then
@@ -106,43 +106,50 @@ function PresentModBetterCitiesSettings()
 	if initialEMBPower == nil then
 		initialEMBPower = 1
 	end
-    
-    --Instructions text
+
+	--Instructions text
 	text1 =
-	UI.CreateLabel(vertlistBetterCities[1]).SetText(
-	"IMPORTANT: When using this mod it's strongely recomended that you make the price to build cities extremely exspensiv, to the point where players can't build cities using gold. Or just turn of the the option under army settings"
-)
-text2 =
-	UI.CreateLabel(vertlistBetterCities[2]).SetText(
-	"City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, so for example 1 city gives 50% extra defence and 2 cities gives 100%. Bomb card can reduce the number of cities on a territory. You can customize the strength. A city of any size will protect the armies in that city from the bomb card! If enabled you can use blockade and EMB cards to build on an exsisting city. EMB can also be used to create a new city! Also a city of size 0, is still a city and can be rebuilt using the either card."
-)
-text3 =
-	UI.CreateLabel(vertlistBetterCities[3]).SetText(
-	"If a starting territory has a set number of armies at the begining of a game, they will start with a large city. This is intended to be used in combination with Custom Senario, so that a game creator can make some key territories start with cities."
-)
-	cityWallsToggle =
-		UI.CreateCheckBox(vertlistBetterCities[4]).SetText("City Walls").SetIsChecked(initialCityWalls)
+		UI.CreateLabel(vertlistBetterCities[1]).SetText(
+		"IMPORTANT: When using this mod it's strongely recomended that you make the price to build cities extremely exspensiv, to the point where players can't build cities using gold. Or just turn of the option under army settings"
+	)
+	text2 =
+		UI.CreateLabel(vertlistBetterCities[2]).SetText(
+		"City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, for example if 1 city gives 50% extra defence. Then 2 cities gives 100%. Bomb card can reduce the number of cities on a territory. You can customize the strength. A city of any size will protect the armies in that city from the bomb card! If enabled you can use blockade and EMB (Emergency blockade) cards to build on an exsisting city. EMB can also be used to create a new city! Also a city of size 0, is still a city and can be rebuilt using either card."
+	)
+	text3 =
+		UI.CreateLabel(vertlistBetterCities[3]).SetText(
+		"If a starting territory has a set number of armies at the begining of a game, they will start with a large city. This is intended to be used in combination with Custom Senario, so that a game creator can make some key territories start with cities."
+	)
+	cityWallsToggle = UI.CreateCheckBox(vertlistBetterCities[4]).SetText("City Walls").SetIsChecked(initialCityWalls)
 	textDefBonus = UI.CreateLabel(vertlistBetterCities[5]).SetText("Percantage bonus for each city:")
-		sliderDefBonus =
-			UI.CreateNumberInputField(vertlistBetterCities[6]).SetSliderMinValue(10).SetSliderMaxValue(50).SetValue(initialDefPower)
+	sliderDefBonus =
+		UI.CreateNumberInputField(vertlistBetterCities[6]).SetSliderMinValue(10).SetSliderMaxValue(50).SetValue(
+		initialDefPower
+	)
 
 	cityGrowthToggle =
 		UI.CreateCheckBox(vertlistBetterCities[7]).SetText("Natural City Growth").SetIsChecked(initialCityGrowth)
-	textGrowth = UI.CreateLabel(vertlistBetterCities[8]).SetText("The max size a city can naturaly grow:")
+	textGrowth = UI.CreateLabel(vertlistBetterCities[8]).SetText("The max size a city can grow:")
 	sliderCityGrowthCap =
-		UI.CreateNumberInputField(vertlistBetterCities[8]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(initialCityGrowthCap)
+		UI.CreateNumberInputField(vertlistBetterCities[8]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(
+		initialCityGrowthCap
+	)
 	textGrowth = UI.CreateLabel(vertlistBetterCities[9]).SetText("How often cities grows (Turns+1 % [modulos] frequency )")
-	sliderCityGrowthFrequency =	UI.CreateNumberInputField(vertlistBetterCities[9]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(initialCityGrowthFrequency)
-	
+	sliderCityGrowthFrequency =
+		UI.CreateNumberInputField(vertlistBetterCities[9]).SetSliderMinValue(1).SetSliderMaxValue(20).SetValue(
+		initialCityGrowthFrequency
+	)
 
 	bombCardToggle =
 		UI.CreateCheckBox(vertlistBetterCities[10]).SetText("Bomb card damages cities").SetIsChecked(initialBombcardActive)
 	textBombCard = UI.CreateLabel(vertlistBetterCities[11]).SetText("Bomb card reduces a city by:")
 	sliderBombCard =
-		UI.CreateNumberInputField(vertlistBetterCities[11]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(initialBombcardPower)
+		UI.CreateNumberInputField(vertlistBetterCities[11]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(
+		initialBombcardPower
+	)
 
-	capitalsToggle =
-		UI.CreateCheckBox(vertlistBetterCities[12]).SetText("Capitals").SetIsChecked(initialCapitalsToggle)
+	--TODO why -1 as deafault?
+	capitalsToggle = UI.CreateCheckBox(vertlistBetterCities[12]).SetText("Capitals").SetIsChecked(initialCapitalsToggle)
 	textCapitals = UI.CreateLabel(vertlistBetterCities[13]).SetText("Capitals starts with this many arimes:")
 	sliderCapitals =
 		UI.CreateNumberInputField(vertlistBetterCities[13]).SetSliderMinValue(0).SetSliderMaxValue(15).SetValue(
@@ -155,27 +162,32 @@ text3 =
 	)
 
 	buildCitiesToggle =
-		UI.CreateCheckBox(vertlistBetterCities[15]).SetText("Use Block and EMB cards to improve a city").SetIsChecked(
+		UI.CreateCheckBox(vertlistBetterCities[15]).SetText("Use Block and EMB cards to expand a city").SetIsChecked(
 		initialBlockCityActive
 	)
-	textBlockCard = UI.CreateLabel(vertlistBetterCities[16]).SetText("Blockade and EMB card improves a city by:")
+	textBlockCard = UI.CreateLabel(vertlistBetterCities[16]).SetText("Blockade and EMB card expands a city by:")
 	sliderBlockCard =
-		UI.CreateNumberInputField(vertlistBetterCities[16]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(initialBlockadePower)
-
-
-
+		UI.CreateNumberInputField(vertlistBetterCities[16]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(
+		initialBlockadePower
+	)
 
 	foundNewCitiesToggle =
 		UI.CreateCheckBox(vertlistBetterCities[17]).SetText("Use EMB to found a new city").SetIsChecked(initialEMBActive)
 	textEMBCard = UI.CreateLabel(vertlistBetterCities[18]).SetText("Emergency Blockade Card can create a new city:")
 	sliderEMBCard =
-		UI.CreateNumberInputField(vertlistBetterCities[18]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(initialEMBPower)
+		UI.CreateNumberInputField(vertlistBetterCities[18]).SetSliderMinValue(1).SetSliderMaxValue(3).SetValue(
+		initialEMBPower
+	)
 
 	wastelandsToggle =
-		UI.CreateCheckBox(vertlistBetterCities[19]).SetText("Wastlands starts with a neutral city").SetIsChecked(initialWastlandCities)
+		UI.CreateCheckBox(vertlistBetterCities[19]).SetText("Wastlands starts with a neutral city").SetIsChecked(
+		initialWastlandCities
+	)
 
 	startingCitiesToggle =
-		UI.CreateCheckBox(vertlistBetterCities[20]).SetText("Distributed player territories starts with a city").SetIsChecked(initialCitiesActive)
+		UI.CreateCheckBox(vertlistBetterCities[20]).SetText("Distributed player territories starts with a city").SetIsChecked(
+		initialCitiesActive
+	)
 	textStartingCities = UI.CreateLabel(vertlistBetterCities[21]).SetText("Size of the starting cities:")
 	sliderStartingCities =
 		UI.CreateNumberInputField(vertlistBetterCities[21]).SetSliderMinValue(1).SetSliderMaxValue(5).SetValue(
