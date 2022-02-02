@@ -1,15 +1,21 @@
 require("Utilities")
 
 function Server_StartGame(game, standing)
-	if (Mod.Settings.Version ~= 1) then
+	if (Mod.Settings.Version ~= 2) then
 		return
 	end
 
-	--TODO we can move stuff here around better so we don't call unneeded things
+	--Setup publicGameData
+
 	publicGameData = Mod.PublicGameData
+	publicGameData.GameFinalized = false
+	publicGameData.Chat = {}
+	broadCastGroupSetup(game)
+	Mod.PublicGameData = publicGameData
+
+	-- Setup playerGameData
 	playerGameData = Mod.PlayerGameData
 
-	--Call playerGameDataSetup if we havn't done it already
 	for _, pid in pairs(game.ServerGame.Game.Players) do
 		if (pid.IsAI == false) then
 			if (playerGameData[pid.ID] == nil) then
@@ -18,20 +24,15 @@ function Server_StartGame(game, standing)
 			end
 		end
 	end
+	Mod.PlayerGameData = playerGameData
+
+	-- Cities setup
 	if (Mod.Settings.ModBetterCitiesEnabled) then
 		StartGameBetterCities(game, standing)
 	end
-
-	Mod.PublicGameData = publicGameData
-	Mod.PlayerGameData = playerGameData
 end
 
 function playerGameDataSetup(game, standing)
-	--Set the mod boolean flag to be enabled
-	publicGameData.GameFinalized = false
-	publicGameData.Chat = {}
-	broadCastGroupSetup(game)
-
 	for _, pid in pairs(game.ServerGame.Game.Players) do
 		if (pid.IsAI == false) then
 			playerGameData[pid.ID] = {}
@@ -44,9 +45,9 @@ function broadCastGroupSetup(game)
 	publicGameData.Chat.BroadcastGroup[1] =
 		"When a game ends, all chat messages can be made public. Also, check out settings and tweek it to your liking."
 	publicGameData.Chat.BroadcastGroup[2] =
-		"Note that messages to the server is rate-limited to 5 calls every 30 seconds per client. Therefore, do not spam chat or group changes: it won't work!"
+		"Note that messages to the server is rate-limited to 5 calls every 5 seconds. Therefore, do not spam chat or group changes: it won't work!"
 	publicGameData.Chat.BroadcastGroup[3] =
-		"BETA! Please report any bugs and feedback to TBest. Not everything has been tested yet, so I aplogize for any issues you may run into"
+		"Please report any bugs and feedback to TBest. Not everything has been tested yet, so I aplogize for any issues you may run into"
 
 	publicGameData.Chat.BroadcastGroup.NumChat = 3
 end
