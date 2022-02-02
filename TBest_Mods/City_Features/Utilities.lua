@@ -127,7 +127,6 @@ function toint(n)
 	end
 end
 
---TODO fix this
 function randomColor()
 	--List given by Fizzer of all supported colors. 74 diffrent colors
 	local PossibleColors = {
@@ -207,8 +206,6 @@ function randomColor()
 		"100C08"
 	}
 
-	local randomStart = math.random(0, 73)
-	local color = PossibleColors[randomStart]
-
-	return color
+	local color = PossibleColors[math.random(#PossibleColors)]
+	return "#" .. color
 end
