@@ -1,5 +1,4 @@
 #Mod Ideas/Improvments
-MirrorPicker
 RandomTemplate
 We respect your privacy : shows random info about players
 CityFeatures  : Commanders can't leave a city.
@@ -8,6 +7,7 @@ CityFeatures  : Deploylimit on a city equal to city size
 City_Features : Link territory in chat
 Order delay : only delay 1 order (each)
 Mafia Mod : Play Mafia in WZ
+LinkedTerritories : Two territories link to each other (portals! using WL.StructureType.Attack)
 
 
 Mod Name - WZ Update
