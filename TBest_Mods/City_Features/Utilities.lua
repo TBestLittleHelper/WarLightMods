@@ -203,7 +203,11 @@ function randomColor()
 		"36454F",
 		"FF00FF",
 		"76FF7A",
-		"100C08"
+		"100C08",
+		"BABABC",
+		"6C73D1",
+		"FF00ED",
+		"FFC200"
 	}
 
 	local color = PossibleColors[math.random(#PossibleColors)]
