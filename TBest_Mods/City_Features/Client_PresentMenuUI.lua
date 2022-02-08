@@ -21,7 +21,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	PlayerGameData = Mod.PlayerGameData
 	skipRefresh = false --This is set to true if we go to Edit or Settings Dialog
 	--TODO or gold?
-	CloseDialog = nil
 
 	--Check if we have any saved settings
 	PublicGameData = Mod.PublicGameData
