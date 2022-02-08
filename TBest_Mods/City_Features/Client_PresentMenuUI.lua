@@ -1,5 +1,4 @@
 require("Utilities")
-require("Giftgold")
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	if (Mod.Settings.Version ~= 2) then
@@ -17,10 +16,11 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		UI.Alert("You can't do anything as a spectator until the game has ended.")
 		return
 	end
-	--Make some global var's
+	--Make some global variables
 	ClientGame = game
 	PlayerGameData = Mod.PlayerGameData
 	skipRefresh = false --This is set to true if we go to Edit or Settings Dialog
+	--TODO or gold?
 	CloseDialog = nil
 
 	--Check if we have any saved settings
@@ -96,16 +96,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end
 	)
 
-	UI.CreateButton(rootParent).SetText("Settings").SetColor("#00ff05").SetOnClick(
-		function()
-			if (ChatMsgContainerArray ~= {}) then
-				DestroyOldUIelements(ChatMsgContainerArray)
-			end
-			skipRefresh = true
-			ClientGame.CreateDialog(SettingsDialog)
-			close() --Close this dialog.
-		end
-	)
 	--If we are in a group, show the chat options
 	if (PlayerGameData.Chat ~= nil) then
 		if not (EachGroupButton) then
@@ -175,6 +165,17 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			end
 		)
 	end
+	--Settings button
+	UI.CreateButton(rootParent).SetText("Settings").SetColor("#00ff05").SetOnClick(
+		function()
+			if (ChatMsgContainerArray ~= {}) then
+				DestroyOldUIelements(ChatMsgContainerArray)
+			end
+			skipRefresh = true
+			ClientGame.CreateDialog(SettingsDialog)
+			close() --Close this dialog.
+		end
+	)
 end
 
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
@@ -706,7 +707,7 @@ function DeleteGroupDeclined()
 	return ret
 end
 
---Determines if the player is one we can interact with.
+--Determins if the player is one we can interact with.
 function IsPotentialTarget(player)
 	if (ClientGame.Us.ID == player.ID) then
 		return false
@@ -731,11 +732,9 @@ function IsAlive(playerID, ClientGame)
 	return false
 end
 
---TODO use PlayingPlayers https://www.warzone.com/wiki/Mod_API_Reference:GameWL instead?
 function CheckGameEnded(game)
 	-- 3 == playing : 4 == elim + over , 5 == manual picks
-	print("Game.state code:")
-	print(game.Game.State)
+	print("Game.state code:" .. game.Game.State)
 	if (game.Us == nil) then
 		return
 	end --Return if spectator
@@ -749,6 +748,89 @@ function CheckGameEnded(game)
 		"Clearing mod data...",
 		payload,
 		function(returnValue)
+		end
+	)
+end
+
+--Gift Gold is adapted from https://github.com/FizzerWL/ExampleMods/tree/master/GiftGoldMod
+
+function GiftGoldMenu(rootParent, setMaxSize, setScrollable, game, close)
+	Game = game
+	Close = close --todo remove
+
+	setMaxSize(450, 250)
+
+	local vert = UI.CreateVerticalLayoutGroup(rootParent)
+
+	local row1 = UI.CreateHorizontalLayoutGroup(vert)
+	UI.CreateLabel(row1).SetText("Gift gold to this player: ")
+	TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...").SetOnClick(TargetPlayerClicked)
+
+	local goldHave = game.LatestStanding.NumResources(game.Us.ID, WL.ResourceType.Gold)
+
+	local row2 = UI.CreateHorizontalLayoutGroup(vert)
+	UI.CreateLabel(row2).SetText("Amount of gold to give away: ")
+	GoldInput = UI.CreateNumberInputField(row2).SetSliderMinValue(1).SetSliderMaxValue(goldHave).SetValue(1)
+
+	UI.CreateButton(vert).SetText("Gift").SetOnClick(SubmitClicked)
+
+	local row3 = UI.CreateHorizontalLayoutGroup(vert)
+	--Go back to PresentMenuUi button
+	UI.CreateButton(row3).SetText("Go Back").SetColor("#0000FF").SetOnClick(
+		function()
+			RefreshMainDialog(close, game)
+		end
+	)
+end
+
+function TargetPlayerClicked()
+	local players =
+		filter(
+		ClientGame.Game.Players,
+		function(p)
+			return p.ID ~= ClientGame.Us.ID
+		end
+	)
+	local options = map(players, GiftGoldPlayerButton)
+	UI.PromptFromList("Select the player you'd like to give gold to", options)
+end
+function GiftGoldPlayerButton(player)
+	local name = player.DisplayName(nil, false)
+	local ret = {}
+	ret["text"] = name
+	ret["selected"] = function()
+		TargetPlayerBtn.SetText(name)
+		TargetPlayerID = player.ID
+	end
+	return ret
+end
+
+function SubmitClicked(game)
+	if (TargetPlayerID == nil) then
+		UI.Alert("Please choose a player first")
+		return
+	end
+
+	--Check for negative gold.  We don't need to check to ensure we have this much since the server does that check in Server_GameCustomMessage
+	local gold = GoldInput.GetValue()
+	if (gold <= 0) then
+		UI.Alert("Gold to gift must be a positive number")
+		return
+	end
+
+	local payload = {}
+	payload.Message = "GiftGold"
+	payload.TargetPlayerID = TargetPlayerID
+	payload.Gold = gold
+
+	--Move into PresentMenuUi?
+	Game.SendGameCustomMessage(
+		"Gifting Gold...",
+		payload,
+		function(returnValue)
+			Close() --Close the dialog since we're done with it
+			RefreshMainDialog(close, game)
+			UI.Alert(returnValue.Message)
 		end
 	)
 end
