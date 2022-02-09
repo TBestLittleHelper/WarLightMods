@@ -15,7 +15,7 @@ function Server_StartGame(game, standing)
 
 	for i = 1, 4 do
 		publicGameData.portals[i] = getRandomTerritory(territoryArray)
-		standing.Territories[publicGameData[i]].Structures = structure
+		standing.Territories[publicGameData.portals[i]].Structures = structure
 	end
 
 	Mod.PublicGameData = publicGameData
