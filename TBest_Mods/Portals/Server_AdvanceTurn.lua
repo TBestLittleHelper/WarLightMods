@@ -8,6 +8,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	Game = game
 
 	--Swap the standing (owner, armies) of the two portals
+	print(#Mod.PublicGameData.portals)
 	for i = 1, #Mod.PublicGameData.portals do
 		TerritoryModifications[i] = terrModHelper(Mod.PublicGameData.portals[i + 1], Mod.PublicGameData.portals[i])
 		i = i + 1
