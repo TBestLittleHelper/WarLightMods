@@ -1,23 +1,30 @@
 function Server_StartGame(game, standing)
 	local publicGameData = Mod.PublicGameData
-	local territories = game.Map.Territories
+	publicGameData.portals = {}
+	territoryArray = {}
 
-	local keys = {}
-	for key, value in pairs(territories) do
-		keys[#keys + 1] = key --Store keys in another table
+	local count = 1
+	for _, territory in pairs(game.Map.Territories) do
+		territoryArray[count] = territory
+		count = count + 1
 	end
-	local index = math.random(1, #keys - 1)
-	portalA = territories[keys[index]].ID
-	portalB = territories[keys[index + 1]].ID
-
-	publicGameData.portalA = portalA
-	publicGameData.portalB = portalB
-
-	Mod.PublicGameData = publicGameData
 
 	local structure = {}
 	Portals = WL.StructureType.Power
 	structure[Portals] = 1
-	standing.Territories[portalA].Structures = structure
-	standing.Territories[portalB].Structures = structure
+
+	for i = 1, 4 do
+		publicGameData[i] = getRandomTerritory(territoryArray)
+		standing.Territories[publicGameData[i]].Structures = structure
+	end
+
+	Mod.PublicGameData = publicGameData
+end
+
+function getRandomTerritory(territoryArray)
+	local index = math.random(#territoryArray)
+	local territory = territoryArray[index]
+	table.remove(territoryArray, index)
+
+	return territory.ID
 end
