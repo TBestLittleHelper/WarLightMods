@@ -8,9 +8,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	Game = game
 
 	--Swap the standing (owner, armies) of the two portals
-	TerritoryModifications[1] = terrModHelper(Mod.PublicGameData.portalB, Mod.PublicGameData.portalA)
-	TerritoryModifications[2] = terrModHelper(Mod.PublicGameData.portalA, Mod.PublicGameData.portalB)
-
+	for i = 1, Mod.PublicGameData.portals do
+		TerritoryModifications[i] = terrModHelper(Mod.PublicGameData.portals[i + 1], Mod.PublicGameData.portals[i])
+		i = i + 1
+	end
 	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "Portal Away", nil, TerritoryModifications, nil))
 end
 
