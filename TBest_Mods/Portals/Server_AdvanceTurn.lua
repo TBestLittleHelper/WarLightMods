@@ -4,15 +4,18 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 end
 
 function Server_AdvanceTurn_End(game, addNewOrder)
-	TerritoryModifications = {}
 	Game = game
+	TerritoryModifications = {}
 
-	--Swap the standing (owner, armies) of the two portals
-	print(#Mod.PublicGameData.portals)
+	--Swap the standing (owner, armies) of the connected portals
 	for i = 1, #Mod.PublicGameData.portals do
-		TerritoryModifications[i] = terrModHelper(Mod.PublicGameData.portals[i + 1], Mod.PublicGameData.portals[i])
-		i = i + 1
+		if (i % 2 == 1) then -- 1 , 3 , 5 swap with 2 , 4 , 6
+			TerritoryModifications[i] = terrModHelper(Mod.PublicGameData.portals[i], Mod.PublicGameData.portals[i + 1])
+		else
+			TerritoryModifications[i] = terrModHelper(Mod.PublicGameData.portals[i], Mod.PublicGameData.portals[i - 1])
+		end
 	end
+
 	addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "Portal Away", nil, TerritoryModifications, nil))
 end
 
