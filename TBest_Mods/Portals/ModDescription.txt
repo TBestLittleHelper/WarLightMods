@@ -1,2 +1,2 @@
-At the end of each turn. Swap standing (armies and owner) of the two portal territories.
-Portals are shown on the map with a Power icon.
+At the end of each turn. Swap standing (armies and owner) of the portal territories.
+Portals are shown on the map  using the Power icon. Recomended to use only 1 portal.
