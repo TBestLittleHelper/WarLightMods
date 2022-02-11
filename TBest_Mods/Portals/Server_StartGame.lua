@@ -1,6 +1,6 @@
 function Server_StartGame(game, standing)
-	local publicGameData = Mod.PublicGameData
-	publicGameData.portals = {}
+	local privateGameData = Mod.PrivateGameData
+	privateGameData.portals = {}
 	territoryArray = {}
 
 	local count = 1
@@ -20,15 +20,15 @@ function Server_StartGame(game, standing)
 	structure[Portals] = 0
 
 	for i = 1, NumPortals * 2 do
-		publicGameData.portals[i] = getRandomTerritory(territoryArray)
+		privateGameData.portals[i] = getRandomTerritory(territoryArray)
 		if (i % 2 == 1) then
 			structure[Portals] = structure[Portals] + 1
 		end
 
-		standing.Territories[publicGameData.portals[i]].Structures = structure
+		standing.Territories[privateGameData.portals[i]].Structures = structure
 	end
 
-	Mod.PublicGameData = publicGameData
+	Mod.PrivateGameData = privateGameData
 end
 
 function getRandomTerritory(territoryArray)
