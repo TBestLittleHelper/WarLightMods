@@ -14,8 +14,7 @@ function Server_StartGame(game, standing)
 	Portals = WL.StructureType.Power
 	structure[Portals] = 0
 
-	--todo the 6 here should be a mod variable
-	for i = 1, 6 do
+	for i = 1, Mod.Settings.NumPortals * 2 do
 		publicGameData.portals[i] = getRandomTerritory(territoryArray)
 		if (i % 2 == 1) then
 			structure[Portals] = structure[Portals] + 1
