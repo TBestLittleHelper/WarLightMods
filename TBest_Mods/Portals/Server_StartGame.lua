@@ -4,17 +4,22 @@ function Server_StartGame(game, standing)
 	territoryArray = {}
 
 	local count = 1
-	-- TODO check that map has enough territories
 	for _, territory in pairs(game.Map.Territories) do
 		territoryArray[count] = territory
 		count = count + 1
+	end
+
+	-- Check that the map has enough territories, else make the minimum number of portals
+	local NumPortals = Mod.Settings.NumPortals
+	if (#territoryArray < Mod.Settings.NumPortals * 2) then
+		NumPortals = 1
 	end
 
 	structure = {}
 	Portals = WL.StructureType.Power
 	structure[Portals] = 0
 
-	for i = 1, Mod.Settings.NumPortals * 2 do
+	for i = 1, NumPortals * 2 do
 		publicGameData.portals[i] = getRandomTerritory(territoryArray)
 		if (i % 2 == 1) then
 			structure[Portals] = structure[Portals] + 1
