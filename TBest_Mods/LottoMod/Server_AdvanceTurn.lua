@@ -13,7 +13,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 end
 
 function randomPlayer(game)
-	local playersSet = game.ServerGame.game.PlayingPlayers
+	local playersSet = game.Game.PlayingPlayers
 
 	local playersTable = {}
 	local count = 0
