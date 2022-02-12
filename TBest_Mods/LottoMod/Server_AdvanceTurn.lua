@@ -1,30 +1,26 @@
-function Server_AdvanceTurn_Start (game,addNewOrder)
-	standing = game.ServerGame.LatestTurnStanding;
-	local playersSet = {}
-	local CurrentIndex=1;
-	local winnerCapturesAll={};
-	for _, territory in pairs(standing.Territories) do
-		if (not territory.IsNeutral) then
-			playersSet[territory.OwnerPlayerID] = true
-		end
+function Server_AdvanceTurn_Start(game, addNewOrder)
+	local CurrentIndex = 1
+	local winnerCapturesAll = {}
+	local winner = randomPlayer(game)
+
+	for _, territory in pairs(game.ServerGame.LatestTurnStanding.Territories) do
+		terrMod = WL.TerritoryModification.Create(territory.ID)
+		terrMod.SetOwnerOpt = winner
+		winnerCapturesAll[CurrentIndex] = terrMod
+		CurrentIndex = CurrentIndex + 1
 	end
-	local winner = lucky(playersSet);
-	for _,territory in pairs(standing.Territories)do
-		terrMod = WL.TerritoryModification.Create(territory.ID);
-		terrMod.SetOwnerOpt=winner;
-		winnerCapturesAll[CurrentIndex]=terrMod;
-		CurrentIndex=CurrentIndex+1;
-	end
-	addNewOrder(WL.GameOrderEvent.Create(winner,"Won the lottery!",nil,winnerCapturesAll));
+	addNewOrder(WL.GameOrderEvent.Create(winner, "Won the lottery!", nil, winnerCapturesAll))
 end
---some code is from https://github.com/kszyhoop/WarlightModPicksSwap/blob/master/SwapPicks.lua
-function lucky(playersSet)
+
+function randomPlayer(game)
+	local playersSet = game.ServerGame.game.PlayingPlayers
+
 	local playersTable = {}
-	local n = 0;
+	local count = 0
 	for key, _ in pairs(playersSet) do
-		playersTable[n] = key
-		n = n + 1;
-	end	
-  	local winner = math.random(0,n-1);
-	return playersTable[winner];
+		playersTable[count] = key
+		count = count + 1
+	end
+	local winner = math.random(#playersTable)
+	return playersTable[winner]
 end
