@@ -13,11 +13,9 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 end
 
 function randomPlayer(game)
-	local playersSet = game.Game.PlayingPlayers
-
 	local playersTable = {}
 	local count = 0
-	for key, _ in pairs(playersSet) do
+	for key, _ in pairs(game.Game.PlayingPlayers) do
 		playersTable[count] = key
 		count = count + 1
 	end
