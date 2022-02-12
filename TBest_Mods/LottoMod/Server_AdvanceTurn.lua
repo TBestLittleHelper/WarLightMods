@@ -15,10 +15,9 @@ end
 function randomPlayer(game)
 	local playersTable = {}
 	local count = 0
-	for key, _ in pairs(game.Game.PlayingPlayers) do
-		playersTable[count] = key
+	for playerID, _ in pairs(game.Game.PlayingPlayers) do
+		playersTable[count] = playerID
 		count = count + 1
 	end
-	local winner = math.random(#playersTable)
-	return playersTable[winner]
+	return math.random(#playersTable)
 end
