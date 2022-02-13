@@ -1,23 +1,16 @@
 #Mod Ideas/Improvments
 RandomTemplate
 We respect your privacy : shows random info about players
-CityFeatures  : Commanders can't leave a city.
-CityFeatures  : Armies far away from a city suffers from 'low moral'
 CityFeatures  : Deploylimit on a city equal to city size
 City_Features : Link territory in chat
-Order delay : only delay 1 order (each)
 Mafia Mod : Play Mafia in WZ
-LinkedTerritories : Two territories link to each other (portals! using WL.StructureType.Attack)
-
 
 Mod Name - WZ Update
 
 #Blocked/Need updates to the mod framework from Warzone
 Undo turn / Reverse Time warp : Go back to previous turn's standing (Need changes to the mod framework before it will work) - 5.17
 
-
 #Testing/WIP
-Group Chat Mod
 Disttribution Mod : What territories can be picked
 
 #Public
@@ -29,7 +22,9 @@ ZombieHorde
 
 
 #Public + Approved
-Lotto Mod
 BonusValue QuickOverrider
 City_Features
+Lotto Mod
+Portals
+
 
