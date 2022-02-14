@@ -3,7 +3,7 @@ function Server_StartGame(game, standing)
 	privateGameData = Mod.PrivateGameData
 	publicGameData = Mod.PublicGameData
 
-	--Setup PublicGameData
+	--Setup PublicGameData -- TODO Refactor to Mod.Settings?
 	publicGameData.Advancment = {Technology = {}, Military = {}, Culture = {}}
 	-- How to gain tech points
 	publicGameData.Advancment.Technology = {Progress = {MinIncome = 25, TurnsEnded = 1, StructuresOwned = 1}}
@@ -22,9 +22,7 @@ function Server_StartGame(game, standing)
 	--Player progress.
 	for _, player in pairs(game.ServerGame.Game.Players) do
 		privateGameData[player.ID] = {Advancment = {}}
-		privateGameData[player.ID].Advancment.TechnologyProgress = 0
-		privateGameData[player.ID].Advancment.MilitaryProgress = 0
-		privateGameData[player.ID].Advancment.CultureProgress = 0
+		privateGameData[player.ID].Advancment.Points = {Technology = 0, Military = 0, Culture = 0}
 		privateGameData[player.ID].Advancment.PreReq = {Technology = 0, Military = 0, Culture = 0}
 		privateGameData[player.ID].Advancment.Unlockables = {
 			Technology = technologyUnlockables(),
@@ -54,7 +52,7 @@ function technologyUnlockables()
 	local unlockables = {
 		{Income = 5, unlockPoints = 10, preReq = 0, unlocked = false, text = "Earn 5 income per turn"},
 		{Structure = WL.StructureType.Market, unlockPoints = 10, preReq = 1, unlocked = false, text = "Build a Market"},
-		{Income = 10, unlockPoints = 15, preReq = 1, unlocked = false, text = "Earn 10 income per turn"}
+		{Income = 10, unlockPoints = 15, preReq = 2, unlocked = false, text = "Earn 10 income per turn"}
 	}
 
 	return unlockables
