@@ -14,10 +14,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		players[playerID].StructuresOwned = 0
 		players[playerID].ArmiesOwned = 0
 		players[playerID].Income = player.Income(0, game.ServerGame.LatestTurnStanding, true, true).Total --bypass army cap and sanc card
-		players[playerID].Progress = {
-			Technology = privateGameData[playerID].Advancment.TechnologyProgress,
-			Military = privateGameData[playerID].Advancment.MilitaryProgress,
-			Culture = privateGameData[playerID].Advancment.CultureProgress
+		players[playerID].Points = {
+			Technology = privateGameData[playerID].Advancment.Points.Technology,
+			Military = privateGameData[playerID].Advancment.Points.Military,
+			Culture = privateGameData[playerID].Advancment.Points.Culture
 		}
 	end
 
@@ -34,9 +34,9 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 
 	--Give out points and boost
 	for playerID, _ in pairs(players) do
-		local techPoints = privateGameData[playerID].Advancment.TechnologyProgress
-		local cultPoints = privateGameData[playerID].Advancment.CultureProgress
-		local miliPoints = privateGameData[playerID].Advancment.MilitaryProgress
+		local techPoints = privateGameData[playerID].Advancment.Points.Technology
+		local cultPoints = privateGameData[playerID].Advancment.Points.Culture
+		local miliPoints = privateGameData[playerID].Advancment.Points.Military
 
 		--Technology points. A point per turn; if over min income; point per structure owned
 		if (Mod.PublicGameData.Advancment.Technology.Progress.MinIncome <= players[playerID].Income) then
@@ -62,9 +62,9 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		end
 		--TODO armies lost, armies defeated
 
-		privateGameData[playerID].Advancment.TechnologyProgress = techPoints
-		privateGameData[playerID].Advancment.CultureProgress = cultPoints
-		privateGameData[playerID].Advancment.MilitaryProgress = miliPoints
+		privateGameData[playerID].Advancment.Points.Technology = techPoints
+		privateGameData[playerID].Advancment.Points.Culture = cultPoints
+		privateGameData[playerID].Advancment.Points.Military = miliPoints
 
 		print(playerID, techPoints, cultPoints, miliPoints)
 		if (not players[playerID].IsAI) then
