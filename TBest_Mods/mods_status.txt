@@ -2,6 +2,7 @@
 RandomTemplate
 We respect your privacy : shows random info about players
 CityFeatures  : Deploylimit on a city equal to city size
+CityFeatures : Deploy near a city/bonus :  https://www.warzone.com/wiki/Mod_API_Reference:IncomeMod
 City_Features : Link territory in chat
 Mafia Mod : Play Mafia in WZ
 
