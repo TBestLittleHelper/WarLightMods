@@ -34,9 +34,38 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 
 	--Give out points and boost
 	for playerID, _ in pairs(players) do
+		local techPoints = privateGameData[playerID].Advancment.TechnologyProgress
+		local cultPoints = privateGameData[playerID].Advancment.CultureProgress
+		local miliPoints = privateGameData[playerID].Advancment.MilitaryProgress
+
+		--Technology points. A point per turn; if over min income; point per structure owned
 		if (Mod.PublicGameData.Advancment.Technology.Progress.MinIncome <= players[playerID].Income) then
-			privateGameData[playerID].Advancment.TechnologyProgress = privateGameData[playerID].Advancment.TechnologyProgress + 1
+			techPoints = techPoints + 1
 		end
+		if (Mod.PublicGameData.Advancment.Technology.Progress.TurnsEnded == 1) then
+			techPoints = techPoints + 1
+		end
+		if (Mod.PublicGameData.Advancment.Technology.Progress.StructuresOwned <= players[playerID].StructuresOwned) then
+			techPoints = techPoints + players[playerID].StructuresOwned
+		end
+		--Culture points. A point if under max Armies; under max territories
+		if (Mod.PublicGameData.Advancment.Culture.Progress.MaxArmiesOwned >= players[playerID].ArmiesOwned) then
+			cultPoints = cultPoints + 1
+		end
+		if (Mod.PublicGameData.Advancment.Culture.Progress.MaxTerritoriesOwned >= players[playerID].TerritoriesOwned) then
+			cultPoints = cultPoints + 1
+		end
+		--TODO no attack culture ^
+		--Military points. A point for min territories owned;
+		if (Mod.PublicGameData.Advancment.Military.Progress.MinTerritoriesOwned <= players[playerID].TerritoriesOwned) then
+			miliPoints = miliPoints + 1
+		end
+		--TODO armies lost, armies defeated
+
+		privateGameData[playerID].Advancment.TechnologyProgress = techPoints
+		privateGameData[playerID].Advancment.CultureProgress = cultPoints
+		privateGameData[playerID].Advancment.MilitaryProgress = miliPoints
+
 		if (not players[playerID].IsAI) then
 			playerGameData[playerID] = privateGameData[playerID]
 		end
