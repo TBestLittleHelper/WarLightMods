@@ -1,7 +1,7 @@
 require("Utilities")
 
 --TODO Cities grow? From Dig cite, to mine? to City?
---addNewOrder: A function that you can call to add a GameOrder to the start of the turn. You may call this function multiple times if you wish to add multiple orders. Pass a single GameOrder as the first argument to this function. Optionally, you can also pass "true" as a second argument to this function to make your new order get skipped if the order this hook was called on gets skipped, either by your mod or another mod. This second argument was added in 5.17.0.
+--TODO addNewOrder: A function that you can call to add a GameOrder to the start of the turn. You may call this function multiple times if you wish to add multiple orders. Pass a single GameOrder as the first argument to this function. Optionally, you can also pass "true" as a second argument to this function to make your new order get skipped if the order this hook was called on gets skipped, either by your mod or another mod. This second argument was added in 5.17.0.
 
 function Server_AdvanceTurn_Start(game, addNewOrder)
 	oldVersion = false
