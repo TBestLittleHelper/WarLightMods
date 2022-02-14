@@ -5,7 +5,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		return
 	end
 
-	setMaxSize(500, 600)
+	setMaxSize(550, 650)
 	setScrollable(false, true)
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent)
@@ -61,6 +61,12 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end --TODO add more info to it?
 	)
 
+	--TODO 		privateGameData[player.ID].AlertUnlockAvailible = true
+	UI.CreateButton(horizontalLayout).SetText("Alerts on").SetFlexibleWidth(0.1).SetOnClick(
+		function()
+		end
+	)
+
 	--Time to show a tech tree!
 	UpdateTechTree()
 end
@@ -80,14 +86,18 @@ function UpdateTechTree()
 		local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
 		--Advancment info
 		AdvancmentInfo = UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(unlockable.text) --setColor
-		if (unlockable.unlocked) then
+		if (unlockable.unlocked) then -- TODO Refactor this
 			AdvancmentInfo.SetInteractable(false).SetColor("#00ff05")
 			UI.CreateButton(horzLayout).SetText("Active").SetColor("#00ff05")
+			UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
 		else
 			local CostButton = UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.unlockPoints)
 			--TODO set false interactable if we can't afford ^
 			if (unlockable.preReq > playerGameData.Advancment.PreReq[TechTreeSelected]) then
-				UI.CreateButton(horzLayout).SetText("Need to unlock  " .. unlockable.preReq).SetInteractable(false)
+				UI.CreateButton(horzLayout).SetText("Need to unlock  " .. unlockable.preReq .. " more").SetInteractable(false)
+				CostButton.SetInteractable(false)
+			else
+				UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
 			end
 		end
 	end

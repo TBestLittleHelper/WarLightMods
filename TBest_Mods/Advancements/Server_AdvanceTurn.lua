@@ -66,6 +66,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		privateGameData[playerID].Advancment.CultureProgress = cultPoints
 		privateGameData[playerID].Advancment.MilitaryProgress = miliPoints
 
+		print(playerID, techPoints, cultPoints, miliPoints)
 		if (not players[playerID].IsAI) then
 			playerGameData[playerID] = privateGameData[playerID]
 		end
