@@ -19,7 +19,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	TechTreeSelected = "Technology"
 
 	--Button to show Technology tech tree
-	UI.CreateButton(horizontalLayout).SetText("Technology " .. playerGameData.Advancment.TechProgress).SetFlexibleWidth(
+	UI.CreateButton(horizontalLayout).SetText("Technology " .. playerGameData.Advancment.TechnologyProgress).SetFlexibleWidth(
 		0.3
 	).SetColor("#FFF700").SetOnClick(
 		function()
@@ -59,13 +59,20 @@ function UpdateTechTree()
 	table.insert(TechTreeContainerArray, treeLayout)
 	local horzMain = UI.CreateVerticalLayoutGroup(treeLayout)
 
-	for key, value in pairs(playerGameData.Advancment.Unlocked[TechTreeSelected]) do
+	for key, unlockable in pairs(playerGameData.Advancment.Unlockables[TechTreeSelected]) do
 		local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
-		print(key, value)
+		print(key, unlockable.text)
 		--Advancment info
-		UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(key .. " " .. value).SetInteractable(
-			false
-		).SetColor("#00ff05")
+		AdvancmentInfo = UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(unlockable.text) --setColor
+		if (unlockable.unlocked) then
+			AdvancmentInfo.SetInteractable(false).SetColor("#00ff05")
+			UI.CreateButton(horzLayout).SetText("Active").SetColor("#00ff05")
+		else
+			UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.unlockPoints)
+			if (unlockable.preReq > playerGameData.Advancment.PreReq[TechTreeSelected]) then
+				UI.CreateButton(horzLayout).SetText("Need to unlock  " .. unlockable.preReq)
+			end
+		end
 	end
 end
 
