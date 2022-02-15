@@ -1,3 +1,5 @@
+require("Utilities")
+
 -- Global variables in AdvanceTurn are availible for all the hooks in this file
 function Server_AdvanceTurn_Start(game, addNewOrder)
 	playerGameData = Mod.PlayerGameData
@@ -24,7 +26,6 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 end
 
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
-	--TODO consider takeing extra care to make the mod more compatible with other mods, using  addNewOrder's second argument
 	if (order.proxyType == "GameOrderAttackTransfer") then
 		if (result.IsAttack) then
 			local DefenceBoost = DefenceBoost()
@@ -45,17 +46,21 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			local NewDefendersArmiesKilled = WL.Armies.Create(defendersKilled)
 			result.AttackingArmiesKilled = NewAttackingArmiesKilled
 			result.DefendingArmiesKilled = NewDefendersArmiesKilled
+
+			--We are takeing extra care to make the mod more compatible with other mods. Therfore, using  addNewOrder's second argument will mean we won't count the attack if another mod skips this order. Thus all point progress will be counted from the new custom order
 			local msg =
 				"The attacker had " ..
 				tostring(AttackBoost) .. " attack boost. The defender had " .. tostring(DefenceBoost) .. " defence boost."
-			addNewOrder(
-				WL.GameOrderEvent.Create(
-					game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID,
-					msg,
-					{order.PlayerID}
-				)
-			)
+			local payload = "Advancments_," .. attackersKilled .. "," .. defendersKilled
+			addNewOrder(WL.GameOrderCustom.Create(order.PlayerID, msg, payload), true)
 		end
+	end
+
+	if (order.proxyType == "GameOrderCustom" and startsWith(order.Payload, "Advancments_")) then
+		local payloadSplit = split(order.Payload, ",")
+		local attackersKilled = payloadSplit[2]
+		local defendersKilled = payloadSplit[3]
+		local attackMade = order.PlayerID
 	end
 end
 
@@ -143,28 +148,4 @@ function countStructures(Structures)
 	end
 
 	return count
-end
-
-function Dump(obj)
-	if obj.proxyType ~= nil then
-		DumpProxy(obj)
-	elseif type(obj) == "table" then
-		DumpTable(obj)
-	else
-		print("Dump " .. type(obj))
-	end
-end
-function DumpTable(tbl)
-	for k, v in pairs(tbl) do
-		print("k = " .. tostring(k) .. " (" .. type(k) .. ") " .. " v = " .. tostring(v) .. " (" .. type(v) .. ")")
-	end
-end
-function DumpProxy(obj)
-	print(
-		"type=" ..
-			obj.proxyType ..
-				" readOnly=" ..
-					tostring(obj.readonly) ..
-						" readableKeys=" .. table.concat(obj.readableKeys, ",") .. " writableKeys=" .. table.concat(obj.writableKeys, ",")
-	)
 end
