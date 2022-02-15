@@ -6,6 +6,8 @@ CityFeatures : Deploy near a city/bonus :  https://www.warzone.com/wiki/Mod_API_
 City_Features : Link territory in chat
 Mafia Mod : Play Mafia in WZ
 
+Use https://www.warzone.com/wiki/Mod_API_Reference:GameOrderStateTransition to remove player data when eliminated
+
 Mod Name - WZ Update
 
 #Blocked/Need updates to the mod framework from Warzone
