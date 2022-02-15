@@ -57,7 +57,6 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	end
 
 	if (order.proxyType == "GameOrderCustom" and startsWith(order.Payload, "Advancments_")) then
-		Dump(order)
 		local payloadSplit = split(order.Payload, ",")
 		local attackersKilled = payloadSplit[2]
 		local defendersKilled = payloadSplit[3]

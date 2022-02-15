@@ -70,7 +70,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Time to show a tech tree!
 	UpdateTechTree()
 end
-
+--TODO also update buttons number of poitns (ie. technology 2)
 function UpdateTechTree()
 	if (TechTreeContainerArray ~= {}) then
 		DestroyOldUIelements(TechTreeContainerArray)
