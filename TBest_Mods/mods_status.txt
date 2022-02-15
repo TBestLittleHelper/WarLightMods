@@ -15,12 +15,13 @@ Undo turn / Reverse Time warp : Go back to previous turn's standing (Need change
 
 #Testing/WIP
 Disttribution Mod : What territories can be picked
+Advancments : 5.17
 
 #Public
 Cost of an empire : Each territory costs income
 no-self-sanc [Demo mod, not going to ask for approved]
 LocalDeployment Helper
-Paratroopers - 5.17
+Paratroopers : 5.17
 ZombieHorde
 
 
