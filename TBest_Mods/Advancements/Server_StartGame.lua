@@ -48,6 +48,7 @@ function Server_StartGame(game, standing)
 	Mod.PublicGameData = publicGameData
 end
 
+--TODO buy armies?
 function technologyUnlockables()
 	local unlockables = {
 		{Income = 5, unlockPoints = 10, preReq = 0, unlocked = false, text = "Earn 5 income per turn"},
@@ -57,6 +58,11 @@ function technologyUnlockables()
 
 	return unlockables
 end
+
+--TODO lastManStanding (1 army defends for 5, 10 armies)
+--TODO flankBonus when attacking?
+--TODO overwhelming attack. Attacks over 100 armies, gain 25 strength?
+--TODO steal income from defeated armies
 
 function militaryUnlockables()
 	local unlockables = {
@@ -68,6 +74,8 @@ function militaryUnlockables()
 	return unlockables
 end
 
+--TODO neutral territories are captured for free
+--TODO defeated attacking armies are converted to defenders, if the attack fails
 function cultureUnlockables()
 	local unlockables = {
 		{DefenceBoost = 15, unlockPoints = 10, preReq = 0, unlocked = true, text = "Increase defencive kill rate by 15"},
