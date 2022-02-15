@@ -13,7 +13,7 @@ function Server_StartGame(game, standing)
 
 	--How to gain Culture points
 	publicGameData.Advancment.Culture = {
-		Progress = {NoAttackMade = 1, MaxTerritoriesOwned = 75, MaxArmiesOwned = 100}
+		Progress = {AttacksMade = 1, MaxTerritoriesOwned = 75, MaxArmiesOwned = 100}
 	}
 
 	-- Setup privateGameData

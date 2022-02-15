@@ -1,33 +1,73 @@
-function Server_AdvanceTurn_End(game, addNewOrder)
+-- Global variables in AdvanceTurn are availible for all the hooks in this file
+function Server_AdvanceTurn_Start(game, addNewOrder)
 	playerGameData = Mod.PlayerGameData
 	privateGameData = Mod.PrivateGameData
 
-	--Territories owned
-	--Structures owned
-	--Armies owned
-	local players = {}
-
+	players = {}
 	for playerID, player in pairs(game.ServerGame.Game.PlayingPlayers) do
 		players[playerID] = {}
 		players[playerID].IsAI = player.IsAI
 		players[playerID].TerritoriesOwned = 0
 		players[playerID].StructuresOwned = 0
 		players[playerID].ArmiesOwned = 0
-		players[playerID].Income = player.Income(0, game.ServerGame.LatestTurnStanding, true, true).Total --bypass army cap and sanc card
+		players[playerID].ArmiesDefeated = 0
+		players[playerID].ArmiesLost = 0
+		players[playerID].AttacksMade = 0
+
+		players[playerID].Income = player.Income(0, game.ServerGame.LatestTurnStanding, true, false).Total --bypass army cap but count sanc card
 		players[playerID].Points = {
 			Technology = privateGameData[playerID].Advancment.Points.Technology,
 			Military = privateGameData[playerID].Advancment.Points.Military,
 			Culture = privateGameData[playerID].Advancment.Points.Culture
 		}
 	end
+end
 
+function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
+	--TODO consider takeing extra care to make the mod more compatible with other mods, using  addNewOrder's second argument
+	if (order.proxyType == "GameOrderAttackTransfer") then
+		if (result.IsAttack) then
+			local DefenceBoost = DefenceBoost()
+			local AttackBoost = AttackBoost()
+			players[order.PlayerID].AttacksMade = players[order.PlayerID].AttacksMade + 1
+
+			local attackersKilled = result.AttackingArmiesKilled.NumArmies + DefenceBoost
+			local defendersKilled = result.DefendingArmiesKilled.NumArmies + AttackBoost
+
+			--Make sure we don't kill more then actualArmies
+			if (result.ActualArmies.NumArmies < attackersKilled) then
+				attackersKilled = result.ActualArmies.NumArmies
+			end
+			--TODO make sure we don't kill more then actual defending armies
+
+			--Write to GameOrderResult	 (result)
+			local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled)
+			local NewDefendersArmiesKilled = WL.Armies.Create(defendersKilled)
+			result.AttackingArmiesKilled = NewAttackingArmiesKilled
+			result.DefendingArmiesKilled = NewDefendersArmiesKilled
+			local msg =
+				"The attacker had " ..
+				tostring(AttackBoost) .. " attack boost. The defender had " .. tostring(DefenceBoost) .. " defence boost."
+			addNewOrder(
+				WL.GameOrderEvent.Create(
+					game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID,
+					msg,
+					{order.PlayerID}
+				)
+			)
+		end
+	end
+end
+
+function Server_AdvanceTurn_End(game, addNewOrder)
 	--Loop all territories and count how many a player owns
 	for _, terr in pairs(game.ServerGame.LatestTurnStanding.Territories) do
 		if (terr.IsNeutral == false) then
 			players[terr.OwnerPlayerID].TerritoriesOwned = players[terr.OwnerPlayerID].TerritoriesOwned + 1
 			players[terr.OwnerPlayerID].ArmiesOwned = players[terr.OwnerPlayerID].ArmiesOwned + terr.NumArmies.NumArmies
 			if (terr.Structures ~= nil) then
-				players[terr.OwnerPlayerID].StructuresOwned = players[terr.OwnerPlayerID].StructuresOwned + 1 --TODO don't assume Structures are not stacked. Create a helper function
+				players[terr.OwnerPlayerID].StructuresOwned =
+					players[terr.OwnerPlayerID].StructuresOwned + countStructures(terr.Structures)
 			end
 		end
 	end
@@ -38,7 +78,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		local cultPoints = privateGameData[playerID].Advancment.Points.Culture
 		local miliPoints = privateGameData[playerID].Advancment.Points.Military
 
-		--Technology points. A point per turn; if over min income; point per structure owned
+		--Technology points. A point per turn; if over min income; a point per structure owned
 		if (Mod.PublicGameData.Advancment.Technology.Progress.MinIncome <= players[playerID].Income) then
 			techPoints = techPoints + 1
 		end
@@ -48,6 +88,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		if (Mod.PublicGameData.Advancment.Technology.Progress.StructuresOwned <= players[playerID].StructuresOwned) then
 			techPoints = techPoints + players[playerID].StructuresOwned
 		end
+
 		--Culture points. A point if under max Armies; under max territories
 		if (Mod.PublicGameData.Advancment.Culture.Progress.MaxArmiesOwned >= players[playerID].ArmiesOwned) then
 			cultPoints = cultPoints + 1
@@ -55,19 +96,27 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		if (Mod.PublicGameData.Advancment.Culture.Progress.MaxTerritoriesOwned >= players[playerID].TerritoriesOwned) then
 			cultPoints = cultPoints + 1
 		end
-		--TODO no attack culture ^
-		--Military points. A point for min territories owned;
+		if (Mod.PublicGameData.Advancment.Culture.Progress.AttacksMade <= players[playerID].AttacksMade) then
+			cultPoints = cultPoints + 1
+		end
+
+		--Military points. A point for min territories owned; x+ armiesLost, x+ armies defeated
 		if (Mod.PublicGameData.Advancment.Military.Progress.MinTerritoriesOwned <= players[playerID].TerritoriesOwned) then
 			miliPoints = miliPoints + 1
 		end
-		--TODO armies lost, armies defeated
+		if (Mod.PublicGameData.Advancment.Military.Progress.ArmiesLost <= players[playerID].ArmiesLost) then
+			miliPoints = miliPoints + 1
+		end
+		if (Mod.PublicGameData.Advancment.Military.Progress.ArmiesDefeated <= players[playerID].ArmiesDefeated) then
+			miliPoints = miliPoints + 1
+		end
 
 		privateGameData[playerID].Advancment.Points.Technology = techPoints
 		privateGameData[playerID].Advancment.Points.Culture = cultPoints
 		privateGameData[playerID].Advancment.Points.Military = miliPoints
 
 		print(playerID, techPoints, cultPoints, miliPoints)
-		if (not players[playerID].IsAI) then
+		if (not players[playerID].IsAI) then --Can't use playerGameData for AI's.
 			playerGameData[playerID] = privateGameData[playerID]
 		end
 	end
@@ -76,6 +125,24 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	Mod.PrivateGameData = privateGameData
 	--local incomeMod = WL.IncomeMod.Create(playerID, cost, msg)
 	--addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil, {incomeMod}))
+end
+
+--todo
+function AttackBoost()
+	return 2
+end
+--TODO
+function DefenceBoost()
+	return 1
+end
+--TODO test
+function countStructures(Structures)
+	local count = 0
+	for key, value in pairs(Structures) do
+		count = count + value
+	end
+
+	return count
 end
 
 function Dump(obj)
