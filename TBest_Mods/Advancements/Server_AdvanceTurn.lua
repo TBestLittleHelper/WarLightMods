@@ -60,7 +60,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		local payloadSplit = split(order.Payload, ",")
 		local attackersKilled = payloadSplit[2]
 		local defendersKilled = payloadSplit[3]
-		players[playerID].ArmiesLost = players[playerID].ArmiesLost + attackersKilled
+		players[order.playerID].ArmiesLost = players[order.playerID].ArmiesLost + attackersKilled
 		players[order.PlayerID].ArmiesDefeated = players[order.PlayerID].ArmiesDefeated + defendersKilled
 
 		players[playerID].AttacksMade = players[playerID].AttacksMade + 1
