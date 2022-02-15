@@ -64,7 +64,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		players[order.PlayerID].ArmiesLost = players[order.PlayerID].ArmiesLost + attackersKilled
 		players[order.PlayerID].ArmiesDefeated = players[order.PlayerID].ArmiesDefeated + defendersKilled
 
-		players[order.PlayerID].AttacksMade = players[playerID].AttacksMade + 1
+		players[order.PlayerID].AttacksMade = players[order.PlayerID].AttacksMade + 1
 
 		--We use GameOrderCustom to record the information of a non-skipped order. We don't need the order itself and can SkipAndSupressSkippedMessage
 
