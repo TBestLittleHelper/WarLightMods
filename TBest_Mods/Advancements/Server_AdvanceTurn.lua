@@ -57,13 +57,14 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	end
 
 	if (order.proxyType == "GameOrderCustom" and startsWith(order.Payload, "Advancments_")) then
+		Dump(order)
 		local payloadSplit = split(order.Payload, ",")
 		local attackersKilled = payloadSplit[2]
 		local defendersKilled = payloadSplit[3]
-		players[order.playerID].ArmiesLost = players[order.playerID].ArmiesLost + attackersKilled
+		players[order.PlayerID].ArmiesLost = players[order.PlayerID].ArmiesLost + attackersKilled
 		players[order.PlayerID].ArmiesDefeated = players[order.PlayerID].ArmiesDefeated + defendersKilled
 
-		players[playerID].AttacksMade = players[playerID].AttacksMade + 1
+		players[order.PlayerID].AttacksMade = players[playerID].AttacksMade + 1
 
 		--We use GameOrderCustom to record the information of a non-skipped order. We don't need the order itself and can SkipAndSupressSkippedMessage
 
