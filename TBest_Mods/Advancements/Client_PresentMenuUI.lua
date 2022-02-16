@@ -1,5 +1,3 @@
-require("Utilities")
-
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	--If a spectator, just alert then return
 	if (game.Us == nil and Mod.PublicGameData.GameFinalized == false) then
@@ -25,7 +23,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Time to show a tech tree!
 	UpdateDialogView()
 end
---TODO also update buttons number of poitns (ie. technology 2)
+
 function UpdateDialogView()
 	if (TechTreeContainerArray ~= {}) then
 		DestroyOldUIelements(TechTreeContainerArray)
