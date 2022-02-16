@@ -4,16 +4,27 @@ function Server_StartGame(game, standing)
 	publicGameData = Mod.PublicGameData
 
 	--Setup PublicGameData -- TODO Refactor to Mod.Settings?
-	publicGameData.Advancment = {Technology = {}, Military = {}, Culture = {}}
+	publicGameData.Advancment = {
+		Technology = {},
+		Military = {},
+		Culture = {}
+	}
 	-- How to gain tech points
-	publicGameData.Advancment.Technology = {Progress = {MinIncome = 25, TurnsEnded = 1, StructuresOwned = 1}}
+	publicGameData.Advancment.Technology = {
+		Progress = {MinIncome = 25, TurnsEnded = 1, StructuresOwned = 1},
+		Color = "#FFF700"
+	}
 
 	--How to gain Military points
-	publicGameData.Advancment.Military = {Progress = {MinTerritoriesOwned = 100, ArmiesLost = 100, ArmiesDefeated = 100}}
+	publicGameData.Advancment.Military = {
+		Progress = {MinTerritoriesOwned = 100, ArmiesLost = 100, ArmiesDefeated = 100},
+		Color = "#FF0000"
+	}
 
 	--How to gain Culture points
 	publicGameData.Advancment.Culture = {
-		Progress = {AttacksMade = 1, MaxTerritoriesOwned = 75, MaxArmiesOwned = 100}
+		Progress = {AttacksMade = 1, MaxTerritoriesOwned = 75, MaxArmiesOwned = 100},
+		Color = "#880085"
 	}
 
 	-- Setup privateGameData
