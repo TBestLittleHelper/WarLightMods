@@ -8,17 +8,17 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	setMaxSize(550, 650)
 	setScrollable(false, true)
 
-	local vert = UI.CreateVerticalLayoutGroup(rootParent)
-	horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
-
-	--Global variables
+	--Global variables TODO use Mod.PlayerGameData instead?
 	playerGameData = Mod.PlayerGameData
 	publicGameData = Mod.PublicGameData
 	clientGame = game
 
+	local vert = UI.CreateVerticalLayoutGroup(rootParent)
+	horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
+
 	TechTreeContainer = UI.CreateVerticalLayoutGroup(vert)
 	TechTreeContainerArray = {}
-	TechTreeSelected = next(publicGameData.Advancment)
+	TechTreeSelected = next(Mod.PublicGameData.Advancment)
 
 	--Time to show a tech tree!
 	UpdateDialogView()
@@ -28,6 +28,9 @@ function UpdateDialogView()
 	if (TechTreeContainerArray ~= {}) then
 		DestroyOldUIelements(TechTreeContainerArray)
 	end
+	--Global variables TODO use Mod.PlayerGameData instead?
+	playerGameData = Mod.PlayerGameData
+	publicGameData = Mod.PublicGameData
 	--Create the Advancment tree buttons
 	for key, _ in pairs(publicGameData.Advancment) do
 		local button =
@@ -90,8 +93,13 @@ function UpdateDialogView()
 			local CostButton =
 				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.unlockPoints).SetOnClick(
 				function()
-					local payload = {unlockable}
-					SendGameCustomMessage("Buying advancment ... ", payload, UpdateTechTree())
+					local payload = {key = key, TechTreeSelected = TechTreeSelected}
+					clientGame.SendGameCustomMessage(
+						"Buying advancment ... ",
+						payload,
+						function(returnValue)
+						end
+					)
 				end
 			)
 			if (unlockable.unlockPoints > playerGameData.Advancment.Points[TechTreeSelected]) then
