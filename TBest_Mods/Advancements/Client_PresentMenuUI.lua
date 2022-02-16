@@ -1,3 +1,5 @@
+require("Utilities")
+
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	--If a spectator, just alert then return
 	if (game.Us == nil and Mod.PublicGameData.GameFinalized == false) then
@@ -9,46 +11,43 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	setScrollable(false, true)
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent)
-	local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
+	horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
 
 	--Global variables
 	playerGameData = Mod.PlayerGameData
+	publicGameData = Mod.PublicGameData
+	clientGame = game
 
 	TechTreeContainer = UI.CreateVerticalLayoutGroup(vert)
 	TechTreeContainerArray = {}
-	TechTreeSelected = "Technology"
+	TechTreeSelected = next(publicGameData.Advancment)
 
-	--Button to show Technology tech tree
-	UI.CreateButton(horizontalLayout).SetText("Technology " .. playerGameData.Advancment.Points.Technology).SetFlexibleWidth(
-		0.3
-	).SetColor("#FFF700").SetOnClick(
-		function()
-			TechTreeSelected = "Technology"
-			UpdateTechTree()
-		end
-	)
-	--Button to show Military tech tree
-	UI.CreateButton(horizontalLayout).SetText("Military " .. playerGameData.Advancment.Points.Military).SetFlexibleWidth(
-		0.3
-	).SetColor("#FF0000").SetOnClick(
-		function()
-			TechTreeSelected = "Military"
-			UpdateTechTree()
-		end
-	)
-	--Button to show Diplomatic tech tree
-	UI.CreateButton(horizontalLayout).SetText("Culture " .. playerGameData.Advancment.Points.Culture).SetFlexibleWidth(0.3).SetColor(
-		"#880085"
-	).SetOnClick(
-		function()
-			TechTreeSelected = "Culture"
-			UpdateTechTree()
-		end
-	)
+	--Time to show a tech tree!
+	UpdateDialogView()
+end
+--TODO also update buttons number of poitns (ie. technology 2)
+function UpdateDialogView()
+	if (TechTreeContainerArray ~= {}) then
+		DestroyOldUIelements(TechTreeContainerArray)
+	end
+	--Create the Advancment tree buttons
+	for key, _ in pairs(publicGameData.Advancment) do
+		local button =
+			UI.CreateButton(horizontalLayout).SetText(key .. " " .. playerGameData.Advancment.Points[key]).SetFlexibleWidth(0.3).SetColor(
+			publicGameData.Advancment[key].Color
+		).SetOnClick(
+			function()
+				TechTreeSelected = key
+				UpdateDialogView()
+			end
+		)
+		table.insert(TechTreeContainerArray, button)
+	end
 	--Button to show Bonus overwiew info, in the user color
-	local color = game.Game.Players[game.Us.ID].Color.HtmlColor
+	local color = clientGame.Game.Players[clientGame.Us.ID].Color.HtmlColor
 
-	UI.CreateButton(horizontalLayout).SetText("Info").SetFlexibleWidth(0.1).SetColor(color).SetOnClick(
+	local infoButton =
+		UI.CreateButton(horizontalLayout).SetText("Info").SetFlexibleWidth(0.1).SetColor(color).SetOnClick(
 		function()
 			local msg = ""
 			if (playerGameData.Bonus == {}) then
@@ -60,21 +59,16 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			UI.Alert(msg)
 		end --TODO add more info to it?
 	)
+	table.insert(TechTreeContainerArray, infoButton)
 
 	--TODO 		privateGameData[player.ID].AlertUnlockAvailible = true
-	UI.CreateButton(horizontalLayout).SetText("Alerts on").SetFlexibleWidth(0.1).SetOnClick(
+	local alertButton =
+		UI.CreateButton(horizontalLayout).SetText("Alerts on").SetFlexibleWidth(0.1).SetOnClick(
 		function()
 		end
 	)
+	table.insert(TechTreeContainerArray, alertButton)
 
-	--Time to show a tech tree!
-	UpdateTechTree()
-end
---TODO also update buttons number of poitns (ie. technology 2)
-function UpdateTechTree()
-	if (TechTreeContainerArray ~= {}) then
-		DestroyOldUIelements(TechTreeContainerArray)
-	end
 	local rowTech = UI.CreateVerticalLayoutGroup(TechTreeContainer)
 	local treeLayout = UI.CreateVerticalLayoutGroup(rowTech)
 
@@ -95,7 +89,13 @@ function UpdateTechTree()
 			UI.CreateButton(horzLayout).SetText("Active").SetColor("#00ff05")
 			UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
 		else
-			local CostButton = UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.unlockPoints)
+			local CostButton =
+				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.unlockPoints).SetOnClick(
+				function()
+					local payload = {unlockable}
+					SendGameCustomMessage("Buying advancment ... ", payload, UpdateTechTree())
+				end
+			)
 			if (unlockable.unlockPoints > playerGameData.Advancment.Points[TechTreeSelected]) then
 				CostButton.SetInteractable(false)
 			end
@@ -109,7 +109,6 @@ function UpdateTechTree()
 	end
 end
 
---TODO move to uitility lua file?
 function DestroyOldUIelements(Container)
 	if (next(Container) ~= nil) then
 		for count = #Container, 1, -1 do
