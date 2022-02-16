@@ -28,12 +28,14 @@ end
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	if (order.proxyType == "GameOrderAttackTransfer") then
 		if (result.IsAttack) then
-			local DefenceBoost = DefenceBoost()
-			local AttackBoost = AttackBoost()
 			players[order.PlayerID].AttacksMade = players[order.PlayerID].AttacksMade + 1
 
-			local attackersKilled = result.AttackingArmiesKilled.NumArmies + DefenceBoost
-			local defendersKilled = result.DefendingArmiesKilled.NumArmies + AttackBoost
+			local attackersKilled =
+				DefenceBoost(
+				result.AttackingArmiesKilled.NumArmies,
+				game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID
+			)
+			local defendersKilled = AttackBoost(result.DefendingArmiesKilled.NumArmies, order.PlayerID)
 
 			--Make sure we don't kill more then actualArmies
 			if (result.ActualArmies.NumArmies < attackersKilled) then
@@ -48,11 +50,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			result.DefendingArmiesKilled = NewDefendersArmiesKilled
 
 			--We are takeing extra care to make the mod more compatible with other mods. Therfore, using  addNewOrder's second argument will mean we won't count the attack if another mod skips this order. Thus all point progress will be counted from the new custom order
-			local msg =
-				"The attacker had " ..
-				tostring(AttackBoost) .. " attack boost. The defender had " .. tostring(DefenceBoost) .. " defence boost."
 			local payload = "Advancments_," .. attackersKilled .. "," .. defendersKilled
-			addNewOrder(WL.GameOrderCustom.Create(order.PlayerID, msg, payload), true)
+			addNewOrder(WL.GameOrderCustom.Create(order.PlayerID, "", payload), true)
 		end
 	end
 
@@ -84,8 +83,15 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		end
 	end
 
-	--Give out points and boost
+	--Give out points and bonus
 	for playerID, _ in pairs(players) do
+		--Income bonus
+		if (privateGameData[playerID].Bonus.Income ~= nil) then
+			local incomeMod = WL.IncomeMod.Create(playerID, privateGameData[playerID].Bonus.Income, "Income from advancments")
+			local msg = "Added bonus income"
+			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
+		end
+
 		local techPoints = privateGameData[playerID].Advancment.Points.Technology
 		local cultPoints = privateGameData[playerID].Advancment.Points.Culture
 		local miliPoints = privateGameData[playerID].Advancment.Points.Military
@@ -139,13 +145,25 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	--addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil, {incomeMod}))
 end
 
---todo
-function AttackBoost()
-	return 2
+function AttackBoost(ArmiesDefeated, playerID)
+	if (privateGameData[playerID].Bonus.Attack ~= nil) then
+		local boost = privateGameData[playerID].Bonus.Attack * 0.01 --From a percentage to a decimal
+		return ArmiesDefeated + (ArmiesDefeated * boost)
+	end
+
+	return ArmiesDefeated
 end
---TODO
-function DefenceBoost()
-	return 1
+
+function DefenceBoost(ArmiesDefeated, playerID)
+	if (playerID == WL.PlayerID.Neutral) then
+		return ArmiesDefeated
+	end
+	if (privateGameData[playerID].Bonus.Defence ~= nil) then
+		local boost = privateGameData[playerID].Bonus.Defence * 0.01 --From a percentage to a decimal
+		return ArmiesDefeated + math.floor((ArmiesDefeated * boost) + 0.05) --Round to int
+	end
+
+	return ArmiesDefeated
 end
 --TODO test
 function countStructures(Structures)
