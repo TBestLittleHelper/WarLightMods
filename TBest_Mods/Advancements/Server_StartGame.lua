@@ -87,9 +87,10 @@ end
 
 --TODO neutral territories are captured for free
 --TODO defeated attacking armies are converted to defenders, if the attack fails
+--TODO embassies
 function cultureUnlockables()
 	local unlockables = {
-		{DefenceBoost = 15, unlockPoints = 10, preReq = 0, unlocked = true, text = "Increase defencive kill rate by 15"},
+		{DefenceBoost = 15, unlockPoints = 10, preReq = 0, unlocked = false, text = "Increase defencive kill rate by 15"},
 		{Structure = WL.StructureType.Arena, unlockPoints = 10, preReq = 1, unlocked = false, text = "Build an Arena"},
 		{DefenceBoost = 15, unlockPoints = 15, preReq = 1, unlocked = false, text = "Increase defencive kill rate by 15"}
 	}
