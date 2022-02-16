@@ -28,7 +28,7 @@ function Server_StartGame(game, standing)
 	}
 
 	-- Setup privateGameData
-	privateGameData.Advancment = {Technology = {}, Military = {}, Culture = {}}
+	privateGameData.Advancment = {Technology = {}, Military = {}, Culture = {}} -- TODO do we use this?
 
 	--Player progress.
 	for _, player in pairs(game.ServerGame.Game.Players) do
@@ -41,7 +41,7 @@ function Server_StartGame(game, standing)
 			Culture = cultureUnlockables()
 		}
 		--We should assume all Bonus Effects can be nil. In case we add or change them in the future
-		privateGameData[player.ID].Bonus = {Income = 0, Attack = 0, Defence = 0}
+		privateGameData[player.ID].Bonus = {}
 
 		--Player Settings
 		privateGameData[player.ID].AlertUnlockAvailible = true
@@ -62,9 +62,16 @@ end
 --TODO buy armies?
 function technologyUnlockables()
 	local unlockables = {
-		{Income = 5, unlockPoints = 10, preReq = 0, unlocked = false, text = "Earn 5 income per turn"},
-		{Structure = WL.StructureType.Market, unlockPoints = 10, preReq = 1, unlocked = false, text = "Build a Market"},
-		{Income = 10, unlockPoints = 15, preReq = 2, unlocked = false, text = "Earn 10 income per turn"}
+		{Type = "Income", Power = 5, UnlockPoints = 10, PreReq = 0, Unlocked = false, Text = "Earn 5 income per turn"},
+		{
+			Type = "Structure",
+			Structure = WL.StructureType.Market,
+			UnlockPoints = 10,
+			PreReq = 1,
+			Unlocked = false,
+			Text = "Build a Market"
+		},
+		{Type = "Income", Power = 10, UnlockPoints = 15, PreReq = 2, Unlocked = false, Text = "Earn 10 income per turn"}
 	}
 
 	return unlockables
@@ -77,9 +84,30 @@ end
 
 function militaryUnlockables()
 	local unlockables = {
-		{AttackBoost = 10, unlockPoints = 10, preReq = 0, unlocked = false, text = "Increase offensive kill rate by 10"},
-		{Structure = WL.StructureType.ArmyCamp, unlockPoints = 10, preReq = 1, unlocked = false, text = "Build an Army Camp"},
-		{AttackBoost = 10, unlockPoints = 15, preReq = 1, unlocked = false, text = "Increase offensive kill rate by 10"}
+		{
+			Type = "Attack",
+			Power = 10,
+			UnlockPoints = 10,
+			PreReq = 0,
+			Unlocked = false,
+			Text = "Increase offensive kill rate by 10"
+		},
+		{
+			Type = "Structure",
+			Structure = WL.StructureType.ArmyCamp,
+			UnlockPoints = 10,
+			PreReq = 1,
+			Unlocked = false,
+			Text = "Build an Army Camp"
+		},
+		{
+			Type = "Attack",
+			Power = 10,
+			UnlockPoints = 15,
+			PreReq = 1,
+			Unlocked = false,
+			Text = "Increase offensive kill rate by 10"
+		}
 	}
 
 	return unlockables
@@ -90,9 +118,30 @@ end
 --TODO embassies
 function cultureUnlockables()
 	local unlockables = {
-		{DefenceBoost = 15, unlockPoints = 10, preReq = 0, unlocked = false, text = "Increase defencive kill rate by 15"},
-		{Structure = WL.StructureType.Arena, unlockPoints = 10, preReq = 1, unlocked = false, text = "Build an Arena"},
-		{DefenceBoost = 15, unlockPoints = 15, preReq = 1, unlocked = false, text = "Increase defencive kill rate by 15"}
+		{
+			Type = "Defence",
+			Power = 15,
+			UnlockPoints = 10,
+			PreReq = 0,
+			Unlocked = false,
+			Text = "Increase defencive kill rate by 15"
+		},
+		{
+			Type = "Structure",
+			Structure = WL.StructureType.Arena,
+			UnlockPoints = 10,
+			PreReq = 1,
+			Unlocked = false,
+			Text = "Build an Arena"
+		},
+		{
+			Type = "Defence",
+			Power = 15,
+			UnlockPoints = 15,
+			PreReq = 1,
+			Unlocked = false,
+			Text = "Increase defencive kill rate by 15"
+		}
 	}
 
 	return unlockables

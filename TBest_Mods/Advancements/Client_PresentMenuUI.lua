@@ -51,11 +51,11 @@ function UpdateDialogView()
 		UI.CreateButton(horizontalLayout).SetText("Info").SetFlexibleWidth(0.1).SetColor(color).SetOnClick(
 		function()
 			local msg = ""
-			if (playerGameData.Bonus == {}) then
+			if (next(playerGameData.Bonus) == nil) then --TODO not working atm
 				UI.Alert("No Advancments")
 			end
-			for perk, value in pairs(playerGameData.Bonus) do
-				msg = msg .. perk .. " " .. value .. "\n"
+			for bonus, value in pairs(playerGameData.Bonus) do
+				msg = msg .. bonus .. " " .. value .. "\n"
 			end
 			UI.Alert(msg)
 		end --TODO add more info to it?
@@ -81,17 +81,17 @@ function UpdateDialogView()
 		local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
 		--Advancment info
 		local AdvancmentInfo =
-			UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(unlockable.text).SetInteractable(
+			UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(unlockable.Text).SetInteractable(
 			false
 		).SetColor("#FF7D00")
 
-		if (unlockable.unlocked) then
+		if (unlockable.Unlocked) then
 			AdvancmentInfo.SetColor("#00ff05")
 			UI.CreateButton(horzLayout).SetText("Active").SetColor("#00ff05")
 			UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
 		else
 			local CostButton =
-				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.unlockPoints).SetOnClick(
+				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.UnlockPoints).SetOnClick(
 				function()
 					local payload = {key = key, TechTreeSelected = TechTreeSelected}
 					clientGame.SendGameCustomMessage(
@@ -102,11 +102,11 @@ function UpdateDialogView()
 					)
 				end
 			)
-			if (unlockable.unlockPoints > playerGameData.Advancment.Points[TechTreeSelected]) then
+			if (unlockable.UnlockPoints > playerGameData.Advancment.Points[TechTreeSelected]) then
 				CostButton.SetInteractable(false)
 			end
-			if (unlockable.preReq > playerGameData.Advancment.PreReq[TechTreeSelected]) then
-				UI.CreateButton(horzLayout).SetText("Need " .. unlockable.preReq .. " " .. TechTreeSelected).SetInteractable(false)
+			if (unlockable.PreReq > playerGameData.Advancment.PreReq[TechTreeSelected]) then
+				UI.CreateButton(horzLayout).SetText("Need " .. unlockable.PreReq .. " " .. TechTreeSelected).SetInteractable(false)
 				CostButton.SetInteractable(false)
 			else
 				UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
