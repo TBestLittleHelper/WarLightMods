@@ -3,7 +3,7 @@ function Server_StartGame(game, standing)
 	privateGameData = Mod.PrivateGameData
 	publicGameData = Mod.PublicGameData
 
-	--Setup PublicGameData -- TODO Refactor to Mod.Settings?
+	--Setup PublicGameData -- TODO Refactor some stuff to Mod.Settings?
 	publicGameData.Advancment = {
 		Technology = {},
 		Military = {},
@@ -59,7 +59,7 @@ function Server_StartGame(game, standing)
 	Mod.PublicGameData = publicGameData
 end
 
---TODO buy armies?
+--TODO one time income?
 function technologyUnlockables()
 	local unlockables = {
 		{Type = "Income", Power = 5, UnlockPoints = 10, PreReq = 0, Unlocked = false, Text = "Earn 5 income per turn"},
@@ -71,7 +71,8 @@ function technologyUnlockables()
 			Unlocked = false,
 			Text = "Build a Market"
 		},
-		{Type = "Income", Power = 10, UnlockPoints = 15, PreReq = 2, Unlocked = false, Text = "Earn 10 income per turn"}
+		{Type = "Income", Power = 10, UnlockPoints = 15, PreReq = 2, Unlocked = false, Text = "Earn 10 income per turn"},
+		{Type = "Armies", Power = 30, UnlockPoints = 30, PreReq = 2, Unlocked = false, Text = "Buy 30 armies"}
 	}
 
 	return unlockables
@@ -80,7 +81,6 @@ end
 --TODO lastManStanding (1 army defends for 5, 10 armies)
 --TODO flankBonus when attacking?
 --TODO overwhelming attack. Attacks over 100 armies, gain 25 strength?
---TODO steal income from defeated armies
 
 function militaryUnlockables()
 	local unlockables = {
@@ -107,13 +107,20 @@ function militaryUnlockables()
 			PreReq = 1,
 			Unlocked = false,
 			Text = "Increase offensive kill rate by 10"
+		},
+		{
+			Type = "Loot",
+			Power = 10,
+			UnlockPoints = 15,
+			PreReq = 1,
+			Unlocked = false,
+			Text = "Pillage 10 defeated armies for 1 income"
 		}
 	}
 
 	return unlockables
 end
 
---TODO neutral territories are captured for free
 --TODO defeated attacking armies are converted to defenders, if the attack fails
 --TODO embassies
 function cultureUnlockables()
@@ -141,6 +148,13 @@ function cultureUnlockables()
 			PreReq = 1,
 			Unlocked = false,
 			Text = "Increase defencive kill rate by 15"
+		},
+		{
+			Type = "NeutralCapture",
+			UnlockPoints = 25,
+			PreReq = 2,
+			Unlocked = false,
+			Text = "Defending neutral armies will surrender"
 		}
 	}
 
