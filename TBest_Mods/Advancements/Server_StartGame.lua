@@ -28,6 +28,7 @@ function Server_StartGame(game, standing)
 	}
 
 	-- Setup privateGameData
+	privateGameData.StartOfTurnOrders = {}
 	privateGameData.Advancment = {Technology = {}, Military = {}, Culture = {}} -- TODO do we use this?
 
 	--Player progress.
@@ -38,7 +39,7 @@ function Server_StartGame(game, standing)
 		privateGameData[player.ID].Advancment.Unlockables = {
 			Technology = technologyUnlockables(),
 			Military = militaryUnlockables(),
-			Culture = cultureUnlockables()
+			Culture = cultureUnlockables() --TODO Refactor
 		}
 		--We should assume all Bonus Effects can be nil. In case we add or change them in the future
 		privateGameData[player.ID].Bonus = {}
