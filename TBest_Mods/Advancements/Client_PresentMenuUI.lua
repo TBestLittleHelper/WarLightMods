@@ -93,8 +93,8 @@ function UpdateDialogView()
 			local CostButton =
 				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.UnlockPoints).SetOnClick(
 				function()
-					if (unlockable.Type == "Structure") then
-						BuyStructure(key, TechTreeSelected)
+					if (unlockable.Type == "Structure" or unlockable.Type == "Armies") then
+						BuyOnTerritory(key, TechTreeSelected)
 					else
 						local payload = {key = key, TechTreeSelected = TechTreeSelected}
 						clientGame.SendGameCustomMessage(
@@ -132,9 +132,17 @@ function DestroyOldUIelements(Container)
 	end
 end
 
-function BuyStructure(key, TechTreeSelected)
+function BuyOnTerritory(key, TechTreeSelected)
+	if (TechTreeContainerArray ~= {}) then
+		DestroyOldUIelements(TechTreeContainerArray)
+	end
+	local selectTerritoryButton =
+		UI.CreateButton(horizontalLayout).SetText(
+		"Select any territory; it is possible to select a territory you don't own. You can move this dialog out of the way if needed. To cancel, click here"
+	)
+	table.insert(TechTreeContainerArray, selectTerritoryButton)
+
 	--TODO Ugly, but I don't know if I can avoid global variables, since I need to use the callback
-	--Maybe a seperte dialog window
 	tempGlobal = {key = key, TechTreeSelected = TechTreeSelected}
 	UI.InterceptNextTerritoryClick(TargetTerritoryClicked)
 end
