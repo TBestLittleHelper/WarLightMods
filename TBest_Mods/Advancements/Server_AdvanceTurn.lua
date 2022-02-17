@@ -4,19 +4,19 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	-- Global variables in AdvanceTurn are availible for all the hooks in this file
 	playerGameData = Mod.PlayerGameData
 	privateGameData = Mod.PrivateGameData
-
+	local standing = game.ServerGame.LatestTurnStanding
 	for _, order in pairs(privateGameData.StartOfTurnOrders) do
-		Dump(order)
 		local terrModsOpt = nil
 		if (order.terrModsOpt) then
 			terrModsOpt = {}
+			local currentStructure = 0
 			local terrMod = WL.TerritoryModification.Create(order.terrModsOpt.TerritoryID)
-			local newStructure = {[order.terrModsOpt.Structure] = 1}
+			local newStructure = {[order.terrModsOpt.Structure] = currentStructure + 1}
 			terrMod.SetStructuresOpt = newStructure
 			terrModsOpt[1] = terrMod
 		end
-		--		newStructure[WL.StructureType.Market] = 1
 
+		--TODO income mod ? -- SetResourceOpt ? we will probaly never use either of them
 		addNewOrder(WL.GameOrderEvent.Create(order.playerID, order.msg, order.visibleToOpt, terrModsOpt))
 	end
 	privateGameData.StartOfTurnOrders = {}
@@ -148,12 +148,24 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		-- privateGameData[playerID].Advancment.Points.Technology = techPoints
 		privateGameData[playerID].Advancment.Points.Technology = techPoints + 100 -- TODO for testing, remove
 
-		privateGameData[playerID].Advancment.Points.Culture = cultPoints
-		privateGameData[playerID].Advancment.Points.Military = miliPoints
+		privateGameData[playerID].Advancment.Points.Culture = cultPoints + 100
+		privateGameData[playerID].Advancment.Points.Military = miliPoints + 100
 
 		print(playerID, techPoints, cultPoints, miliPoints)
 		if (not players[playerID].IsAI) then --Can't use playerGameData for AI's.
 			playerGameData[playerID] = privateGameData[playerID]
+		else
+			--We need to "help" the AI to unlock uppgrades. For now, we will just give them Income/Attack/Defence boost
+			--TODO
+			if privateGameData[playerID].Advancment.Points.Technology >= 10 then
+				privateGameData[playerID].Advancment.Points.Technology = techPoints - 10
+			end
+			if privateGameData[playerID].Advancment.Points.Culture >= 10 then
+				privateGameData[playerID].Advancment.Points.Culture = cultPoints - 10
+			end
+			if privateGameData[playerID].Advancment.Points.Military >= 10 then
+				privateGameData[playerID].Advancment.Points.Military = miliPoints - 10
+			end
 		end
 	end
 
