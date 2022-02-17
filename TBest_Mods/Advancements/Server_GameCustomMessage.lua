@@ -12,7 +12,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	 then
 		if (unlockable.UnlockPoints <= privateGameData[playerID].Advancment.Points[payload.TechTreeSelected]) then
 			if (unlockable.Type == "Income" or unlockable.Type == "Attack" or unlockable.Type == "Defence") then
-				print("We can buy it!") -- TODO make this more readable
+				print("We can buy it!") -- TODO make this code more readable
 				--Subtract the points from the techtree bank
 				privateGameData[playerID].Advancment.Points[payload.TechTreeSelected] =
 					privateGameData[playerID].Advancment.Points[payload.TechTreeSelected] - unlockable.UnlockPoints
