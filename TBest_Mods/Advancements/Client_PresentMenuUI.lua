@@ -28,7 +28,7 @@ function UpdateDialogView()
 	if (TechTreeContainerArray ~= {}) then
 		DestroyOldUIelements(TechTreeContainerArray)
 	end
-	--Global variables TODO use Mod.PlayerGameData instead?
+	--Update global Mod gameData variables
 	playerGameData = Mod.PlayerGameData
 	publicGameData = Mod.PublicGameData
 	--Create the Advancment tree buttons
@@ -144,7 +144,7 @@ function TargetTerritoryClicked(territory)
 		UI.Alert("No territory was selected")
 		tempGlobal = nil
 	else
-		local payload = {key = tempGlobal.key, TechTreeSelected = tempGlobal.TechTreeSelected, Territory = territory}
+		local payload = {key = tempGlobal.key, TechTreeSelected = tempGlobal.TechTreeSelected, TerritoryID = territory.ID}
 		clientGame.SendGameCustomMessage(
 			"Buying advancment ... ",
 			payload,
