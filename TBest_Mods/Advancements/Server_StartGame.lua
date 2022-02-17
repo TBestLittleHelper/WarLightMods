@@ -3,7 +3,7 @@ function Server_StartGame(game, standing)
 	privateGameData = Mod.PrivateGameData
 	publicGameData = Mod.PublicGameData
 
-	--Setup PublicGameData -- TODO Refactor some stuff to Mod.Settings?
+	--Setup PublicGameData -- TODO Refactor some stuff to Mod.Settings? // TODO use the mod settings
 	publicGameData.Advancment = {
 		Technology = {},
 		Military = {},

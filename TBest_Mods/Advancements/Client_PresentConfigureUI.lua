@@ -1,21 +1,21 @@
 function Client_PresentConfigureUI(rootParent)
-	local initialAdvancments = Mod.Settings.Advancments
-	if initialAdvancments == nil then
-		initialAdvancments = {}
+	local initialAdvancement = Mod.Settings.Advancement
+	if initialAdvancement == nil then
+		initialAdvancement = {}
 	end
-	if initialAdvancments.Technology == nil then
-		initialAdvancments.Technology = true
+	if initialAdvancement.Technology == nil then
+		initialAdvancement.Technology = true
 	end
-	if initialAdvancments.Military == nil then
-		initialAdvancments.Military = true
+	if initialAdvancement.Military == nil then
+		initialAdvancement.Military = true
 	end
-	if initialAdvancments.Culture == nil then
-		initialAdvancments.Culture = true
+	if initialAdvancement.Culture == nil then
+		initialAdvancement.Culture = true
 	end
 
 	local mainContainer = UI.CreateVerticalLayoutGroup(rootParent)
-	UI.CreateLabel(mainContainer).SetText("Select the Advancments trees to be incuded")
-	TechnologyCheckBox = UI.CreateCheckBox(mainContainer).SetText("Technology").SetIsChecked(initialAdvancments.Technology)
-	MilitaryCheckBox = UI.CreateCheckBox(mainContainer).SetText("Military").SetIsChecked(initialAdvancments.Military)
-	CultureCheckBox = UI.CreateCheckBox(mainContainer).SetText("Culture").SetIsChecked(initialAdvancments.Culture)
+	UI.CreateLabel(mainContainer).SetText("Select the Advancements trees to be incuded")
+	TechnologyCheckBox = UI.CreateCheckBox(mainContainer).SetText("Technology").SetIsChecked(initialAdvancement.Technology)
+	MilitaryCheckBox = UI.CreateCheckBox(mainContainer).SetText("Military").SetIsChecked(initialAdvancement.Military)
+	CultureCheckBox = UI.CreateCheckBox(mainContainer).SetText("Culture").SetIsChecked(initialAdvancement.Culture)
 end
