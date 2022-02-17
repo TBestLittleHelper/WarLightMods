@@ -129,7 +129,9 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			miliPoints = miliPoints + 1
 		end
 
-		privateGameData[playerID].Advancment.Points.Technology = techPoints
+		-- privateGameData[playerID].Advancment.Points.Technology = techPoints
+		privateGameData[playerID].Advancment.Points.Technology = techPoints + 100 -- TODO for testing, remove
+
 		privateGameData[playerID].Advancment.Points.Culture = cultPoints
 		privateGameData[playerID].Advancment.Points.Military = miliPoints
 
