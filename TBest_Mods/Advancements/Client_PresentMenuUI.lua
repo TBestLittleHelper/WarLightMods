@@ -138,7 +138,7 @@ function BuyOnTerritory(key, TechTreeSelected)
 	end
 	local selectTerritoryButton =
 		UI.CreateButton(horizontalLayout).SetText(
-		"Select any territory; it is possible to select a territory you don't own. You can move this dialog out of the way if needed. To cancel, click here"
+		"Select any territory; it is possible to select a territory you don't own. You can move this dialog out of the way if needed. WARNING : If you pick a territory that already has a structure, you will waste your points." -- TODO conformation method
 	)
 	table.insert(TechTreeContainerArray, selectTerritoryButton)
 
