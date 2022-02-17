@@ -93,13 +93,19 @@ function UpdateDialogView()
 			local CostButton =
 				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.UnlockPoints).SetOnClick(
 				function()
-					local payload = {key = key, TechTreeSelected = TechTreeSelected}
-					clientGame.SendGameCustomMessage(
-						"Buying advancment ... ",
-						payload,
-						function(returnValue)
-						end
-					)
+					if (unlockable.Type == "Structure") then
+						BuyStructure(key, TechTreeSelected)
+					else
+						local payload = {key = key, TechTreeSelected = TechTreeSelected}
+						clientGame.SendGameCustomMessage(
+							"Buying advancment ... ",
+							payload,
+							function(returnValue)
+								--TODO return some msg if error?
+								UpdateDialogView() --TODO test
+							end
+						)
+					end
 				end
 			)
 			if (unlockable.UnlockPoints > playerGameData.Advancment.Points[TechTreeSelected]) then
@@ -124,4 +130,30 @@ function DestroyOldUIelements(Container)
 			table.remove(Container, count)
 		end
 	end
+end
+
+function BuyStructure(key, TechTreeSelected)
+	--TODO Ugly, but I don't know if I can avoid global variables, since I need to use the callback
+	--Maybe a seperte dialog window
+	tempGlobal = {key = key, TechTreeSelected = TechTreeSelected}
+	UI.InterceptNextTerritoryClick(TargetTerritoryClicked)
+end
+function TargetTerritoryClicked(territory)
+	if (territory == nil) then
+		--The click request was cancelled.
+		UI.Alert("No territory was selected")
+		tempGlobal = nil
+	else
+		local payload = {key = tempGlobal.key, TechTreeSelected = tempGlobal.TechTreeSelected, Territory = territory}
+		clientGame.SendGameCustomMessage(
+			"Buying advancment ... ",
+			payload,
+			function(returnValue)
+				--TODO return some msg if error?
+				UpdateDialogView() --TODO test
+			end
+		)
+		tempGlobal = nil
+	end
+	UpdateDialogView()
 end
