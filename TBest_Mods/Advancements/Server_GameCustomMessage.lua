@@ -28,7 +28,15 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 				privateGameData[playerID].Bonus[unlockable.Type] =
 					privateGameData[playerID].Bonus[unlockable.Type] + unlockable.Power
 			elseif (unlockable.Type == "Structure") then
-				print(payload.TerritoryID)
+				local order = {
+					playerID = playerID,
+					msg = "Built a structure",
+					visibleToOpt = {},
+					terrModsOpt = {TerritoryID = payload.TerritoryID, Structure = unlockable.Structure},
+					setResourcesOpt = nil,
+					incomeModsOpt = nil
+				}
+				table.insert(privateGameData.StartOfTurnOrders, order)
 			else
 				return --If we don't know the unlockable.Type, return
 			end
