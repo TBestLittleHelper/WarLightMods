@@ -1,9 +1,25 @@
 require("Utilities")
 
--- Global variables in AdvanceTurn are availible for all the hooks in this file
 function Server_AdvanceTurn_Start(game, addNewOrder)
+	-- Global variables in AdvanceTurn are availible for all the hooks in this file
 	playerGameData = Mod.PlayerGameData
 	privateGameData = Mod.PrivateGameData
+
+	for _, order in pairs(privateGameData.StartOfTurnOrders) do
+		Dump(order)
+		local terrModsOpt = nil
+		if (order.terrModsOpt) then
+			terrModsOpt = {}
+			local terrMod = WL.TerritoryModification.Create(order.terrModsOpt.TerritoryID)
+			local newStructure = {[order.terrModsOpt.Structure] = 1}
+			terrMod.SetStructuresOpt = newStructure
+			terrModsOpt[1] = terrMod
+		end
+		--		newStructure[WL.StructureType.Market] = 1
+
+		addNewOrder(WL.GameOrderEvent.Create(order.playerID, order.msg, order.visibleToOpt, terrModsOpt))
+	end
+	privateGameData.StartOfTurnOrders = {}
 
 	players = {}
 	for playerID, player in pairs(game.ServerGame.Game.PlayingPlayers) do
