@@ -1,5 +1,5 @@
 function Client_PresentConfigureUI(rootParent)
-	local initialAdvancments = Mod.Settings.Advancment
+	local initialAdvancments = Mod.Settings.Advancments
 	if initialAdvancments == nil then
 		initialAdvancments = {}
 	end
