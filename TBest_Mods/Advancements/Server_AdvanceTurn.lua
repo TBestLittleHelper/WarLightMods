@@ -4,25 +4,28 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	-- Global variables in AdvanceTurn are availible for all the hooks in this file
 	playerGameData = Mod.PlayerGameData
 	privateGameData = Mod.PrivateGameData
-	local standing = game.ServerGame.LatestTurnStanding
+
 	for _, order in pairs(privateGameData.StartOfTurnOrders) do
 		local terrModsOpt = nil
 		if (order.terrModsOpt) then
-			terrModsOpt = {}
+			local terrModsOpt = {}
 			local terrMod = WL.TerritoryModification.Create(order.terrModsOpt.TerritoryID)
+			--If setting structure
 			if (order.terrModsOpt.Structure ~= nil) then
+				--If setting armies
 				local newStructure = {[order.terrModsOpt.Structure] = 1}
 				terrMod.SetStructuresOpt = newStructure
+			elseif (order.terrModsOpt.Armies ~= nil) then
+				--If adding armies, add a deploy order
+				addNewOrder(
+					WL.GameOrderDeploy.Create(order.playerID, order.terrModsOpt.Armies, order.terrModsOpt.TerritoryID, true)
+				)
 			end
-			if (order.terrModsOpt.Armies ~= nil) then
-			--TODO local armies etc.
-			end
+			--We always have the event order. So that order.msg get's shown
+			addNewOrder(WL.GameOrderEvent.Create(order.playerID, order.msg, order.visibleToOpt, terrModsOpt))
 
 			terrModsOpt[1] = terrMod
 		end
-
-		--TODO income mod ? -- SetResourceOpt ? we will probaly never use either of them
-		addNewOrder(WL.GameOrderEvent.Create(order.playerID, order.msg, order.visibleToOpt, terrModsOpt))
 	end
 	privateGameData.StartOfTurnOrders = {}
 
@@ -62,7 +65,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			if (result.ActualArmies.NumArmies < attackersKilled) then
 				attackersKilled = result.ActualArmies.NumArmies
 			end
-			--TODO make sure we don't kill more then actual defending armies
+			--TODO make sure we don't kill more then actual defending armies?
 
 			--Write to GameOrderResult	 (result)
 			local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled)
@@ -98,8 +101,8 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			players[terr.OwnerPlayerID].TerritoriesOwned = players[terr.OwnerPlayerID].TerritoriesOwned + 1
 			players[terr.OwnerPlayerID].ArmiesOwned = players[terr.OwnerPlayerID].ArmiesOwned + terr.NumArmies.NumArmies
 			if (terr.Structures ~= nil) then
-				players[terr.OwnerPlayerID].StructuresOwned =
-					players[terr.OwnerPlayerID].StructuresOwned + countStructures(terr.Structures)
+				--While there can be more then 1 structure per territory, we want to encourage players to not stack them.
+				players[terr.OwnerPlayerID].StructuresOwned = players[terr.OwnerPlayerID].StructuresOwned + 1
 			end
 		end
 	end
@@ -112,7 +115,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			local msg = "Added bonus income"
 			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
 		end
-		--Loot bonus
+		--Loot bonus (income from defeated armies)
 		if (privateGameData[playerID].Bonus.Loot ~= nil and players[playerID].ArmiesDefeated > 0) then
 			local incomeMod =
 				WL.IncomeMod.Create(
@@ -221,13 +224,4 @@ function DefenceBoost(ArmiesDefeated, playerID)
 	end
 
 	return ArmiesDefeated
-end
---TODO test
-function countStructures(Structures)
-	local count = 0
-	for key, value in pairs(Structures) do
-		count = count + value
-	end
-
-	return count
 end
