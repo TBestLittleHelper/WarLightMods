@@ -17,6 +17,7 @@ function Server_StartGame(game, standing)
 
 	--How to gain Military points
 	publicGameData.Advancment.Military = {
+		-- TODO seems too slow progress atm. Can we teak the numbers
 		Progress = {MinTerritoriesOwned = 100, ArmiesLost = 100, ArmiesDefeated = 100},
 		Color = "#FF0000"
 	}
@@ -63,6 +64,7 @@ end
 --TODO one time income?
 --TODO income per structure owned?
 function technologyUnlockables()
+	--TODO hackey. But we could simply return a dummy unlockable if the tech is disabled in Mod.Settings.Advancement
 	local unlockables = {
 		{Type = "Income", Power = 5, UnlockPoints = 10, PreReq = 0, Unlocked = false, Text = "Earn 5 income per turn"},
 		{
@@ -74,23 +76,7 @@ function technologyUnlockables()
 			Text = "Build a Market"
 		},
 		{Type = "Income", Power = 10, UnlockPoints = 15, PreReq = 2, Unlocked = false, Text = "Earn 10 income per turn"},
-		{Type = "Armies", Power = 30, UnlockPoints = 30, PreReq = 2, Unlocked = false, Text = "Buy 30 armies"},
-		{
-			Type = "Structure",
-			Structure = WL.StructureType.Market,
-			UnlockPoints = 10,
-			PreReq = 1,
-			Unlocked = false,
-			Text = "Build a Market"
-		},
-		{
-			Type = "Structure",
-			Structure = WL.StructureType.Market,
-			UnlockPoints = 10,
-			PreReq = 1,
-			Unlocked = false,
-			Text = "Build a Market"
-		}
+		{Type = "Armies", Power = 30, UnlockPoints = 30, PreReq = 2, Unlocked = false, Text = "Buy 30 armies"}
 	}
 
 	return unlockables
@@ -128,11 +114,19 @@ function militaryUnlockables()
 		},
 		{
 			Type = "Loot",
-			Power = 10,
+			Power = 0.1,
 			UnlockPoints = 15,
 			PreReq = 1,
 			Unlocked = false,
-			Text = "Pillage 10 defeated armies for 1 income"
+			Text = "Pillage 100 defeated armies for 10 income"
+		},
+		{
+			Type = "Loot",
+			Power = 0.1,
+			UnlockPoints = 30,
+			PreReq = 2,
+			Unlocked = false,
+			Text = "Pillage 100 defeated armies for 10 income"
 		}
 	}
 
