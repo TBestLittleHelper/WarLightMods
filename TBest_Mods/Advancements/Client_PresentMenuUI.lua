@@ -48,7 +48,7 @@ function UpdateDialogView()
 	local color = clientGame.Game.Players[clientGame.Us.ID].Color.HtmlColor
 
 	local infoButton =
-		UI.CreateButton(horizontalLayout).SetText("Info").SetFlexibleWidth(0.1).SetColor(color).SetOnClick(
+		UI.CreateButton(horizontalLayout).SetText("Help").SetFlexibleWidth(0.1).SetColor(color).SetOnClick(
 		function()
 			local msg = ""
 			if (next(playerGameData.Bonus) == nil) then --TODO not working atm
