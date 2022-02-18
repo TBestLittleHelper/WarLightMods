@@ -21,7 +21,10 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			privateGameData[playerID].Advancment.PreReq[payload.TechTreeSelected] =
 				privateGameData[playerID].Advancment.PreReq[payload.TechTreeSelected] + 1
 
-			if (unlockable.Type == "Income" or unlockable.Type == "Attack" or unlockable.Type == "Defence") then
+			if
+				(unlockable.Type == "Income" or unlockable.Type == "Attack" or unlockable.Type == "Defence" or
+					unlockable.Type == "Loot")
+			 then
 				if (privateGameData[playerID].Bonus[unlockable.Type] == nil) then
 					privateGameData[playerID].Bonus[unlockable.Type] = 0
 				end
@@ -33,6 +36,16 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 					msg = "Built a structure",
 					visibleToOpt = {},
 					terrModsOpt = {TerritoryID = payload.TerritoryID, Structure = unlockable.Structure},
+					setResourcesOpt = nil,
+					incomeModsOpt = nil
+				}
+				table.insert(privateGameData.StartOfTurnOrders, order)
+			elseif (unlockable.Type == "Armies") then
+				local order = {
+					playerID = playerID,
+					msg = "Bought some mercinaries",
+					visibleToOpt = {},
+					terrModsOpt = {TerritoryID = payload.TerritoryID, Armies = unlockable.Power},
 					setResourcesOpt = nil,
 					incomeModsOpt = nil
 				}
