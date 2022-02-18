@@ -9,10 +9,15 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 		local terrModsOpt = nil
 		if (order.terrModsOpt) then
 			terrModsOpt = {}
-			local currentStructure = 0
 			local terrMod = WL.TerritoryModification.Create(order.terrModsOpt.TerritoryID)
-			local newStructure = {[order.terrModsOpt.Structure] = currentStructure + 1}
-			terrMod.SetStructuresOpt = newStructure
+			if (order.terrModsOpt.Structure ~= nil) then
+				local newStructure = {[order.terrModsOpt.Structure] = 1}
+				terrMod.SetStructuresOpt = newStructure
+			end
+			if (order.terrModsOpt.Armies ~= nil) then
+			--TODO local armies etc.
+			end
+
 			terrModsOpt[1] = terrMod
 		end
 
@@ -107,6 +112,17 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			local msg = "Added bonus income"
 			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
 		end
+		--Loot bonus
+		if (privateGameData[playerID].Bonus.Loot ~= nil and players[playerID].ArmiesDefeated > 0) then
+			local incomeMod =
+				WL.IncomeMod.Create(
+				playerID,
+				privateGameData[playerID].Bonus.Loot * players[playerID].ArmiesDefeated,
+				"Income from Loot"
+			)
+			local msg = "Added Loot income"
+			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
+		end
 
 		local techPoints = privateGameData[playerID].Advancment.Points.Technology
 		local cultPoints = privateGameData[playerID].Advancment.Points.Culture
@@ -156,16 +172,23 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			playerGameData[playerID] = privateGameData[playerID]
 		else
 			--We need to "help" the AI to unlock uppgrades. For now, we will just give them Income/Attack/Defence boost
-			--TODO
+			--TODO consider doing it more advanced
+			if privateGameData[playerID].Bonus.Income == nil then
+				privateGameData[playerID].Bonus.Income = 0
+			end
 			if privateGameData[playerID].Advancment.Points.Technology >= 10 then
 				privateGameData[playerID].Advancment.Points.Technology = techPoints - 10
+				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
 			if privateGameData[playerID].Advancment.Points.Culture >= 10 then
 				privateGameData[playerID].Advancment.Points.Culture = cultPoints - 10
+				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
 			if privateGameData[playerID].Advancment.Points.Military >= 10 then
 				privateGameData[playerID].Advancment.Points.Military = miliPoints - 10
+				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
+			print(playerID, privateGameData[playerID].Bonus.Income)
 		end
 	end
 
