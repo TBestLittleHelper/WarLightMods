@@ -161,14 +161,17 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			miliPoints = miliPoints + 1
 		end
 
-		-- privateGameData[playerID].Advancment.Points.Technology = techPoints
-		privateGameData[playerID].Advancment.Points.Technology = techPoints + 100 -- TODO for testing, remove
+		--Store the points
+		privateGameData[playerID].Advancment.Points.Technology = techPoints
+		privateGameData[playerID].Advancment.Points.Culture = cultPoints
+		privateGameData[playerID].Advancment.Points.Military = miliPoints
 
-		privateGameData[playerID].Advancment.Points.Culture = cultPoints + 100
-		privateGameData[playerID].Advancment.Points.Military = miliPoints + 100
-
-		print(playerID, techPoints, cultPoints, miliPoints)
 		if (not players[playerID].IsAI) then --Can't use playerGameData for AI's.
+			--For testing, give humans some extra points
+			privateGameData[playerID].Advancment.Points.Technology = techPoints + 100 -- TODO for testing, remove
+			privateGameData[playerID].Advancment.Points.Culture = cultPoints + 100
+			privateGameData[playerID].Advancment.Points.Military = miliPoints + 100
+
 			playerGameData[playerID] = privateGameData[playerID]
 		else
 			--We need to "help" the AI to unlock uppgrades. For now, we will just give them Income/Attack/Defence boost
@@ -188,8 +191,9 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				privateGameData[playerID].Advancment.Points.Military = miliPoints - 10
 				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
-			print(playerID, privateGameData[playerID].Bonus.Income)
 		end
+		print(playerID, techPoints, cultPoints, miliPoints)
+		print(playerID, privateGameData[playerID].Bonus.Income)
 	end
 
 	Mod.PlayerGameData = playerGameData
