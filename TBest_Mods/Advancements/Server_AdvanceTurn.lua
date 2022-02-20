@@ -57,7 +57,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			local attackersKilled =
 				DefenceBoost(
 				result.AttackingArmiesKilled.NumArmies,
-				game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID
+				game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID,
+				order.playerID
 			)
 			local defendersKilled = AttackBoost(result.DefendingArmiesKilled.NumArmies, order.PlayerID)
 
@@ -214,12 +215,14 @@ function AttackBoost(ArmiesDefeated, playerID)
 	return ArmiesDefeated
 end
 
-function DefenceBoost(ArmiesDefeated, playerID)
-	if (playerID == WL.PlayerID.Neutral) then
+function DefenceBoost(ArmiesDefeated, defenderPlayerID, attackerPlayerID)
+	if (defenderPlayerID == WL.PlayerID.Neutral) then
+		if (privateGameData[attackerPlayerID].Bonus.FreeNeutralCapture ~= nil) then
+			ArmiesDefeated = 0
+		end
 		return ArmiesDefeated
-	end
-	if (privateGameData[playerID].Bonus.Defence ~= nil) then
-		local boost = privateGameData[playerID].Bonus.Defence * 0.01 --From a percentage to a decimal
+	elseif (privateGameData[defenderPlayerID].Bonus.Defence ~= nil) then
+		local boost = privateGameData[defenderPlayerID].Bonus.Defence * 0.01 --From a percentage to a decimal
 		return ArmiesDefeated + math.floor((ArmiesDefeated * boost) + 0.05) --Round to int
 	end
 

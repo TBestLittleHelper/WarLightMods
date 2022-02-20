@@ -162,7 +162,7 @@ function cultureUnlockables()
 			Text = "Increase defencive kill rate by 15"
 		},
 		{
-			Type = "NeutralCapture",
+			Type = "FreeNeutralCapture",
 			UnlockPoints = 25,
 			PreReq = 2,
 			Unlocked = false,
