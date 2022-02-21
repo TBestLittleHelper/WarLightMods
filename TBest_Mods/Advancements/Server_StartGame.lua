@@ -3,34 +3,43 @@ function Server_StartGame(game, standing)
 	privateGameData = Mod.PrivateGameData
 	publicGameData = Mod.PublicGameData
 
+	GameSpeed = Mod.Settings.GameSpeed -- From 1 to 6. Where 6 is a faster progress
+
 	--Setup PublicGameData -- TODO Refactor some stuff to Mod.Settings? // TODO use the mod settings
 	publicGameData.Advancment = {
 		Technology = {},
 		Military = {},
-		Culture = {}
+		Culture = {},
+		Diplomacy = {}
 	}
 	-- How to gain tech points
 	publicGameData.Advancment.Technology = {
-		Progress = {MinIncome = 25, TurnsEnded = 1, StructuresOwned = 1},
+		Progress = {MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed},
 		Color = "#FFF700"
 	}
 
 	--How to gain Military points
 	publicGameData.Advancment.Military = {
 		-- TODO seems too slow progress atm. Can we teak the numbers
-		Progress = {MinTerritoriesOwned = 100, ArmiesLost = 100, ArmiesDefeated = 100},
+		Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
 		Color = "#FF0000"
 	}
 
 	--How to gain Culture points
 	publicGameData.Advancment.Culture = {
-		Progress = {AttacksMade = 1, MaxTerritoriesOwned = 75, MaxArmiesOwned = 100},
+		Progress = {AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed},
 		Color = "#880085"
+	}
+
+	--How to gain Diplomacy points
+	publicGameData.Advancment.Diplomacy = {
+		Progress = {},
+		Color = "#880085" -- TODO color
 	}
 
 	-- Setup privateGameData
 	privateGameData.StartOfTurnOrders = {}
-	privateGameData.Advancment = {Technology = {}, Military = {}, Culture = {}} -- TODO do we use this?
+	privateGameData.Advancment = {Technology = {}, Military = {}, Culture = {}, Diplomacy = {}} -- TODO do we use this?
 
 	--Player progress.
 	for _, player in pairs(game.ServerGame.Game.Players) do
@@ -40,7 +49,8 @@ function Server_StartGame(game, standing)
 		privateGameData[player.ID].Advancment.Unlockables = {
 			Technology = technologyUnlockables(),
 			Military = militaryUnlockables(),
-			Culture = cultureUnlockables() --TODO Refactor
+			Culture = cultureUnlockables(), --TODO Refactor
+			Diplomacy = diplomacyUnlokables()
 		}
 		--We should assume all Bonus Effects can be nil. In case we add or change them in the future
 		privateGameData[player.ID].Bonus = {}
@@ -63,6 +73,7 @@ end
 
 --TODO one time income?
 --TODO income per structure owned?
+
 function technologyUnlockables()
 	--TODO hackey. But we could simply return a dummy unlockable if the tech is disabled in Mod.Settings.Advancement
 	local unlockables = {
@@ -170,5 +181,27 @@ function cultureUnlockables()
 		}
 	}
 
+	return unlockables
+end
+
+--TODO golden years (double income for 7 turns)
+--todo investment : Give income to someone else. But reduces your own income
+function diplomacyUnlokables()
+	local unlockables = {
+			Type = "Support",
+			Power = 1,
+			UnlockPoints = 4,
+			PreReq = 0,
+			Unlocked = false,
+			Text = "Form a national goverment"
+		},
+		{
+			Type = "Support",
+			Power = 1,
+			UnlockPoints = 8,
+			PreReq = 1,
+			Unlocked = false,
+			Text = "Form a national goverment"
+		}
 	return unlockables
 end
