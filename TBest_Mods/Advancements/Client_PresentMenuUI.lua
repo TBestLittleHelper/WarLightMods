@@ -1,3 +1,5 @@
+require "Utilities"
+
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	--If a spectator, just alert then return
 	if (game.Us == nil and Mod.PublicGameData.GameFinalized == false) then
@@ -18,7 +20,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	TechTreeContainer = UI.CreateVerticalLayoutGroup(vert)
 	TechTreeContainerArray = {}
-	TechTreeSelected = next(Mod.PublicGameData.Advancment)
+	TechTreeSelected = next(Mod.PublicGameData.Advancement)
 
 	--Time to show a tech tree!
 	UpdateDialogView()
@@ -31,11 +33,11 @@ function UpdateDialogView()
 	--Update global Mod gameData variables
 	playerGameData = Mod.PlayerGameData
 	publicGameData = Mod.PublicGameData
-	--Create the Advancment tree buttons
-	for key, _ in pairs(publicGameData.Advancment) do
+	--Create the Advancement tree buttons
+	for key, _ in pairs(publicGameData.Advancement) do
 		local button =
-			UI.CreateButton(horizontalLayout).SetText(key .. " " .. playerGameData.Advancment.Points[key]).SetFlexibleWidth(0.3).SetColor(
-			publicGameData.Advancment[key].Color
+			UI.CreateButton(horizontalLayout).SetText(key .. " " .. playerGameData.Advancement.Points[key]).SetFlexibleWidth(0.3).SetColor(
+			publicGameData.Advancement[key].Color
 		).SetOnClick(
 			function()
 				TechTreeSelected = key
@@ -52,7 +54,7 @@ function UpdateDialogView()
 		function()
 			local msg = ""
 			if (next(playerGameData.Bonus) == nil) then --TODO not working atm
-				UI.Alert("No Advancments")
+				UI.Alert("No Advancements")
 			end
 			for bonus, value in pairs(playerGameData.Bonus) do
 				msg = msg .. bonus .. " " .. value .. "\n"
@@ -76,48 +78,51 @@ function UpdateDialogView()
 	table.insert(TechTreeContainerArray, rowTech)
 	table.insert(TechTreeContainerArray, treeLayout)
 	local horzMain = UI.CreateVerticalLayoutGroup(treeLayout)
+	if (publicGameData.Advancement[TechTreeSelected].Menu == "Buttons") then
+		for key, unlockable in pairs(playerGameData.Advancement.Unlockables[TechTreeSelected]) do
+			local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
+			--Advancement info
+			local AdvancementInfo =
+				UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(unlockable.Text).SetInteractable(
+				false
+			).SetColor("#FF7D00")
 
-	for key, unlockable in pairs(playerGameData.Advancment.Unlockables[TechTreeSelected]) do
-		local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
-		--Advancment info
-		local AdvancmentInfo =
-			UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(unlockable.Text).SetInteractable(
-			false
-		).SetColor("#FF7D00")
-
-		if (unlockable.Unlocked) then
-			AdvancmentInfo.SetColor("#00ff05")
-			UI.CreateButton(horzLayout).SetText("Active").SetColor("#00ff05")
-			UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
-		else
-			local CostButton =
-				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.UnlockPoints).SetOnClick(
-				function()
-					if (unlockable.Type == "Structure" or unlockable.Type == "Armies") then
-						BuyOnTerritory(key, TechTreeSelected)
-					else
-						local payload = {key = key, TechTreeSelected = TechTreeSelected}
-						clientGame.SendGameCustomMessage(
-							"Buying advancment ... ",
-							payload,
-							function(returnValue)
-								--TODO return some msg if error?
-								UpdateDialogView() --TODO test
-							end
-						)
-					end
-				end
-			)
-			if (unlockable.UnlockPoints > playerGameData.Advancment.Points[TechTreeSelected]) then
-				CostButton.SetInteractable(false)
-			end
-			if (unlockable.PreReq > playerGameData.Advancment.PreReq[TechTreeSelected]) then
-				UI.CreateButton(horzLayout).SetText("Need " .. unlockable.PreReq .. " " .. TechTreeSelected).SetInteractable(false)
-				CostButton.SetInteractable(false)
-			else
+			if (unlockable.Unlocked) then
+				AdvancementInfo.SetColor("#00ff05")
+				UI.CreateButton(horzLayout).SetText("Active").SetColor("#00ff05")
 				UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
+			else
+				local CostButton =
+					UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.UnlockPoints).SetOnClick(
+					function()
+						if (unlockable.Type == "Structure" or unlockable.Type == "Armies") then
+							BuyOnTerritory(key, TechTreeSelected)
+						else
+							local payload = {key = key, TechTreeSelected = TechTreeSelected}
+							clientGame.SendGameCustomMessage(
+								"Buying Advancement ... ",
+								payload,
+								function(returnValue)
+									--TODO return some msg if error?
+									UpdateDialogView() --TODO test
+								end
+							)
+						end
+					end
+				)
+				if (unlockable.UnlockPoints > playerGameData.Advancement.Points[TechTreeSelected]) then
+					CostButton.SetInteractable(false)
+				end
+				if (unlockable.PreReq > playerGameData.Advancement.PreReq[TechTreeSelected]) then
+					UI.CreateButton(horzLayout).SetText("Need " .. unlockable.PreReq .. " " .. TechTreeSelected).SetInteractable(false)
+					CostButton.SetInteractable(false)
+				else
+					UI.CreateButton(horzLayout).SetText("Unlocked").SetColor("#00ff05").SetInteractable(false)
+				end
 			end
 		end
+	elseif (publicGameData.Advancement[TechTreeSelected].Menu == "Diplomacy") then
+		print("Diplomacy todo")
 	end
 end
 
@@ -138,12 +143,15 @@ function BuyOnTerritory(key, TechTreeSelected)
 	end
 	local selectTerritoryButton =
 		UI.CreateButton(horizontalLayout).SetText(
-		"Select any territory; it is possible to select a territory you don't own. You can move this dialog out of the way if needed. WARNING : If you pick a territory that already has a structure, you will waste your points." -- TODO conformation method
+		"Select any territory; it is possible to select a territory you don't own. You can move this dialog out of the way if needed. WARNING : If you pick a territory that already has a structure, you will waste your points."
 	)
+	selectedTerritoryButton =
+		UI.CreateButton(horizontalLayout).SetText("Select a territory").SetOnClick(BuyWithTerritory(tempGlobal))
+	table.insert(TechTreeContainerArray, selectTerritoryButton)
 	table.insert(TechTreeContainerArray, selectTerritoryButton)
 
 	--TODO Ugly, but I don't know if I can avoid global variables, since I need to use the callback
-	tempGlobal = {key = key, TechTreeSelected = TechTreeSelected}
+	tempGlobal = {key = key, TechTreeSelected = TechTreeSelected, territory = nil}
 	UI.InterceptNextTerritoryClick(TargetTerritoryClicked)
 end
 function TargetTerritoryClicked(territory)
@@ -151,17 +159,24 @@ function TargetTerritoryClicked(territory)
 		--The click request was cancelled.
 		UI.Alert("No territory was selected")
 		tempGlobal = nil
-	else
-		local payload = {key = tempGlobal.key, TechTreeSelected = tempGlobal.TechTreeSelected, TerritoryID = territory.ID}
-		clientGame.SendGameCustomMessage(
-			"Buying advancment ... ",
-			payload,
-			function(returnValue)
-				--TODO return some msg if error?
-				UpdateDialogView() --TODO test
-			end
-		)
-		tempGlobal = nil
+		UpdateDialogView()
 	end
-	UpdateDialogView()
+	tempGlobal.territory = territory
+	selectedTerritoryButton.SetText("Place the bonus on " .. territory.Name)
+end
+function BuyWithTerritory(tempGlobal)
+	local payload = {
+		key = tempGlobal.key,
+		TechTreeSelected = tempGlobal.TechTreeSelected,
+		TerritoryID = tempGlobal.territory.ID
+	}
+	clientGame.SendGameCustomMessage(
+		"Buying Advancement ... ",
+		payload,
+		function(returnValue)
+			--TODO return some msg if error?
+			UpdateDialogView() --TODO test
+		end
+	)
+	tempGlobal = nil
 end

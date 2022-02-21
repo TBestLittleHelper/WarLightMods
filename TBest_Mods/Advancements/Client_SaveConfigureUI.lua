@@ -13,6 +13,6 @@ function Client_SaveConfigureUI(alert)
 		Diplomacy = DiplomacyheckBox.GetIsChecked()
 	}
 	if (Mod.Settings.Advancement == nil) then
-		alert("You need to enable at least one advancment")
+		alert("You need to enable at least one advancement")
 	end
 end
