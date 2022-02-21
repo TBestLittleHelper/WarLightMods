@@ -6,47 +6,51 @@ function Server_StartGame(game, standing)
 	GameSpeed = Mod.Settings.GameSpeed -- From 1 to 6. Where 6 is a faster progress
 
 	--Setup PublicGameData -- TODO Refactor some stuff to Mod.Settings? // TODO use the mod settings
-	publicGameData.Advancment = {
+	publicGameData.Advancement = {
 		Technology = {},
 		Military = {},
 		Culture = {},
 		Diplomacy = {}
 	}
 	-- How to gain tech points
-	publicGameData.Advancment.Technology = {
+	publicGameData.Advancement.Technology = {
 		Progress = {MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed},
-		Color = "#FFF700"
+		Color = "#FFF700",
+		Menu = "Buttons"
 	}
 
 	--How to gain Military points
-	publicGameData.Advancment.Military = {
+	publicGameData.Advancement.Military = {
 		-- TODO seems too slow progress atm. Can we teak the numbers
 		Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
-		Color = "#FF0000"
+		Color = "#FF0000",
+		Menu = "Buttons"
 	}
 
 	--How to gain Culture points
-	publicGameData.Advancment.Culture = {
+	publicGameData.Advancement.Culture = {
 		Progress = {AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed},
-		Color = "#880085"
+		Color = "#880085",
+		Menu = "Buttons"
 	}
 
 	--How to gain Diplomacy points
-	publicGameData.Advancment.Diplomacy = {
+	publicGameData.Advancement.Diplomacy = {
 		Progress = {},
-		Color = "#880085" -- TODO color
+		Color = "#880085", -- TODO color
+		Menu = "Diplomacy"
 	}
 
 	-- Setup privateGameData
 	privateGameData.StartOfTurnOrders = {}
-	privateGameData.Advancment = {Technology = {}, Military = {}, Culture = {}, Diplomacy = {}} -- TODO do we use this?
+	privateGameData.Advancement = {Technology = {}, Military = {}, Culture = {}, Diplomacy = {}} -- TODO do we use this?
 
 	--Player progress.
 	for _, player in pairs(game.ServerGame.Game.Players) do
-		privateGameData[player.ID] = {Advancment = {}}
-		privateGameData[player.ID].Advancment.Points = {Technology = 0, Military = 0, Culture = 0}
-		privateGameData[player.ID].Advancment.PreReq = {Technology = 0, Military = 0, Culture = 0}
-		privateGameData[player.ID].Advancment.Unlockables = {
+		privateGameData[player.ID] = {Advancement = {}}
+		privateGameData[player.ID].Advancement.Points = {Technology = 0, Military = 0, Culture = 0, Diplomacy = 0}
+		privateGameData[player.ID].Advancement.PreReq = {Technology = 0, Military = 0, Culture = 0, Diplomacy = 0}
+		privateGameData[player.ID].Advancement.Unlockables = {
 			Technology = technologyUnlockables(),
 			Military = militaryUnlockables(),
 			Culture = cultureUnlockables(), --TODO Refactor
