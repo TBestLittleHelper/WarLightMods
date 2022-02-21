@@ -42,9 +42,9 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 
 		players[playerID].Income = player.Income(0, game.ServerGame.LatestTurnStanding, true, false).Total --bypass army cap but count sanc card
 		players[playerID].Points = {
-			Technology = privateGameData[playerID].Advancment.Points.Technology,
-			Military = privateGameData[playerID].Advancment.Points.Military,
-			Culture = privateGameData[playerID].Advancment.Points.Culture
+			Technology = privateGameData[playerID].Advancement.Points.Technology,
+			Military = privateGameData[playerID].Advancement.Points.Military,
+			Culture = privateGameData[playerID].Advancement.Points.Culture
 		}
 	end
 end
@@ -52,15 +52,17 @@ end
 function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	if (order.proxyType == "GameOrderAttackTransfer") then
 		if (result.IsAttack) then
-			players[order.PlayerID].AttacksMade = players[order.PlayerID].AttacksMade + 1
+			local AttackerPlayerID = game.ServerGame.LatestTurnStanding.Territories[order.From].OwnerPlayerID
+
+			players[AttackerPlayerID].AttacksMade = players[AttackerPlayerID].AttacksMade + 1
 
 			local attackersKilled =
 				DefenceBoost(
 				result.AttackingArmiesKilled.NumArmies,
 				game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID,
-				order.playerID
+				AttackerPlayerID
 			)
-			local defendersKilled = AttackBoost(result.DefendingArmiesKilled.NumArmies, order.PlayerID)
+			local defendersKilled = AttackBoost(result.DefendingArmiesKilled.NumArmies, AttackerPlayerID)
 
 			--Make sure we don't kill more then actualArmies
 			if (result.ActualArmies.NumArmies < attackersKilled) then
@@ -75,12 +77,12 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			result.DefendingArmiesKilled = NewDefendersArmiesKilled
 
 			--We are takeing extra care to make the mod more compatible with other mods. Therfore, using  addNewOrder's second argument will mean we won't count the attack if another mod skips this order. Thus all point progress will be counted from the new custom order
-			local payload = "Advancments_," .. attackersKilled .. "," .. defendersKilled
-			addNewOrder(WL.GameOrderCustom.Create(order.PlayerID, "", payload), true)
+			local payload = "Advancements_," .. attackersKilled .. "," .. defendersKilled
+			addNewOrder(WL.GameOrderCustom.Create(AttackerPlayerID, "", payload), true)
 		end
 	end
 
-	if (order.proxyType == "GameOrderCustom" and startsWith(order.Payload, "Advancments_")) then
+	if (order.proxyType == "GameOrderCustom" and startsWith(order.Payload, "Advancements_")) then
 		local payloadSplit = split(order.Payload, ",")
 		local attackersKilled = payloadSplit[2]
 		local defendersKilled = payloadSplit[3]
@@ -112,7 +114,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	for playerID, _ in pairs(players) do
 		--Income bonus
 		if (privateGameData[playerID].Bonus.Income ~= nil) then
-			local incomeMod = WL.IncomeMod.Create(playerID, privateGameData[playerID].Bonus.Income, "Income from advancments")
+			local incomeMod = WL.IncomeMod.Create(playerID, privateGameData[playerID].Bonus.Income, "Income from advancements")
 			local msg = "Added bonus income"
 			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
 		end
@@ -128,53 +130,53 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
 		end
 
-		local techPoints = privateGameData[playerID].Advancment.Points.Technology
-		local cultPoints = privateGameData[playerID].Advancment.Points.Culture
-		local miliPoints = privateGameData[playerID].Advancment.Points.Military
+		local techPoints = privateGameData[playerID].Advancement.Points.Technology
+		local cultPoints = privateGameData[playerID].Advancement.Points.Culture
+		local miliPoints = privateGameData[playerID].Advancement.Points.Military
 
 		--Technology points. A point per turn; if over min income; a point per structure owned
-		if (Mod.PublicGameData.Advancment.Technology.Progress.MinIncome <= players[playerID].Income) then
+		if (Mod.PublicGameData.Advancement.Technology.Progress.MinIncome <= players[playerID].Income) then
 			techPoints = techPoints + 1
 		end
-		if (Mod.PublicGameData.Advancment.Technology.Progress.TurnsEnded == 1) then
+		if (Mod.PublicGameData.Advancement.Technology.Progress.TurnsEnded == 1) then
 			techPoints = techPoints + 1
 		end
-		if (Mod.PublicGameData.Advancment.Technology.Progress.StructuresOwned <= players[playerID].StructuresOwned) then
+		if (Mod.PublicGameData.Advancement.Technology.Progress.StructuresOwned <= players[playerID].StructuresOwned) then
 			techPoints = techPoints + players[playerID].StructuresOwned
 		end
 
 		--Culture points. A point if under max Armies; under max territories
-		if (Mod.PublicGameData.Advancment.Culture.Progress.MaxArmiesOwned >= players[playerID].ArmiesOwned) then
+		if (Mod.PublicGameData.Advancement.Culture.Progress.MaxArmiesOwned >= players[playerID].ArmiesOwned) then
 			cultPoints = cultPoints + 1
 		end
-		if (Mod.PublicGameData.Advancment.Culture.Progress.MaxTerritoriesOwned >= players[playerID].TerritoriesOwned) then
+		if (Mod.PublicGameData.Advancement.Culture.Progress.MaxTerritoriesOwned >= players[playerID].TerritoriesOwned) then
 			cultPoints = cultPoints + 1
 		end
-		if (Mod.PublicGameData.Advancment.Culture.Progress.AttacksMade <= players[playerID].AttacksMade) then
+		if (Mod.PublicGameData.Advancement.Culture.Progress.AttacksMade <= players[playerID].AttacksMade) then
 			cultPoints = cultPoints + 1
 		end
 
 		--Military points. A point for min territories owned; x+ armiesLost, x+ armies defeated
-		if (Mod.PublicGameData.Advancment.Military.Progress.MinTerritoriesOwned <= players[playerID].TerritoriesOwned) then
+		if (Mod.PublicGameData.Advancement.Military.Progress.MinTerritoriesOwned <= players[playerID].TerritoriesOwned) then
 			miliPoints = miliPoints + 1
 		end
-		if (Mod.PublicGameData.Advancment.Military.Progress.ArmiesLost <= players[playerID].ArmiesLost) then
+		if (Mod.PublicGameData.Advancement.Military.Progress.ArmiesLost <= players[playerID].ArmiesLost) then
 			miliPoints = miliPoints + 1
 		end
-		if (Mod.PublicGameData.Advancment.Military.Progress.ArmiesDefeated <= players[playerID].ArmiesDefeated) then
+		if (Mod.PublicGameData.Advancement.Military.Progress.ArmiesDefeated <= players[playerID].ArmiesDefeated) then
 			miliPoints = miliPoints + 1
 		end
 
 		--Store the points
-		privateGameData[playerID].Advancment.Points.Technology = techPoints
-		privateGameData[playerID].Advancment.Points.Culture = cultPoints
-		privateGameData[playerID].Advancment.Points.Military = miliPoints
+		privateGameData[playerID].Advancement.Points.Technology = techPoints
+		privateGameData[playerID].Advancement.Points.Culture = cultPoints
+		privateGameData[playerID].Advancement.Points.Military = miliPoints
 
 		if (not players[playerID].IsAI) then --Can't use playerGameData for AI's.
 			--For testing, give humans some extra points
-			privateGameData[playerID].Advancment.Points.Technology = techPoints + 100 -- TODO for testing, remove
-			privateGameData[playerID].Advancment.Points.Culture = cultPoints + 100
-			privateGameData[playerID].Advancment.Points.Military = miliPoints + 100
+			privateGameData[playerID].Advancement.Points.Technology = techPoints + 100 -- TODO for testing, remove
+			privateGameData[playerID].Advancement.Points.Culture = cultPoints + 100
+			privateGameData[playerID].Advancement.Points.Military = miliPoints + 100
 
 			playerGameData[playerID] = privateGameData[playerID]
 		else
@@ -183,16 +185,16 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			if privateGameData[playerID].Bonus.Income == nil then
 				privateGameData[playerID].Bonus.Income = 0
 			end
-			if privateGameData[playerID].Advancment.Points.Technology >= 10 then
-				privateGameData[playerID].Advancment.Points.Technology = techPoints - 10
+			if privateGameData[playerID].Advancement.Points.Technology >= 10 then
+				privateGameData[playerID].Advancement.Points.Technology = techPoints - 10
 				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
-			if privateGameData[playerID].Advancment.Points.Culture >= 10 then
-				privateGameData[playerID].Advancment.Points.Culture = cultPoints - 10
+			if privateGameData[playerID].Advancement.Points.Culture >= 10 then
+				privateGameData[playerID].Advancement.Points.Culture = cultPoints - 10
 				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
-			if privateGameData[playerID].Advancment.Points.Military >= 10 then
-				privateGameData[playerID].Advancment.Points.Military = miliPoints - 10
+			if privateGameData[playerID].Advancement.Points.Military >= 10 then
+				privateGameData[playerID].Advancement.Points.Military = miliPoints - 10
 				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
 		end

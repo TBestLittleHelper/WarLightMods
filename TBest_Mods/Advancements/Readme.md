@@ -1,4 +1,4 @@
-Major types of advancments. Each type has 10 unlockable upgrades, and three ways to gain uppgrade points
+Major types of advancements. Each type has 10 unlockable upgrades, and three ways to gain uppgrade points
 
 Technology/Economics
 	1. A turn passed

@@ -4,22 +4,22 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	--payload = {key = key, TechTreeSelected = TechTreeSelected}
 
 	local privateGameData = Mod.PrivateGameData
-	local unlockable = privateGameData[playerID].Advancment.Unlockables[payload.TechTreeSelected][payload.key]
+	local unlockable = privateGameData[playerID].Advancement.Unlockables[payload.TechTreeSelected][payload.key]
 	Dump(unlockable)
 	if
 		(unlockable.Unlocked == false and
-			unlockable.PreReq <= privateGameData[playerID].Advancment.PreReq[payload.TechTreeSelected])
+			unlockable.PreReq <= privateGameData[playerID].Advancement.PreReq[payload.TechTreeSelected])
 	 then
-		if (unlockable.UnlockPoints <= privateGameData[playerID].Advancment.Points[payload.TechTreeSelected]) then
+		if (unlockable.UnlockPoints <= privateGameData[playerID].Advancement.Points[payload.TechTreeSelected]) then
 			print("We can buy it!") -- TODO make this code more readable
 			--Subtract the points from the techtree bank
-			privateGameData[playerID].Advancment.Points[payload.TechTreeSelected] =
-				privateGameData[playerID].Advancment.Points[payload.TechTreeSelected] - unlockable.UnlockPoints
+			privateGameData[playerID].Advancement.Points[payload.TechTreeSelected] =
+				privateGameData[playerID].Advancement.Points[payload.TechTreeSelected] - unlockable.UnlockPoints
 			--Set unlocked to true
-			privateGameData[playerID].Advancment.Unlockables[payload.TechTreeSelected][payload.key].Unlocked = true
+			privateGameData[playerID].Advancement.Unlockables[payload.TechTreeSelected][payload.key].Unlocked = true
 			--Add one the the PreReq counter
-			privateGameData[playerID].Advancment.PreReq[payload.TechTreeSelected] =
-				privateGameData[playerID].Advancment.PreReq[payload.TechTreeSelected] + 1
+			privateGameData[playerID].Advancement.PreReq[payload.TechTreeSelected] =
+				privateGameData[playerID].Advancement.PreReq[payload.TechTreeSelected] + 1
 
 			if
 				(unlockable.Type == "Income" or unlockable.Type == "Attack" or unlockable.Type == "Defence" or
