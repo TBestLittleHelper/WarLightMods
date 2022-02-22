@@ -26,7 +26,8 @@ function Client_PresentConfigureUI(rootParent)
 	UI.CreateLabel(mainContainer).SetText(
 		"Select the game speed. A higher value gives a faster game. Most games will work best on the normal (3) game speed. On a big map with 40 players, a game speed of 1 is recomended. "
 	)
-	GameSpeedInput = UI.CreateNumberInputField(horz).SetSliderMinValue(1).SetSliderMaxValue(6).SetValue(turnsInitial)
+	GameSpeedInput =
+		UI.CreateNumberInputField(mainContainer).SetSliderMinValue(1).SetSliderMaxValue(6).SetValue(initialGameSpeed)
 
 	UI.CreateLabel(mainContainer).SetText("Select the Advancements that you want to incude")
 	TechnologyCheckBox = UI.CreateCheckBox(mainContainer).SetText("Technology").SetIsChecked(initialAdvancement.Technology)
