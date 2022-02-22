@@ -197,15 +197,15 @@ function diplomacyUnlokables()
 			UnlockPoints = 4,
 			PreReq = 0,
 			Unlocked = false,
-			Text = "Form a national goverment"
+			Text = "Control your own nation"
 		},
 		{
-			Type = "Support",
-			Power = 1,
+			Type = "Investment",
+			Power = 10,
 			UnlockPoints = 8,
 			PreReq = 1,
 			Unlocked = false,
-			Text = "Form a national goverment"
+			Text = "Give some of your own income to the needy."
 		}
 	return unlockables
 end
