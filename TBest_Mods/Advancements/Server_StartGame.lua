@@ -5,41 +5,41 @@ function Server_StartGame(game, standing)
 
 	GameSpeed = Mod.Settings.GameSpeed -- From 1 to 6. Where 6 is a faster progress
 
-	--Setup PublicGameData -- TODO Refactor some stuff to Mod.Settings? // TODO use the mod settings
-	publicGameData.Advancement = {
-		Technology = {},
-		Military = {},
-		Culture = {},
-		Diplomacy = {}
-	}
-	-- How to gain tech points
-	publicGameData.Advancement.Technology = {
-		Progress = {MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed},
-		Color = "#FFF700",
-		Menu = "Buttons"
-	}
-
-	--How to gain Military points
-	publicGameData.Advancement.Military = {
-		-- TODO seems too slow progress atm. Can we teak the numbers
-		Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
-		Color = "#FF0000",
-		Menu = "Buttons"
-	}
-
-	--How to gain Culture points
-	publicGameData.Advancement.Culture = {
-		Progress = {AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed},
-		Color = "#880085",
-		Menu = "Buttons"
-	}
-
-	--How to gain Diplomacy points
-	publicGameData.Advancement.Diplomacy = {
-		Progress = {},
-		Color = "#880085", -- TODO color
-		Menu = "Diplomacy"
-	}
+	--Setup PublicGameData
+	publicGameData.Advancement = {}
+	--Technology
+	if (Mod.Settings.Advancement.Technology) then
+		publicGameData.Advancement.Technology = {
+			Progress = {MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed},
+			Color = "#FFF700",
+			Menu = "Buttons"
+		}
+	end
+	--Military
+	if (Mod.Settings.Advancement.Military) then
+		publicGameData.Advancement.Military = {
+			-- TODO seems too slow progress atm. Can we teak the numbers
+			Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
+			Color = "#FF0000",
+			Menu = "Buttons"
+		}
+	end
+	--Culture
+	if (Mod.Settings.Advancement.Culture) then
+		publicGameData.Advancement.Culture = {
+			Progress = {AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed},
+			Color = "#880085",
+			Menu = "Buttons"
+		}
+	end
+	--Diplomacy
+	if (Mod.Settings.Advancement.Diplomacy) then
+		publicGameData.Advancement.Diplomacy = {
+			Progress = {},
+			Color = "#880085", -- TODO color
+			Menu = "Diplomacy"
+		}
+	end
 
 	-- Setup privateGameData
 	privateGameData.StartOfTurnOrders = {}
@@ -63,7 +63,7 @@ function Server_StartGame(game, standing)
 		privateGameData[player.ID].AlertUnlockAvailible = true
 	end
 
-	-- playerGameData is sent to the client, so we can show it in the UI. Thus, it mirror the privateGameData.
+	-- playerGameData is sent to the client, so we can show it in the UI. Thus, it mirrors the privateGameData.
 	--Note that AI's can't use playerGameData. Thus, only privateGameData will have AI data.
 	for _, player in pairs(game.ServerGame.Game.Players) do
 		if (player.IsAI == false) then
@@ -91,7 +91,14 @@ function technologyUnlockables()
 			Text = "Build a Market"
 		},
 		{Type = "Income", Power = 10, UnlockPoints = 15, PreReq = 2, Unlocked = false, Text = "Earn 10 income per turn"},
-		{Type = "Armies", Power = 30, UnlockPoints = 30, PreReq = 2, Unlocked = false, Text = "Buy 30 armies"}
+		{
+			Type = "Armies",
+			Power = 10 * Mod.Settings.GameSpeed,
+			UnlockPoints = 30,
+			PreReq = 2,
+			Unlocked = false,
+			Text = "Buy 30 armies"
+		}
 	}
 
 	return unlockables
@@ -142,6 +149,14 @@ function militaryUnlockables()
 			PreReq = 2,
 			Unlocked = false,
 			Text = "Pillage 100 defeated armies for 10 income"
+		},
+		{
+			Type = "Attack",
+			Power = 10,
+			UnlockPoints = 30,
+			PreReq = 2,
+			Unlocked = false,
+			Text = "Increase offensive kill rate by 10"
 		}
 	}
 
@@ -149,7 +164,6 @@ function militaryUnlockables()
 end
 
 --TODO defeated attacking armies are converted to defenders, if the attack fails
---TODO sanctions : recuce the income of someone else
 function cultureUnlockables()
 	local unlockables = {
 		{
@@ -189,6 +203,7 @@ function cultureUnlockables()
 end
 
 --TODO golden years (double income for 7 turns)
+--TODO sanctions : recduce the income of someone else
 --todo investment : Give income to someone else. But reduces your own income
 function diplomacyUnlokables()
 	local unlockables = {
