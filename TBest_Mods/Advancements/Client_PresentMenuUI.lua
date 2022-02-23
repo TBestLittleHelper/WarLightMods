@@ -13,7 +13,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Global variables TODO use Mod.PlayerGameData instead?
 	playerGameData = Mod.PlayerGameData
 	publicGameData = Mod.PublicGameData
+	closeMenu = close -- Should only ever be one menu open. So this should always point the open dialog
 	clientGame = game
+	unlockableSelected = nil
 
 	local vert = UI.CreateVerticalLayoutGroup(rootParent)
 	horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
@@ -96,7 +98,12 @@ function UpdateDialogView()
 					UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.UnlockPoints).SetOnClick(
 					function()
 						if (unlockable.Type == "Structure" or unlockable.Type == "Armies") then
-							BuyOnTerritory(key, TechTreeSelected)
+							unlockableSelected = unlockable
+							unlockableSelected.key = key
+							unlockableSelected.TechTreeSelected = TechTreeSelected
+							-- Close current menu, and open a new one
+							closeMenu()
+							clientGame.CreateDialog(BuyOnTerritory)
 						else
 							local payload = {key = key, TechTreeSelected = TechTreeSelected}
 							clientGame.SendGameCustomMessage(
@@ -137,46 +144,55 @@ function DestroyOldUIelements(Container)
 	end
 end
 
-function BuyOnTerritory(key, TechTreeSelected)
-	if (TechTreeContainerArray ~= {}) then
-		DestroyOldUIelements(TechTreeContainerArray)
+function BuyOnTerritory(rootParent, setMaxSize, setScrollable, game, close)
+	if (unlockableSelected == nil) then
+		UI.Alert("No unlockable selected")
+		close()
+		return
 	end
-	local selectTerritoryButton =
-		UI.CreateButton(horizontalLayout).SetText(
-		"Select any territory; it is possible to select a territory you don't own. You can move this dialog out of the way if needed. WARNING : If you pick a territory that already has a structure, you will waste your points."
-	)
-	selectedTerritoryButton =
-		UI.CreateButton(horizontalLayout).SetText("Select a territory").SetOnClick(BuyWithTerritory(tempGlobal))
-	table.insert(TechTreeContainerArray, selectTerritoryButton)
-	table.insert(TechTreeContainerArray, selectTerritoryButton)
+	closeMenu = close
+	setMaxSize(300, 350)
 
-	--TODO Ugly, but I don't know if I can avoid global variables, since I need to use the callback
-	tempGlobal = {key = key, TechTreeSelected = TechTreeSelected, territory = nil}
-	UI.InterceptNextTerritoryClick(TargetTerritoryClicked)
+	local veticalBuyOnTerritory = UI.CreateVerticalLayoutGroup(rootParent)
+
+	UI.CreateButton(veticalBuyOnTerritory).SetText(unlockableSelected.Text).SetInteractable(false)
+	UI.CreateButton(veticalBuyOnTerritory).SetText(
+		"It is possible to select a territory you don't own. WARNING : If you pick a territory that already has a structure, you will waste your points."
+	).SetInteractable(false)
+
+	selectedTerritoryButton =
+		UI.CreateButton(veticalBuyOnTerritory).SetText("Select a territory").SetOnClick(SelectBuyOnTerritory)
+
+	confirmButton =
+		UI.CreateButton(veticalBuyOnTerritory).SetText("Confirm").SetOnClick(ConfirmBuyWithTerritory).SetInteractable(false)
 end
 function TargetTerritoryClicked(territory)
 	if (territory == nil) then
 		--The click request was cancelled.
 		UI.Alert("No territory was selected")
-		tempGlobal = nil
-		UpdateDialogView()
 	end
-	tempGlobal.territory = territory
-	selectedTerritoryButton.SetText("Place the bonus on " .. territory.Name)
+	confirmButton.SetInteractable(true)
+	confirmButton.SetText("Click here to confirm buying on " .. territory.Name)
+	unlockableSelected.territorySelected = territory
 end
-function BuyWithTerritory(tempGlobal)
+function SelectBuyOnTerritory()
+	UI.InterceptNextTerritoryClick(TargetTerritoryClicked)
+	selectedTerritoryButton.SetText("Please click on a territory.  If needed, you can move this dialog out of the way.")
+end
+function ConfirmBuyWithTerritory(close)
+	Dump(unlockableSelected)
 	local payload = {
-		key = tempGlobal.key,
-		TechTreeSelected = tempGlobal.TechTreeSelected,
-		TerritoryID = tempGlobal.territory.ID
+		key = unlockableSelected.key,
+		TechTreeSelected = unlockableSelected.TechTreeSelected,
+		TerritoryID = unlockableSelected.territorySelected.ID
 	}
 	clientGame.SendGameCustomMessage(
 		"Buying Advancement ... ",
 		payload,
 		function(returnValue)
 			--TODO return some msg if error?
-			UpdateDialogView() --TODO test
 		end
 	)
-	tempGlobal = nil
+	closeMenu()
+	clientGame.CreateDialog(Client_PresentMenuUI) --TODO test
 end
