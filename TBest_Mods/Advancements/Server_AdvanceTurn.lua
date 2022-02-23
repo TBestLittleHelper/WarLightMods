@@ -13,9 +13,9 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			local terrMod = WL.TerritoryModification.Create(order.terrModsOpt.TerritoryID)
 			--If setting structure
 			if (order.terrModsOpt.Structure ~= nil) then
-				--If setting armies
 				local newStructure = {[order.terrModsOpt.Structure] = 1}
-				terrMod.SetStructuresOpt = newStructure --TODO broken
+				terrMod.SetStructuresOpt = newStructure
+				terrModsOpt[1] = terrMod
 			elseif (order.terrModsOpt.Armies ~= nil) then
 				--If adding armies, add a deploy order
 				addNewOrder(
@@ -24,8 +24,6 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			end
 			--We always have the event order. So that order.msg get's shown
 			addNewOrder(WL.GameOrderEvent.Create(order.playerID, order.msg, order.visibleToOpt, terrModsOpt))
-
-			terrModsOpt[1] = terrMod
 		end
 	end
 	privateGameData.StartOfTurnOrders = {}
