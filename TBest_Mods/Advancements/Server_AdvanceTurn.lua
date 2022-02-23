@@ -7,6 +7,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 
 	for _, order in pairs(privateGameData.StartOfTurnOrders) do
 		local terrModsOpt = nil
+		Dump(order)
 		if (order.terrModsOpt) then
 			local terrModsOpt = {}
 			local terrMod = WL.TerritoryModification.Create(order.terrModsOpt.TerritoryID)
@@ -14,7 +15,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			if (order.terrModsOpt.Structure ~= nil) then
 				--If setting armies
 				local newStructure = {[order.terrModsOpt.Structure] = 1}
-				terrMod.SetStructuresOpt = newStructure
+				terrMod.SetStructuresOpt = newStructure --TODO broken
 			elseif (order.terrModsOpt.Armies ~= nil) then
 				--If adding armies, add a deploy order
 				addNewOrder(
@@ -198,8 +199,8 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
 		end
-		print(playerID, techPoints, cultPoints, miliPoints)
-		print(playerID, privateGameData[playerID].Bonus.Income)
+		--	print(playerID, techPoints, cultPoints, miliPoints)
+		--	print(playerID, privateGameData[playerID].Bonus.Income)
 	end
 
 	Mod.PlayerGameData = playerGameData
