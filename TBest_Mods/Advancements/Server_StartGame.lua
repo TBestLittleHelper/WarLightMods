@@ -207,6 +207,7 @@ end
 --todo investment : Give income to someone else. But reduces your own income
 function diplomacyUnlokables()
 	local unlockables = {
+		{
 			Type = "Support",
 			Power = 1,
 			UnlockPoints = 4,
@@ -222,5 +223,6 @@ function diplomacyUnlokables()
 			Unlocked = false,
 			Text = "Give some of your own income to the needy."
 		}
+	}
 	return unlockables
 end
