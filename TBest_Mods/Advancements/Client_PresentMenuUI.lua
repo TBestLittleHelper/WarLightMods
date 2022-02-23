@@ -80,6 +80,7 @@ function UpdateDialogView()
 	table.insert(TechTreeContainerArray, rowTech)
 	table.insert(TechTreeContainerArray, treeLayout)
 	local horzMain = UI.CreateVerticalLayoutGroup(treeLayout)
+	--Defualt advancements have the "Buttons" menu
 	if (publicGameData.Advancement[TechTreeSelected].Menu == "Buttons") then
 		for key, unlockable in pairs(playerGameData.Advancement.Unlockables[TechTreeSelected]) do
 			local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
@@ -129,7 +130,25 @@ function UpdateDialogView()
 			end
 		end
 	elseif (publicGameData.Advancement[TechTreeSelected].Menu == "Diplomacy") then
-		print("Diplomacy todo")
+		--The diplomacy advancement is unique
+
+		for key, unlockable in pairs(playerGameData.Advancement.Unlockables[TechTreeSelected]) do
+			local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
+			local AdvancementInfo =
+				UI.CreateButton(horzLayout).SetPreferredWidth(150).SetPreferredHeight(8).SetText(unlockable.Text).SetInteractable(
+				false
+			).SetColor("#FF7D00")
+			local CostButton =
+				UI.CreateButton(horzLayout).SetText("Cost " .. unlockable.UnlockPoints).SetOnClick(
+				function()
+					unlockableSelected = unlockable
+					unlockableSelected.key = key
+					unlockableSelected.TechTreeSelected = TechTreeSelected
+
+					BuyWithPlayer()
+				end
+			)
+		end
 	end
 end
 
@@ -195,4 +214,37 @@ function ConfirmBuyWithTerritory(close)
 	)
 	closeMenu()
 	clientGame.CreateDialog(Client_PresentMenuUI) --TODO test
+end
+function BuyWithPlayer()
+	if (unlockableSelected == nil) then
+		UI.Alert("No unlockable selected")
+		return
+	end
+	local players = {}
+	for i, player in pairs(clientGame.Game.Players) do
+		players[i] = player
+	end
+	local options = map(players, SelectedBuyWithPlayer)
+	UI.PromptFromList("Select a player ", options) --TODO unlockable text here?
+end
+
+function SelectedBuyWithPlayer(player)
+	local name = player.ID
+	local ret = {}
+	ret["text"] = name
+	ret["selected"] = function()
+		local payload = {
+			key = unlockableSelected.key,
+			TechTreeSelected = unlockableSelected.TechTreeSelected,
+			PlayerID = player.ID
+		}
+		clientGame.SendGameCustomMessage(
+			"Buying Advancement ... ",
+			payload,
+			function(returnValue)
+				--TODO return some msg if error?
+			end
+		)
+	end
+	return ret
 end
