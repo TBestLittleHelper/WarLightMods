@@ -151,7 +151,7 @@ function BuyOnTerritory(rootParent, setMaxSize, setScrollable, game, close)
 		return
 	end
 	closeMenu = close
-	setMaxSize(300, 350)
+	setMaxSize(300, 400)
 
 	local veticalBuyOnTerritory = UI.CreateVerticalLayoutGroup(rootParent)
 
