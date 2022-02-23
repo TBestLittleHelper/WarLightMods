@@ -43,7 +43,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			elseif (unlockable.Type == "Armies") then
 				local order = {
 					playerID = playerID,
-					msg = "Bought some mercinaries",
+					msg = "Bought " .. unlockable.Power .. " mercinaries",
 					visibleToOpt = {},
 					terrModsOpt = {TerritoryID = payload.TerritoryID, Armies = unlockable.Power},
 					setResourcesOpt = nil,
