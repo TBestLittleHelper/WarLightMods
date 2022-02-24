@@ -221,7 +221,7 @@ function diplomacyUnlokables()
 			UnlockPoints = 8,
 			PreReq = 1,
 			Unlocked = false,
-			Text = "Give some of your own income to the needy."
+			Text = "Invest 10 income to help another gain 20"
 		}
 	}
 	return unlockables
