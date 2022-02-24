@@ -50,6 +50,34 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 					incomeModsOpt = nil
 				}
 				table.insert(privateGameData.StartOfTurnOrders, order)
+			elseif (unlockable.Type == "Investment") then
+				targetPlayerID = payload.PlayerID
+				--Can't target this to yourself
+				if (targetPlayerID == playerID) then
+					return
+				end
+				--Take some of your own income, and give it to someone else
+				if (privateGameData[playerID].Bonus[unlockable.Type] == nil) then
+					privateGameData[playerID].Bonus[unlockable.Type] = 0
+				end
+				privateGameData[playerID].Bonus[unlockable.Type] =
+					privateGameData[playerID].Bonus[unlockable.Type] - unlockable.Power
+
+				if (privateGameData[targetPlayerID].Bonus[unlockable.Type] == nil) then
+					privateGameData[targetPlayerID].Bonus[unlockable.Type] = 0
+				end
+				--The targetPlayerID recives 2x the power of the unlockable
+				privateGameData[targetPlayerID].Bonus[unlockable.Type] =
+					privateGameData[targetPlayerID].Bonus[unlockable.Type] + unlockable.Power * 2
+				local order = {
+					playerID = playerID,
+					msg = "Investment made!", --TODO from player name to player name
+					visibleToOpt = {playerID, targetPlayerID},
+					terrModsOpt = nil,
+					setResourcesOpt = nil,
+					incomeModsOpt = nil
+				}
+				table.insert(privateGameData.StartOfTurnOrders, order)
 			else
 				return --If we don't know the unlockable.Type, return
 			end
