@@ -12,7 +12,8 @@ function Server_StartGame(game, standing)
 		publicGameData.Advancement.Technology = {
 			Progress = {MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed},
 			Color = "#FFF700",
-			Menu = "Buttons"
+			Menu = "Buttons",
+			Helptext = "Technology points are earned from having a high income, owning structure and the passage of time"
 		}
 	end
 	--Military
@@ -21,7 +22,8 @@ function Server_StartGame(game, standing)
 			-- TODO seems too slow progress atm. Can we teak the numbers
 			Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
 			Color = "#FF0000",
-			Menu = "Buttons"
+			Menu = "Buttons",
+			Helptext = "Military points are earned from owning many territories, deafeting enemy armies or loosing your own armies."
 		}
 	end
 	--Culture
@@ -29,15 +31,17 @@ function Server_StartGame(game, standing)
 		publicGameData.Advancement.Culture = {
 			Progress = {AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed},
 			Color = "#880085",
-			Menu = "Buttons"
+			Menu = "Buttons",
+			Helptext = "Culture points are earned from owning few territories, not making attacks and owning few armies."
 		}
 	end
 	--Diplomacy
 	if (Mod.Settings.Advancement.Diplomacy) then
 		publicGameData.Advancement.Diplomacy = {
 			Progress = {},
-			Color = "#880085", -- TODO color
-			Menu = "Diplomacy"
+			Color = "#0021FF",
+			Menu = "Diplomacy",
+			Helptext = "Diplomacy points can only be earned by other players supporting you."
 		}
 	end
 
@@ -45,21 +49,20 @@ function Server_StartGame(game, standing)
 	privateGameData.StartOfTurnOrders = {}
 
 	--Player progress.
-	for _, player in pairs(game.ServerGame.Game.Players) do
-		privateGameData[player.ID] = {Advancement = {}}
-		privateGameData[player.ID].Advancement.Points = {Technology = 0, Military = 0, Culture = 0, Diplomacy = 0}
-		privateGameData[player.ID].Advancement.PreReq = {Technology = 0, Military = 0, Culture = 0, Diplomacy = 0}
-		privateGameData[player.ID].Advancement.Unlockables = {
-			Technology = technologyUnlockables(),
-			Military = militaryUnlockables(),
-			Culture = cultureUnlockables(), --TODO Refactor
-			Diplomacy = diplomacyUnlokables()
-		}
-		--We should assume all Bonus Effects can be nil. In case we add or change them in the future
-		privateGameData[player.ID].Bonus = {}
+	for advancement, _ in pairs(publicGameData.Advancement.Technology) do
+		for _, player in pairs(game.ServerGame.Game.Players) do
+			privateGameData[player.ID] = {Advancement = {Points = {}, PreReq = {}, Unlockables = {}}}
+			privateGameData[player.ID].Advancement.Points = {advancement = 0}
+			privateGameData[player.ID].Advancement.PreReq = {advancement = 0}
+			privateGameData[player.ID].Advancement.Unlockables = {
+				advancement = getUnlockables(advancement)
+			}
+			--We should assume all Bonus Effects can be nil. In case we add or change them in the future
+			privateGameData[player.ID].Bonus = {}
 
-		--Player Settings
-		privateGameData[player.ID].AlertUnlockAvailible = true
+			--Player Settings
+			privateGameData[player.ID].AlertUnlockAvailible = true
+		end
 	end
 
 	-- playerGameData is sent to the client, so we can show it in the UI. Thus, it mirrors the privateGameData.
@@ -74,11 +77,25 @@ function Server_StartGame(game, standing)
 	Mod.PublicGameData = publicGameData
 end
 
+--Helper function to get the unlockable for the advancement
+function getUnlockables(key)
+	if key == "Technology" then
+		return technologyUnlockables
+	end
+	if key == "Military" then
+		return militaryUnlockables
+	end
+	if key == "Culture" then
+		return cultureUnlockables
+	end
+	if key == "Diplomacy" then
+		return diplomacyUnlokables
+	end
+end
 --TODO one time income?
 --TODO income per structure owned?
 
 function technologyUnlockables()
-	--TODO hackey. But we could simply return a dummy unlockable if the tech is disabled in Mod.Settings.Advancement
 	local unlockables = {
 		{Type = "Income", Power = 5, UnlockPoints = 10, PreReq = 0, Unlocked = false, Text = "Earn 5 income per turn"},
 		{
@@ -97,7 +114,25 @@ function technologyUnlockables()
 			PreReq = 2,
 			Unlocked = false,
 			Text = "Buy 30 armies"
-		}
+		},
+		{Type = "Income", Power = 20, UnlockPoints = 30, PreReq = 3, Unlocked = false, Text = "Earn 20 income per turn"},
+		{
+			Type = "Structure",
+			Structure = WL.StructureType.Market,
+			UnlockPoints = 30,
+			PreReq = 3,
+			Unlocked = false,
+			Text = "Build a Market"
+		},
+		{
+			Type = "Armies",
+			Power = 20 * Mod.Settings.GameSpeed,
+			UnlockPoints = 35,
+			PreReq = 4,
+			Unlocked = false,
+			Text = "Buy 30 armies"
+		},
+		{Type = "Income", Power = 30, UnlockPoints = 30, PreReq = 5, Unlocked = false, Text = "Earn 30 income per turn"}
 	}
 
 	return unlockables
