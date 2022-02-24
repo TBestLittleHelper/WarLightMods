@@ -117,6 +117,12 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			local msg = "Added bonus income"
 			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
 		end
+		--Investment bonus
+		if (privateGameData[playerID].Bonus.Investment ~= nil) then
+			local incomeMod = WL.IncomeMod.Create(playerID, privateGameData[playerID].Bonus.Investment, "Income from investment")
+			local msg = "Added investment income"
+			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
+		end
 		--Loot bonus (income from defeated armies)
 		if (privateGameData[playerID].Bonus.Loot ~= nil and players[playerID].ArmiesDefeated > 0) then
 			local incomeMod =
