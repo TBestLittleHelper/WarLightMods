@@ -49,20 +49,19 @@ function Server_StartGame(game, standing)
 	privateGameData.StartOfTurnOrders = {}
 
 	--Player progress.
-	for advancement, _ in pairs(publicGameData.Advancement.Technology) do
-		for _, player in pairs(game.ServerGame.Game.Players) do
-			privateGameData[player.ID] = {Advancement = {Points = {}, PreReq = {}, Unlockables = {}}}
-			privateGameData[player.ID].Advancement.Points = {advancement = 0}
-			privateGameData[player.ID].Advancement.PreReq = {advancement = 0}
-			privateGameData[player.ID].Advancement.Unlockables = {
-				advancement = getUnlockables(advancement)
-			}
-			--We should assume all Bonus Effects can be nil. In case we add or change them in the future
-			privateGameData[player.ID].Bonus = {}
+	for _, player in pairs(game.ServerGame.Game.Players) do
+		privateGameData[player.ID] = {Advancement = {Points = {}, PreReq = {}, Unlockables = {}}}
 
-			--Player Settings
-			privateGameData[player.ID].AlertUnlockAvailible = true
+		for advancement, _ in pairs(publicGameData.Advancement) do
+			privateGameData[player.ID].Advancement.Points[advancement] = 0
+			privateGameData[player.ID].Advancement.PreReq[advancement] = 0
+			privateGameData[player.ID].Advancement.Unlockables[advancement] = getUnlockables(advancement) --TODO This could probably be more efficient
 		end
+		--We should assume all Bonus Effects can be nil. In case we add or change them in the future
+		privateGameData[player.ID].Bonus = {}
+
+		--Player Settings
+		privateGameData[player.ID].AlertUnlockAvailible = true
 	end
 
 	-- playerGameData is sent to the client, so we can show it in the UI. Thus, it mirrors the privateGameData.
@@ -72,6 +71,7 @@ function Server_StartGame(game, standing)
 			playerGameData[player.ID] = privateGameData[player.ID]
 		end
 	end
+
 	Mod.PlayerGameData = playerGameData
 	Mod.PrivateGameData = privateGameData
 	Mod.PublicGameData = publicGameData
@@ -80,16 +80,16 @@ end
 --Helper function to get the unlockable for the advancement
 function getUnlockables(key)
 	if key == "Technology" then
-		return technologyUnlockables
+		return technologyUnlockables()
 	end
 	if key == "Military" then
-		return militaryUnlockables
+		return militaryUnlockables()
 	end
 	if key == "Culture" then
-		return cultureUnlockables
+		return cultureUnlockables()
 	end
 	if key == "Diplomacy" then
-		return diplomacyUnlokables
+		return diplomacyUnlokables()
 	end
 end
 --TODO one time income?
