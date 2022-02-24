@@ -43,7 +43,6 @@ function Server_StartGame(game, standing)
 
 	-- Setup privateGameData
 	privateGameData.StartOfTurnOrders = {}
-	privateGameData.Advancement = {Technology = {}, Military = {}, Culture = {}, Diplomacy = {}} -- TODO do we use this?
 
 	--Player progress.
 	for _, player in pairs(game.ServerGame.Game.Players) do
