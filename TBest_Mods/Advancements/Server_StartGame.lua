@@ -13,7 +13,7 @@ function Server_StartGame(game, standing)
 			Progress = {MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed},
 			Color = "#FFF700",
 			Menu = "Buttons",
-			Helptext = "Technology points are earned from having a high income, owning structure and the passage of time"
+			Helptext = "Technology points are earned from having a high income, owning structure and the passage of time. The advancements will increase your income"
 		}
 	end
 	--Military
@@ -23,7 +23,7 @@ function Server_StartGame(game, standing)
 			Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
 			Color = "#FF0000",
 			Menu = "Buttons",
-			Helptext = "Military points are earned from owning many territories, deafeting enemy armies or loosing your own armies."
+			Helptext = "Military points are earned from owning many territories, deafeting enemy armies or loosing your own armies. The advancements effects the outcome when you are the attacking player"
 		}
 	end
 	--Culture
@@ -32,7 +32,7 @@ function Server_StartGame(game, standing)
 			Progress = {AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed},
 			Color = "#880085",
 			Menu = "Buttons",
-			Helptext = "Culture points are earned from owning few territories, not making attacks and owning few armies."
+			Helptext = "Culture points are earned from owning few territories, not making attacks and owning few armies. The advancements effects the outcome when you are the defending player"
 		}
 	end
 	--Diplomacy
@@ -41,7 +41,7 @@ function Server_StartGame(game, standing)
 			Progress = {},
 			Color = "#0021FF",
 			Menu = "Diplomacy",
-			Helptext = "Diplomacy points can only be earned by other players supporting you."
+			Helptext = "Diplomacy points can only be earned by other players supporting you. They are a powerful way to assist your allies."
 		}
 	end
 
@@ -55,7 +55,7 @@ function Server_StartGame(game, standing)
 		for advancement, _ in pairs(publicGameData.Advancement) do
 			privateGameData[player.ID].Advancement.Points[advancement] = 0
 			privateGameData[player.ID].Advancement.PreReq[advancement] = 0
-			privateGameData[player.ID].Advancement.Unlockables[advancement] = getUnlockables(advancement) --TODO This could probably be more efficient
+			privateGameData[player.ID].Advancement.Unlockables[advancement] = getUnlockables(advancement) --TODO This could be more efficient
 		end
 		--We should assume all Bonus Effects can be nil. In case we add or change them in the future
 		privateGameData[player.ID].Bonus = {}
@@ -92,9 +92,6 @@ function getUnlockables(key)
 		return diplomacyUnlokables()
 	end
 end
---TODO one time income?
---TODO income per structure owned?
-
 function technologyUnlockables()
 	local unlockables = {
 		{Type = "Income", Power = 5, UnlockPoints = 10, PreReq = 0, Unlocked = false, Text = "Earn 5 income per turn"},
@@ -139,7 +136,6 @@ function technologyUnlockables()
 end
 
 --TODO lastManStanding (1 army defends for 5, 10 armies)
---TODO flankBonus when attacking??
 --TODO overwhelming attack. Attacks over 100 armies, gain 25 strength?
 
 function militaryUnlockables()
@@ -174,7 +170,7 @@ function militaryUnlockables()
 			UnlockPoints = 15,
 			PreReq = 1,
 			Unlocked = false,
-			Text = "Pillage 100 defeated armies for 10 income"
+			Text = "Pillage 10 defeated armies for 1 income"
 		},
 		{
 			Type = "Loot",
@@ -182,7 +178,7 @@ function militaryUnlockables()
 			UnlockPoints = 30,
 			PreReq = 2,
 			Unlocked = false,
-			Text = "Pillage 100 defeated armies for 10 income"
+			Text = "Pillage 10 defeated armies for 1 income"
 		},
 		{
 			Type = "Attack",
@@ -191,6 +187,22 @@ function militaryUnlockables()
 			PreReq = 2,
 			Unlocked = false,
 			Text = "Increase offensive kill rate by 10"
+		},
+		{
+			Type = "Attack",
+			Power = 10,
+			UnlockPoints = 30,
+			PreReq = 3,
+			Unlocked = false,
+			Text = "Increase offensive kill rate by 10"
+		},
+		{
+			Type = "Loot",
+			Power = 0.1,
+			UnlockPoints = 30,
+			PreReq = 3,
+			Unlocked = false,
+			Text = "Pillage 10 defeated armies for 1 income"
 		}
 	}
 
@@ -230,32 +242,44 @@ function cultureUnlockables()
 			PreReq = 2,
 			Unlocked = false,
 			Text = "Defending neutral armies will surrender"
+		},
+		{
+			Type = "DefenceLoot",
+			Power = 0.2,
+			UnlockPoints = 30,
+			PreReq = 3,
+			Unlocked = false,
+			Text = "For every 10 deafeted armies, gain 2 income"
 		}
 	}
 
 	return unlockables
 end
-
---TODO golden years (double income for 7 turns)
---TODO sanctions : recduce the income of someone else
---todo investment : Give income to someone else. But reduces your own income
 function diplomacyUnlokables()
 	local unlockables = {
 		{
 			Type = "Support",
 			Power = 1,
-			UnlockPoints = 4,
+			UnlockPoints = 0,
 			PreReq = 0,
 			Unlocked = false,
-			Text = "Control your own nation"
+			Text = "Show your support for another player, give them 1 point"
 		},
 		{
 			Type = "Investment",
 			Power = 10,
-			UnlockPoints = 8,
+			UnlockPoints = 30 / GameSpeed,
 			PreReq = 1,
 			Unlocked = false,
 			Text = "Invest 10 income to help another gain 20"
+		},
+		{
+			Type = "Sanctions",
+			Power = 10,
+			UnlockPoints = 60 / GameSpeed,
+			PreReq = 2,
+			Unlocked = false,
+			Text = "Loose 10 income to cost another player 20 income"
 		}
 	}
 	return unlockables
