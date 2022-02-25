@@ -182,6 +182,9 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			privateGameData[playerID].Advancement.Points.Technology = techPoints + 100 -- TODO for testing, remove
 			privateGameData[playerID].Advancement.Points.Culture = cultPoints + 100
 			privateGameData[playerID].Advancement.Points.Military = miliPoints + 100
+			privateGameData[playerID].Advancement.Points.Diplomacy = 100
+			--TODO diplomacy
+			--TODO diplomacy targets a player, so we must check that the player is still in PlayingPlayers / a valid playerID
 
 			playerGameData[playerID] = privateGameData[playerID]
 		else
@@ -203,14 +206,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 			end
 		end
-		--	print(playerID, techPoints, cultPoints, miliPoints)
-		--	print(playerID, privateGameData[playerID].Bonus.Income)
 	end
 
 	Mod.PlayerGameData = playerGameData
 	Mod.PrivateGameData = privateGameData
-	--local incomeMod = WL.IncomeMod.Create(playerID, cost, msg)
-	--addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil, {incomeMod}))
 end
 
 function AttackBoost(ArmiesDefeated, playerID)
