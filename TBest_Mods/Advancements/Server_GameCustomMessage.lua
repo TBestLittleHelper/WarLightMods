@@ -50,6 +50,19 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 					incomeModsOpt = nil
 				}
 				table.insert(privateGameData.StartOfTurnOrders, order)
+			elseif (unlockable.Type == "Support" or unlockable.Type == "Sanctions") then
+				--TODO must be possible to cancel/select a nil player
+				targetPlayerID = payload.PlayerID
+				--Can't target this to yourself
+				if (targetPlayerID == playerID) then
+					return
+				end
+				--Store what player we are targeting
+				if (privateGameData[playerID].Bonus[unlockable.Type] == nil) then
+					privateGameData[playerID].Bonus[unlockable.Type] = targetPlayerID
+				end
+				--Set this back to false, since we can unlock/change the advancement multiple times
+				privateGameData[playerID].Advancement.Unlockables[payload.TechTreeSelected][payload.key].Unlocked = false
 			elseif (unlockable.Type == "Investment") then
 				targetPlayerID = payload.PlayerID
 				--Can't target this to yourself
@@ -79,6 +92,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 				}
 				table.insert(privateGameData.StartOfTurnOrders, order)
 			else
+				print(unlockable.Type)
 				return --If we don't know the unlockable.Type, return
 			end
 
