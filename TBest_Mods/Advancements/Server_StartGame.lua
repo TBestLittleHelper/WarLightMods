@@ -53,7 +53,7 @@ function Server_StartGame(game, standing)
 		privateGameData[player.ID] = {Advancement = {Points = {}, PreReq = {}, Unlockables = {}}}
 
 		for advancement, _ in pairs(publicGameData.Advancement) do
-			privateGameData[player.ID].Advancement.Points[advancement] = 0
+			privateGameData[player.ID].Advancement.Points[advancement] = GameSpeed --Allow players to start with some points
 			privateGameData[player.ID].Advancement.PreReq[advancement] = 0
 			privateGameData[player.ID].Advancement.Unlockables[advancement] = getUnlockables(advancement) --TODO This could be more efficient
 		end
@@ -260,7 +260,7 @@ function diplomacyUnlokables()
 		{
 			Type = "Support",
 			Power = 1,
-			UnlockPoints = 0,
+			UnlockPoints = 1,
 			PreReq = 0,
 			Unlocked = false,
 			Text = "Show your support for another player, give them 1 point"
