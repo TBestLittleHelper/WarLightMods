@@ -148,6 +148,11 @@ function UpdateDialogView()
 					BuyWithPlayer()
 				end
 			)
+			local SelectedPlayerButton = UI.CreateButton(horzLayout).SetInteractable(false).SetText("No player selected")
+			Dump(unlockable)
+			if (unlockable.TargetPlayerID ~= nil) then --TODO display name, display color
+				SelectedPlayerButton.SetText("Current target : " .. unlockable.TargetPlayerID)
+			end
 		end
 	end
 end
