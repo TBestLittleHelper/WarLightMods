@@ -64,6 +64,7 @@ function RemoveFromGroup(game, playerID, payload, setReturnTable)
 				playerGameData[TargetPlayerID].Chat[TargetGroupID] = nil
 			end
 		end
+		Mod.PlayerGameData = playerGameData
 		--Update all other group members
 		UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData.Chat)
 
