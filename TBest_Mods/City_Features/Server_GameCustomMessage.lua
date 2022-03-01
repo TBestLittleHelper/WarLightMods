@@ -60,7 +60,9 @@ function RemoveFromGroup(game, playerID, payload, setReturnTable)
 
 		--Remove the group from the playerGameData.Chat of the removed player, if it's not an AI
 		if not (game.Game.Players[TargetPlayerID].IsAI) then
-			Mod.playerGameData.Chat[TargetPlayerID][TargetGroupID] = nil
+			if not (Mod.playerGameData.Chat[TargetPlayerID][TargetGroupID] == nil) then
+				playerGameData.Chat[TargetPlayerID][TargetGroupID] = nil
+			end
 		end
 		--Update all other group members
 		UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData.Chat)
