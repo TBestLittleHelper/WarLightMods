@@ -66,7 +66,7 @@ function RemoveFromGroup(game, playerID, payload, setReturnTable)
 		end
 		Mod.PlayerGameData = playerGameData
 		--Update all other group members
-		UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData.Chat)
+		UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData)
 
 		--Send a chat msg to the group chat
 		payload.Chat = game.Game.Players[TargetPlayerID].DisplayName(nil, false) .. " was removed from " .. Group.GroupName
