@@ -1,6 +1,8 @@
 function Client_PresentSettingsUI(rootParent)
 	if (Mod.Settings.Version ~= 2) then
-		UI.CreateLabel(rootParent).SetText("Version " .. Mod.Settings.Version)
+		UI.CreateLabel(rootParent).SetText(
+			"This game was made using an old version, and things might not work. This game has version " .. Mod.Settings.Version
+		)
 		return
 	end
 
