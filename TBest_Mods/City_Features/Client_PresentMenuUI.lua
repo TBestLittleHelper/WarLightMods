@@ -2,6 +2,7 @@ require("Utilities")
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	if (Mod.Settings.Version ~= 2) then
+		UI.Alert(Mod.Setting.Version)
 		return
 	end
 
