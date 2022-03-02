@@ -2,8 +2,7 @@ require("Utilities")
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	if (Mod.Settings.Version ~= 2) then
-		UI.Alert(Mod.Setting.Version)
-		return
+		UI.Alert("This game uses an old version of the mod. Things might not work.")
 	end
 
 	if (Mod.PublicGameData.GameFinalized == false) then
