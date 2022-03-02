@@ -1,5 +1,6 @@
 function Client_PresentSettingsUI(rootParent)
 	if (Mod.Settings.Version ~= 2) then
+		UI.CreateLabel(rootParent).SetText("Version " .. Mod.Settings.Version)
 		return
 	end
 
