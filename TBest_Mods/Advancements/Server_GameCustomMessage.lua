@@ -89,7 +89,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 					privateGameData[targetPlayerID].Bonus[unlockable.Type] + unlockable.Power * 2
 				local order = {
 					playerID = playerID,
-					msg = "Investment made!", --TODO from player name to player name
+					msg = "Investment made!", --TODO add from player name and to player name
 					visibleToOpt = {playerID, targetPlayerID},
 					terrModsOpt = nil,
 					setResourcesOpt = nil,
