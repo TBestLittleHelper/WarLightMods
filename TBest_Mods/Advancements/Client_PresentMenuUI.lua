@@ -55,11 +55,16 @@ function UpdateDialogView()
 		UI.CreateButton(horizontalLayout).SetText("Help").SetFlexibleWidth(0.1).SetColor(color).SetOnClick(
 		function()
 			local msg = ""
-			if (next(playerGameData.Bonus) == nil) then --TODO not working atm
-				UI.Alert("No Advancements")
-			end
 			for bonus, value in pairs(playerGameData.Bonus) do
+				if (type(value)) == "table" then
+					value = value.TargetPlayerID
+				end
+				print(bonus)
+				print(value)
 				msg = msg .. bonus .. " " .. value .. "\n"
+			end
+			if (msg == "") then
+				msg = "No Advancments"
 			end
 			UI.Alert(msg)
 		end --TODO add more info to it?
