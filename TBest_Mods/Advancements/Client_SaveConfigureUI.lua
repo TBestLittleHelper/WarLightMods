@@ -12,7 +12,15 @@ function Client_SaveConfigureUI(alert)
 		Culture = CultureCheckBox.GetIsChecked(),
 		Diplomacy = DiplomacyheckBox.GetIsChecked()
 	}
-	if (Mod.Settings.Advancement == nil) then
+
+	local noTech = true
+	for _, isEnabled in pairs(Mod.Settings.Advancement) do
+		if (isEnabled == true) then
+			noTech = false
+			return
+		end
+	end
+	if (noTech) then
 		alert("You need to enable at least one advancement")
 	end
 end
