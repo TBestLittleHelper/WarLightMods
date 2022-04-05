@@ -140,48 +140,52 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		local miliPoints = privateGameData[playerID].Advancement.Points.Military
 
 		--Technology points. A point per turn; if over min income; a point per structure owned
-		if (Mod.PublicGameData.Advancement.Technology.Progress.MinIncome <= players[playerID].Income) then
-			techPoints = techPoints + 1
-		end
-		if (Mod.PublicGameData.Advancement.Technology.Progress.TurnsEnded == 1) then
-			techPoints = techPoints + 1
-		end
-		if (Mod.PublicGameData.Advancement.Technology.Progress.StructuresOwned <= players[playerID].StructuresOwned) then
-			techPoints = techPoints + players[playerID].StructuresOwned
+		if (Mod.Settings.Advancement.Technology) then
+			if (Mod.PublicGameData.Advancement.Technology.Progress.MinIncome <= players[playerID].Income) then
+				techPoints = techPoints + 1
+			end
+			if (Mod.PublicGameData.Advancement.Technology.Progress.TurnsEnded == 1) then
+				techPoints = techPoints + 1
+			end
+			if (Mod.PublicGameData.Advancement.Technology.Progress.StructuresOwned <= players[playerID].StructuresOwned) then
+				techPoints = techPoints + players[playerID].StructuresOwned
+			end
+			privateGameData[playerID].Advancement.Points.Technology = techPoints
 		end
 
 		--Culture points. A point if under max Armies; under max territories
-		if (Mod.PublicGameData.Advancement.Culture.Progress.MaxArmiesOwned >= players[playerID].ArmiesOwned) then
-			cultPoints = cultPoints + 1
-		end
-		if (Mod.PublicGameData.Advancement.Culture.Progress.MaxTerritoriesOwned >= players[playerID].TerritoriesOwned) then
-			cultPoints = cultPoints + 1
-		end
-		if (Mod.PublicGameData.Advancement.Culture.Progress.AttacksMade <= players[playerID].AttacksMade) then
-			cultPoints = cultPoints + 1
+		if (Mod.Settings.Advancement.Culture) then
+			if (Mod.PublicGameData.Advancement.Culture.Progress.MaxArmiesOwned >= players[playerID].ArmiesOwned) then
+				cultPoints = cultPoints + 1
+			end
+			if (Mod.PublicGameData.Advancement.Culture.Progress.MaxTerritoriesOwned >= players[playerID].TerritoriesOwned) then
+				cultPoints = cultPoints + 1
+			end
+			if (Mod.PublicGameData.Advancement.Culture.Progress.AttacksMade <= players[playerID].AttacksMade) then
+				cultPoints = cultPoints + 1
+			end
+			privateGameData[playerID].Advancement.Points.Culture = cultPoints
 		end
 
 		--Military points. A point for min territories owned; x+ armiesLost, x+ armies defeated
-		if (Mod.PublicGameData.Advancement.Military.Progress.MinTerritoriesOwned <= players[playerID].TerritoriesOwned) then
-			miliPoints = miliPoints + 1
+		if (Mod.Settings.Advancement.Military) then
+			if (Mod.PublicGameData.Advancement.Military.Progress.MinTerritoriesOwned <= players[playerID].TerritoriesOwned) then
+				miliPoints = miliPoints + 1
+			end
+			if (Mod.PublicGameData.Advancement.Military.Progress.ArmiesLost <= players[playerID].ArmiesLost) then
+				miliPoints = miliPoints + 1
+			end
+			if (Mod.PublicGameData.Advancement.Military.Progress.ArmiesDefeated <= players[playerID].ArmiesDefeated) then
+				miliPoints = miliPoints + 1
+			end
+			privateGameData[playerID].Advancement.Points.Military = miliPoints
 		end
-		if (Mod.PublicGameData.Advancement.Military.Progress.ArmiesLost <= players[playerID].ArmiesLost) then
-			miliPoints = miliPoints + 1
-		end
-		if (Mod.PublicGameData.Advancement.Military.Progress.ArmiesDefeated <= players[playerID].ArmiesDefeated) then
-			miliPoints = miliPoints + 1
-		end
-
-		--Store the points
-		privateGameData[playerID].Advancement.Points.Technology = techPoints
-		privateGameData[playerID].Advancement.Points.Culture = cultPoints
-		privateGameData[playerID].Advancement.Points.Military = miliPoints
 
 		if (not players[playerID].IsAI) then --Can't use playerGameData for AI's.
 			--For testing, give humans some extra points
-			privateGameData[playerID].Advancement.Points.Technology = techPoints + 100 -- TODO for testing, remove
-			privateGameData[playerID].Advancement.Points.Culture = cultPoints + 100
-			privateGameData[playerID].Advancement.Points.Military = miliPoints + 100
+			--privateGameData[playerID].Advancement.Points.Technology = techPoints + 100 -- TODO for testing, remove
+			--privateGameData[playerID].Advancement.Points.Culture = cultPoints + 100
+			--privateGameData[playerID].Advancement.Points.Military = miliPoints + 100
 			privateGameData[playerID].Advancement.Points.Diplomacy = 100
 			--TODO diplomacy
 			--TODO diplomacy targets a player, so we must check that the player is still in PlayingPlayers / a valid playerID
@@ -193,17 +197,23 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			if privateGameData[playerID].Bonus.Income == nil then
 				privateGameData[playerID].Bonus.Income = 0
 			end
-			if privateGameData[playerID].Advancement.Points.Technology >= 10 then
-				privateGameData[playerID].Advancement.Points.Technology = techPoints - 10
-				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
+			if (Mod.Settings.Advancement.Technology) then
+				if privateGameData[playerID].Advancement.Points.Technology >= 10 then
+					privateGameData[playerID].Advancement.Points.Technology = techPoints - 10
+					privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
+				end
 			end
-			if privateGameData[playerID].Advancement.Points.Culture >= 10 then
-				privateGameData[playerID].Advancement.Points.Culture = cultPoints - 10
-				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
+			if (Mod.Settings.Advancement.Culture) then
+				if privateGameData[playerID].Advancement.Points.Culture >= 10 then
+					privateGameData[playerID].Advancement.Points.Culture = cultPoints - 10
+					privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
+				end
 			end
-			if privateGameData[playerID].Advancement.Points.Military >= 10 then
-				privateGameData[playerID].Advancement.Points.Military = miliPoints - 10
-				privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
+			if (Mod.Settings.Advancement.Military) then
+				if privateGameData[playerID].Advancement.Points.Military >= 10 then
+					privateGameData[playerID].Advancement.Points.Military = miliPoints - 10
+					privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
+				end
 			end
 		end
 	end
