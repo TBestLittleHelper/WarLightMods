@@ -59,15 +59,13 @@ function UpdateDialogView()
 				if (type(value)) == "table" then
 					value = value.TargetPlayerID
 				end
-				print(bonus)
-				print(value)
 				msg = msg .. bonus .. " " .. value .. "\n"
 			end
 			if (msg == "") then
 				msg = "No Advancments"
 			end
 			UI.Alert(msg)
-		end --TODO add more info to it?
+		end
 	)
 	table.insert(TechTreeContainerArray, infoButton)
 
@@ -75,6 +73,7 @@ function UpdateDialogView()
 	local alertButton =
 		UI.CreateButton(horizontalLayout).SetText("Alerts on").SetFlexibleWidth(0.1).SetOnClick(
 		function()
+			alertButton.SetText("Alerts off")
 		end
 	)
 	table.insert(TechTreeContainerArray, alertButton)
@@ -135,7 +134,7 @@ function UpdateDialogView()
 			end
 		end
 	elseif (publicGameData.Advancement[TechTreeSelected].Menu == "Diplomacy") then
-		--The diplomacy advancement is unique
+		--The diplomacy advancements are unique
 
 		for key, unlockable in pairs(playerGameData.Advancement.Unlockables[TechTreeSelected]) do
 			local horzLayout = UI.CreateHorizontalLayoutGroup(horzMain)
@@ -234,8 +233,20 @@ function BuyWithPlayer()
 	for i, player in pairs(clientGame.Game.Players) do
 		players[i] = player
 	end
-	local options = map(players, SelectedBuyWithPlayer)
+	local options = map(filter(players, IsPotentialTarget), SelectedBuyWithPlayer)
 	UI.PromptFromList("Select a player ", options) --TODO unlockable text here?
+end
+--Determins if the player is one we can interact with.
+function IsPotentialTarget(player)
+	if (ClientGame.Us.ID == player.ID) then
+		return false
+	end -- we can never add ourselves.
+
+	if (player.State ~= WL.GamePlayerState.Playing) then
+		return false
+	end --skip players not alive anymore, or that declined the game.
+
+	return not player.IsAI --In multi-player, never allow adding an AI.
 end
 
 function SelectedBuyWithPlayer(player)
