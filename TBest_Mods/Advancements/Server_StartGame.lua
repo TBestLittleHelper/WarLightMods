@@ -249,7 +249,7 @@ function cultureUnlockables()
 			UnlockPoints = 30,
 			PreReq = 3,
 			Unlocked = false,
-			Text = "For every 10 deafeted armies, gain 2 income"
+			Text = "Tractor division : Recvoer 1 army, for every 2 killed while defending"
 		}
 	}
 
@@ -263,7 +263,7 @@ function diplomacyUnlokables()
 			UnlockPoints = 1,
 			PreReq = 0,
 			Unlocked = false,
-			Text = "Show your support for another player, give them 1 point"
+			Text = "Support a player, give them 1 diplomacy point"
 		},
 		{
 			Type = "Investment",
@@ -271,7 +271,7 @@ function diplomacyUnlokables()
 			UnlockPoints = 30 / GameSpeed,
 			PreReq = 1,
 			Unlocked = false,
-			Text = "Invest 10 income to help another gain 20"
+			Text = "Invest 10 income to help another player gain 20"
 		},
 		{
 			Type = "Sanctions",
