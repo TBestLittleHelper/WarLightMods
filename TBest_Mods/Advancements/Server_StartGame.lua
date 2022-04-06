@@ -55,7 +55,7 @@ function Server_StartGame(game, standing)
 		for advancement, _ in pairs(publicGameData.Advancement) do
 			privateGameData[player.ID].Advancement.Points[advancement] = GameSpeed --Allow players to start with some points
 			privateGameData[player.ID].Advancement.PreReq[advancement] = 0
-			privateGameData[player.ID].Advancement.Unlockables[advancement] = getUnlockables(advancement) --TODO This could be more efficient
+			privateGameData[player.ID].Advancement.Unlockables[advancement] = getUnlockables(advancement)
 		end
 		--We should assume all Bonus Effects can be nil. In case we add or change them in the future
 		privateGameData[player.ID].Bonus = {}
