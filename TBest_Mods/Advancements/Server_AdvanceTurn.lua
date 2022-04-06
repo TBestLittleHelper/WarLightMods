@@ -181,14 +181,52 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			privateGameData[playerID].Advancement.Points.Military = miliPoints
 		end
 
-		if (not players[playerID].IsAI) then --Can't use playerGameData for AI's.
+		if (not players[playerID].IsAI) then --For all non-AI players
+			if (Mod.Settings.Advancement.Diplomacy) and (privateGameData[playerID].Bonus ~= nil) then
+				--TODO diplomacy targets a player, so we must check that the player is still in PlayingPlayers / a valid playerID
+
+				if (privateGameData[playerID].Bonus.Support ~= nil) then
+					--Support gives the target 1 diplomacy point
+					local targetPlayerID = privateGameData[playerID].Bonus.Support.TargetPlayerID
+					privateGameData[targetPlayerID].Advancement.Points.Diplomacy =
+						1 + privateGameData[targetPlayerID].Advancement.Points.Diplomacy
+					local msg = playerID + " supported you! You earned 1 diplomacy point"
+					addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msg, {playerID}))
+				end
+				if (privateGameData[playerID].Bonus.Investment ~= nil) then
+					--Increase playerID income, and increase targetPlayerID income more
+					local targetPlayerID = privateGameData[playerID].Bonus.Investment.TargetPlayerID
+					local targetInvestment = 20
+					local playerInvestment = 10
+
+					local incomeModTarget = WL.IncomeMod.Create(targetPlayerID, targetInvestment, "Investment by " .. playerID)
+					local incomeModPlayer = WL.IncomeMod.Create(playerID, playerInvestment, "Investment in " .. targetPlayerID)
+					local msgTarget = "Investments from " .. playerID
+					local msgPlayer = "Investments in " .. targetPlayerID
+					addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msgTarget, {}, {}, nil, {incomeModTarget}))
+					addNewOrder(WL.GameOrderEvent.Create(playerID, msgPlayer, {}, {}, nil, {incomeModPlayer}))
+				end
+
+				if (privateGameData[playerID].Bonus.Sanctions ~= nil) then
+					--Reduce playerID income, and reduce targetPlayerID income more
+					local targetPlayerID = privateGameData[playerID].Bonus.Sanctions.TargetPlayerID
+					local targetSanction = 20
+					local playerSanctionCost = 10
+
+					local incomeModTarget = WL.IncomeMod.Create(targetPlayerID, targetSanction, "Sanctions by " .. playerID)
+					local incomeModPlayer = WL.IncomeMod.Create(playerID, playerSanctionCost, "Cost of sanctioning " .. targetPlayerID)
+					local msgTarget = "Sanctions from " .. playerID
+					local msgPlayer = "Cost of sanctioning " .. targetPlayerID
+					addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msgTarget, {}, {}, nil, {incomeModTarget}))
+					addNewOrder(WL.GameOrderEvent.Create(playerID, msgPlayer, {}, {}, nil, {incomeModPlayer}))
+				end
+			end
+
 			--For testing, give humans some extra points
 			--privateGameData[playerID].Advancement.Points.Technology = techPoints + 100 -- TODO for testing, remove
 			--privateGameData[playerID].Advancement.Points.Culture = cultPoints + 100
 			--privateGameData[playerID].Advancement.Points.Military = miliPoints + 100
 			privateGameData[playerID].Advancement.Points.Diplomacy = 100
-			--TODO diplomacy
-			--TODO diplomacy targets a player, so we must check that the player is still in PlayingPlayers / a valid playerID
 
 			playerGameData[playerID] = privateGameData[playerID]
 		else
