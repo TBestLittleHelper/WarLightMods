@@ -193,7 +193,6 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			playerGameData[playerID] = privateGameData[playerID]
 		else
 			--We need to "help" the AI to unlock uppgrades. For now, we will just give them Income/Attack/Defence boost
-			--TODO consider doing it more advanced
 			if privateGameData[playerID].Bonus.Income == nil then
 				privateGameData[playerID].Bonus.Income = 0
 			end
@@ -212,6 +211,13 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			if (Mod.Settings.Advancement.Military) then
 				if privateGameData[playerID].Advancement.Points.Military >= 10 then
 					privateGameData[playerID].Advancement.Points.Military = miliPoints - 10
+					privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
+				end
+			end
+			if (Mod.Settings.Advancement.Diplomacy) then
+				if privateGameData[playerID].Advancement.Points.Diplomacy >= 10 then
+					privateGameData[playerID].Advancement.Points.Diplomacy =
+						privateGameData[playerID].Advancement.Points.Diplomacy - 10
 					privateGameData[playerID].Bonus.Income = privateGameData[playerID].Bonus.Income + 2
 				end
 			end
