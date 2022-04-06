@@ -3,7 +3,7 @@ function Client_PresentConfigureUI(rootParent)
 	local initialGameSpeed = Mod.Settings.GameSpeed
 
 	if initialGameSpeed == nil then
-		initialGameSpeed = 2
+		initialGameSpeed = 3
 	end
 
 	if initialAdvancement == nil then
