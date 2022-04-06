@@ -4,6 +4,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	-- Global variables in AdvanceTurn are availible for all the hooks in this file
 	playerGameData = Mod.PlayerGameData
 	privateGameData = Mod.PrivateGameData
+	game = game
 
 	for _, order in pairs(privateGameData.StartOfTurnOrders) do
 		local terrModsOpt = nil
@@ -188,37 +189,50 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				if (privateGameData[playerID].Bonus.Support ~= nil) then
 					--Support gives the target 1 diplomacy point
 					local targetPlayerID = privateGameData[playerID].Bonus.Support.TargetPlayerID
-					privateGameData[targetPlayerID].Advancement.Points.Diplomacy =
-						1 + privateGameData[targetPlayerID].Advancement.Points.Diplomacy
-					local msg = playerID + " supported you! You earned 1 diplomacy point"
-					addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msg, {playerID}))
+					if isPlayingPlayer(targetPlayerID) then
+						privateGameData[targetPlayerID].Advancement.Points.Diplomacy =
+							1 + privateGameData[targetPlayerID].Advancement.Points.Diplomacy
+						local msg = playerName(playerID) + " supported you! You earned 1 diplomacy point"
+						addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msg, {playerID}))
+					else
+						privateGameData[playerID].Bonus.Support = nil
+					end
 				end
 				if (privateGameData[playerID].Bonus.Investment ~= nil) then
 					--Increase playerID income, and increase targetPlayerID income more
 					local targetPlayerID = privateGameData[playerID].Bonus.Investment.TargetPlayerID
-					local targetInvestment = 20
-					local playerInvestment = 10
+					if isPlayingPlayer(targetPlayerID) then
+						local targetInvestment = 20
+						local playerInvestment = 10
 
-					local incomeModTarget = WL.IncomeMod.Create(targetPlayerID, targetInvestment, "Investment by " .. playerID)
-					local incomeModPlayer = WL.IncomeMod.Create(playerID, playerInvestment, "Investment in " .. targetPlayerID)
-					local msgTarget = "Investments from " .. playerID
-					local msgPlayer = "Investments in " .. targetPlayerID
-					addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msgTarget, {}, {}, nil, {incomeModTarget}))
-					addNewOrder(WL.GameOrderEvent.Create(playerID, msgPlayer, {}, {}, nil, {incomeModPlayer}))
+						local incomeModTarget = WL.IncomeMod.Create(targetPlayerID, targetInvestment, "Investment by " .. playerID)
+						local incomeModPlayer = WL.IncomeMod.Create(playerID, playerInvestment, "Investment in " .. targetPlayerID)
+						local msgTarget = "Investments from " .. playerName(playerID)
+						local msgPlayer = "Investments in " .. playerName(targetPlayerID)
+						addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msgTarget, {}, {}, nil, {incomeModTarget}))
+						addNewOrder(WL.GameOrderEvent.Create(playerID, msgPlayer, {}, {}, nil, {incomeModPlayer}))
+					else
+						privateGameData[playerID].Bonus.Investment = nil
+					end
 				end
 
 				if (privateGameData[playerID].Bonus.Sanctions ~= nil) then
 					--Reduce playerID income, and reduce targetPlayerID income more
 					local targetPlayerID = privateGameData[playerID].Bonus.Sanctions.TargetPlayerID
-					local targetSanction = 20
-					local playerSanctionCost = 10
+					if isPlayingPlayer(targetPlayerID) then
+						local targetSanction = 20
+						local playerSanctionCost = 10
 
-					local incomeModTarget = WL.IncomeMod.Create(targetPlayerID, targetSanction, "Sanctions by " .. playerID)
-					local incomeModPlayer = WL.IncomeMod.Create(playerID, playerSanctionCost, "Cost of sanctioning " .. targetPlayerID)
-					local msgTarget = "Sanctions from " .. playerID
-					local msgPlayer = "Cost of sanctioning " .. targetPlayerID
-					addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msgTarget, {}, {}, nil, {incomeModTarget}))
-					addNewOrder(WL.GameOrderEvent.Create(playerID, msgPlayer, {}, {}, nil, {incomeModPlayer}))
+						local incomeModTarget = WL.IncomeMod.Create(targetPlayerID, targetSanction, "Sanctions by " .. playerID)
+						local incomeModPlayer =
+							WL.IncomeMod.Create(playerID, playerSanctionCost, "Cost of sanctioning " .. targetPlayerID)
+						local msgTarget = "Sanctions from " .. playerName(playerID)
+						local msgPlayer = "Cost of sanctioning " .. playerName(targetPlayerID)
+						addNewOrder(WL.GameOrderEvent.Create(targetPlayerID, msgTarget, {}, {}, nil, {incomeModTarget}))
+						addNewOrder(WL.GameOrderEvent.Create(playerID, msgPlayer, {}, {}, nil, {incomeModPlayer}))
+					else
+						privateGameData[playerID].Bonus.Sanctions = nil
+					end
 				end
 			end
 
@@ -287,4 +301,15 @@ function DefenceBoost(ArmiesDefeated, defenderPlayerID, attackerPlayerID)
 	end
 
 	return ArmiesDefeated
+end
+
+function isPlayingPlayer(playerID)
+	if (game.game.PlayingPlayers[playerID] ~= WL.GamePlayerState.Playing) then
+		return false
+	end
+	return true
+end
+
+function playerName(playerID)
+	return game.game.Players[playerID].DisplayName(nil, true)
 end
