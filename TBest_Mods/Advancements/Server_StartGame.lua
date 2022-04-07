@@ -263,7 +263,7 @@ function diplomacyUnlokables()
 			UnlockPoints = 1,
 			PreReq = 0,
 			Unlocked = false,
-			Text = "Support a player, give them 1 diplomacy point"
+			Text = "Select a player to support."
 		},
 		{
 			Type = "Investment",
