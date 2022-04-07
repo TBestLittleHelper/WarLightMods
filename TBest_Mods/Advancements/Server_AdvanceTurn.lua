@@ -36,6 +36,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 		players[playerID].StructuresOwned = 0
 		players[playerID].ArmiesOwned = 0
 		players[playerID].ArmiesDefeated = 0
+		players[playerID].ArmiesDefeatedDefending = 0
 		players[playerID].ArmiesLost = 0
 		players[playerID].AttacksMade = 0
 
@@ -52,22 +53,17 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 	if (order.proxyType == "GameOrderAttackTransfer") then
 		if (result.IsAttack) then
 			local AttackerPlayerID = game.ServerGame.LatestTurnStanding.Territories[order.From].OwnerPlayerID
+			local DefenderPlayerID = game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID
 
 			players[AttackerPlayerID].AttacksMade = players[AttackerPlayerID].AttacksMade + 1
 
-			local attackersKilled =
-				DefenceBoost(
-				result.AttackingArmiesKilled.NumArmies,
-				game.ServerGame.LatestTurnStanding.Territories[order.To].OwnerPlayerID,
-				AttackerPlayerID
-			)
+			local attackersKilled = DefenceBoost(result.AttackingArmiesKilled.NumArmies, DefenderPlayerID, AttackerPlayerID)
 			local defendersKilled = AttackBoost(result.DefendingArmiesKilled.NumArmies, AttackerPlayerID)
 
 			--Make sure we don't kill more then actualArmies
 			if (result.ActualArmies.NumArmies < attackersKilled) then
 				attackersKilled = result.ActualArmies.NumArmies
 			end
-			--TODO make sure we don't kill more then actual defending armies?
 
 			--Write to GameOrderResult	 (result)
 			local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled)
@@ -76,7 +72,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			result.DefendingArmiesKilled = NewDefendersArmiesKilled
 
 			--We are takeing extra care to make the mod more compatible with other mods. Therfore, using  addNewOrder's second argument will mean we won't count the attack if another mod skips this order. Thus all point progress will be counted from the new custom order
-			local payload = "Advancements_," .. attackersKilled .. "," .. defendersKilled
+			local payload = "Advancements_," .. attackersKilled .. "," .. defendersKilled .. "," .. defenderPlayerID
 			addNewOrder(WL.GameOrderCustom.Create(AttackerPlayerID, "", payload), true)
 		end
 	end
@@ -85,13 +81,17 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		local payloadSplit = split(order.Payload, ",")
 		local attackersKilled = payloadSplit[2]
 		local defendersKilled = payloadSplit[3]
+		local defenderPlayerID = payloadSplit[4]
+		--Attacker
 		players[order.PlayerID].ArmiesLost = players[order.PlayerID].ArmiesLost + attackersKilled
 		players[order.PlayerID].ArmiesDefeated = players[order.PlayerID].ArmiesDefeated + defendersKilled
-
 		players[order.PlayerID].AttacksMade = players[order.PlayerID].AttacksMade + 1
 
-		--We use GameOrderCustom to record the information of a non-skipped order. We don't need the order itself and can SkipAndSupressSkippedMessage
+		--Defender
+		players[defenderPlayerID].ArmiesDefeatedDefending =
+			players[defenderPlayerID].ArmiesDefeatedDefending + attackersKilled
 
+		--We use GameOrderCustom to record the information of a non-skipped order. We don't need the order itself and can SkipAndSupressSkippedMessage
 		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
 	end
 end
@@ -126,6 +126,16 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				"Income from Loot"
 			)
 			local msg = "Added Loot income"
+			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
+		end
+		if (privateGameData[playerID].Bonus.DefenceLoot ~= nil and players[playerID].ArmiesDefeatedDefending > 0) then
+			local incomeMod =
+				WL.IncomeMod.Create(
+				playerID,
+				privateGameData[playerID].Bonus.DefenceLoot * players[playerID].ArmiesDefeatedDefending,
+				"Income from Defencive Looting"
+			)
+			local msg = "Added Defencive Loot income"
 			addNewOrder(WL.GameOrderEvent.Create(playerID, msg, {}, {}, nil, {incomeMod}))
 		end
 
@@ -298,6 +308,9 @@ function DefenceBoost(ArmiesDefeated, defenderPlayerID, attackerPlayerID)
 end
 
 function isPlayingPlayer(playerID, game)
+	if (game.ServerGame.Game.Players[playerID].State ~= WL.GamePlayerState.Playing) then
+		return false
+	end
 	return true
 end
 
