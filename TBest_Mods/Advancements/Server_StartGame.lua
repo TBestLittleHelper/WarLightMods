@@ -19,7 +19,7 @@ function Server_StartGame(game, standing)
 	--Military
 	if (Mod.Settings.Advancement.Military) then
 		publicGameData.Advancement.Military = {
-			-- TODO seems too slow progress atm. Can we teak the numbers
+			-- TODO seems too slow progress atm. Can we tweak the numbers?
 			Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
 			Color = "#FF0000",
 			Menu = "Buttons",
@@ -135,9 +135,6 @@ function technologyUnlockables()
 	return unlockables
 end
 
---TODO lastManStanding (1 army defends for 5, 10 armies)
---TODO overwhelming attack. Attacks over 100 armies, gain 25 strength?
-
 function militaryUnlockables()
 	local unlockables = {
 		{
@@ -208,8 +205,6 @@ function militaryUnlockables()
 
 	return unlockables
 end
-
---TODO defeated attacking armies are converted to defenders, if the attack fails
 function cultureUnlockables()
 	local unlockables = {
 		{
@@ -249,7 +244,7 @@ function cultureUnlockables()
 			UnlockPoints = 30,
 			PreReq = 3,
 			Unlocked = false,
-			Text = "Tractor division : Recvoer 1 army, for every 2 killed while defending"
+			Text = "Recover 1 income, for every 2 army defeated while defending"
 		}
 	}
 
