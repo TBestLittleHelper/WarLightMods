@@ -10,7 +10,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	setMaxSize(550, 650)
 	setScrollable(false, true)
 
-	--Global variables TODO use Mod.PlayerGameData instead?
+	--Global variables
 	playerGameData = Mod.PlayerGameData
 	publicGameData = Mod.PublicGameData
 	closeMenu = close -- Should only ever be one menu open. So this should always point the open dialog
@@ -234,7 +234,7 @@ function BuyWithPlayer()
 		players[i] = player
 	end
 	local options = map(filter(players, IsPotentialTarget), SelectedBuyWithPlayer)
-	UI.PromptFromList("Select a player ", options) --TODO unlockable text here?
+	UI.PromptFromList("Select a player ", options)
 end
 --Determins if the player is one we can interact with.
 function IsPotentialTarget(player)
