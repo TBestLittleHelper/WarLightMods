@@ -69,15 +69,6 @@ function UpdateDialogView()
 	)
 	table.insert(TechTreeContainerArray, infoButton)
 
-	--TODO 		privateGameData[player.ID].AlertUnlockAvailible = true
-	local alertButton =
-		UI.CreateButton(horizontalLayout).SetText("Alerts on").SetFlexibleWidth(0.1).SetOnClick(
-		function()
-			alertButton.SetText("Alerts off")
-		end
-	)
-	table.insert(TechTreeContainerArray, alertButton)
-
 	local rowTech = UI.CreateVerticalLayoutGroup(TechTreeContainer)
 	local treeLayout = UI.CreateVerticalLayoutGroup(rowTech)
 
