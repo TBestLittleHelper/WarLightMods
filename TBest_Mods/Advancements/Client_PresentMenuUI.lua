@@ -152,10 +152,10 @@ function UpdateDialogView()
 					BuyWithPlayer()
 				end
 			)
-			local SelectedPlayerButton = UI.CreateButton(horzLayout).SetInteractable(false).SetText("No player selected")
-			Dump(unlockable)
-			if (unlockable.TargetPlayerID ~= nil) then --TODO display name, display color
-				SelectedPlayerButton.SetText("Current target : " .. unlockable.TargetPlayerID)
+			if (unlockable.TargetPlayerID ~= nil and unlockable.Type == "Support") then
+				--TODO display name, display color
+				local SelectedPlayerButton = UI.CreateButton(horzLayout).SetInteractable(false).SetText("No player selected")
+				SelectedPlayerButton.SetText("Selected player: " .. unlockable.TargetPlayerID)
 			end
 		end
 	end
@@ -238,7 +238,7 @@ function BuyWithPlayer()
 end
 --Determins if the player is one we can interact with.
 function IsPotentialTarget(player)
-	if (ClientGame.Us.ID == player.ID) then
+	if (clientGame.Us.ID == player.ID) then
 		return false
 	end -- we can never add ourselves.
 
@@ -246,7 +246,7 @@ function IsPotentialTarget(player)
 		return false
 	end --skip players not alive anymore, or that declined the game.
 
-	return not player.IsAI --In multi-player, never allow adding an AI.
+	return true
 end
 
 function SelectedBuyWithPlayer(player)
