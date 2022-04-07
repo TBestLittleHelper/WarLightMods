@@ -22,7 +22,8 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 
 			if
 				(unlockable.Type == "Income" or unlockable.Type == "Attack" or unlockable.Type == "Defence" or
-					unlockable.Type == "Loot")
+					unlockable.Type == "Loot" or
+					unlockable.Type == "DefenceLoot")
 			 then
 				if (privateGameData[playerID].Bonus[unlockable.Type] == nil) then
 					privateGameData[playerID].Bonus[unlockable.Type] = 0
@@ -50,7 +51,6 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 				}
 				table.insert(privateGameData.StartOfTurnOrders, order)
 			elseif (unlockable.Type == "Support" or unlockable.Type == "Sanctions" or unlockable.Type == "Investment") then
-				--TODO maybe it should be possible to cancel/select a nil player
 				targetPlayerID = payload.PlayerID
 				--Can't target this to yourself
 				if (targetPlayerID == playerID) then
