@@ -64,6 +64,9 @@ function UpdateDialogView()
 			if (msg == "") then
 				msg = "No Advancments"
 			end
+			for _, advancement in pairs(publicGameData.Advancement) do
+				msg = msg .. "\n" .. advancement.Helptext
+			end
 			UI.Alert(msg)
 		end
 	)
