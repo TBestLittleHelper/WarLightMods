@@ -72,7 +72,8 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			result.DefendingArmiesKilled = NewDefendersArmiesKilled
 
 			--We are takeing extra care to make the mod more compatible with other mods. Therfore, using  addNewOrder's second argument will mean we won't count the attack if another mod skips this order. Thus all point progress will be counted from the new custom order
-			local payload = "Advancements_," .. attackersKilled .. "," .. defendersKilled .. "," .. defenderPlayerID
+			local payload = "Advancements_," .. attackersKilled .. "," .. defendersKilled .. "," .. DefenderPlayerID
+
 			addNewOrder(WL.GameOrderCustom.Create(AttackerPlayerID, "", payload), true)
 		end
 	end
@@ -81,16 +82,18 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		local payloadSplit = split(order.Payload, ",")
 		local attackersKilled = payloadSplit[2]
 		local defendersKilled = payloadSplit[3]
-		local defenderPlayerID = payloadSplit[4]
+		local defenderPlayerID = tonumber(payloadSplit[4]) --We need toNumber here
+
 		--Attacker
 		players[order.PlayerID].ArmiesLost = players[order.PlayerID].ArmiesLost + attackersKilled
 		players[order.PlayerID].ArmiesDefeated = players[order.PlayerID].ArmiesDefeated + defendersKilled
 		players[order.PlayerID].AttacksMade = players[order.PlayerID].AttacksMade + 1
 
 		--Defender
-		players[defenderPlayerID].ArmiesDefeatedDefending =
-			players[defenderPlayerID].ArmiesDefeatedDefending + attackersKilled
-
+		if (defenderPlayerID ~= WL.PlayerID.Neutral) then
+			players[defenderPlayerID].ArmiesDefeatedDefending =
+				players[defenderPlayerID].ArmiesDefeatedDefending + attackersKilled
+		end
 		--We use GameOrderCustom to record the information of a non-skipped order. We don't need the order itself and can SkipAndSupressSkippedMessage
 		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
 	end
@@ -239,13 +242,6 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 					privateGameData[playerID].Bonus.Sanctions = nil
 				end
 			end
-
-			--For testing, give humans some extra points
-			--privateGameData[playerID].Advancement.Points.Technology = techPoints + 100 -- TODO for testing, remove
-			--privateGameData[playerID].Advancement.Points.Culture = cultPoints + 100
-			--privateGameData[playerID].Advancement.Points.Military = miliPoints + 100
-			privateGameData[playerID].Advancement.Points.Diplomacy = 100
-
 			playerGameData[playerID] = privateGameData[playerID]
 		else
 			--We need to "help" the AI to unlock uppgrades. For now, we will just give them Income/Attack/Defence boost
