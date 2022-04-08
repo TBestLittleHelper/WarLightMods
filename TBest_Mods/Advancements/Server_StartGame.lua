@@ -13,7 +13,7 @@ function Server_StartGame(game, standing)
 			Progress = {MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed},
 			Color = "#FFF700",
 			Menu = "Buttons",
-			Helptext = "Technology points are earned from having a high income, owning structure and the passage of time. The advancements will increase your income"
+			Helptext = "Technology points are earned from having a high income, owning structures and the passage of time. [MinIncome = 100 / GameSpeed, TurnsEnded = 1, StructuresOwned = 1 * GameSpeed] The advancements will increase your income"
 		}
 	end
 	--Military
@@ -23,7 +23,7 @@ function Server_StartGame(game, standing)
 			Progress = {MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed},
 			Color = "#FF0000",
 			Menu = "Buttons",
-			Helptext = "Military points are earned from owning many territories, deafeting enemy armies or loosing your own armies. The advancements effects the outcome when you are the attacking player"
+			Helptext = "Military points are earned from owning many territories, deafeting enemy armies or loosing your own armies.[MinTerritoriesOwned = 100 / GameSpeed, ArmiesLost = 100 / GameSpeed, ArmiesDefeated = 100 / GameSpeed] The advancements effects the outcome when you are the attacking player"
 		}
 	end
 	--Culture
@@ -32,7 +32,7 @@ function Server_StartGame(game, standing)
 			Progress = {AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed},
 			Color = "#880085",
 			Menu = "Buttons",
-			Helptext = "Culture points are earned from owning few territories, not making attacks and owning few armies. The advancements effects the outcome when you are the defending player"
+			Helptext = "Culture points are earned from owning few territories, not making attacks and owning few armies. [AttacksMade = 1 * GameSpeed, MaxTerritoriesOwned = 25 * GameSpeed, MaxArmiesOwned = 30 * GameSpeed] The advancements effects the outcome when you are the defending player"
 		}
 	end
 	--Diplomacy
@@ -41,7 +41,7 @@ function Server_StartGame(game, standing)
 			Progress = {},
 			Color = "#0021FF",
 			Menu = "Diplomacy",
-			Helptext = "Diplomacy points can only be earned by other players supporting you. They are a powerful way to assist your allies."
+			Helptext = "Diplomacy points can only be earned by other players supporting you. They can be a powerful way to assist your allies. Diplomacy actions happens at the end of a turn, against the latest selected player. Support will automaticaly renew, until a new player is selected"
 		}
 	end
 
@@ -266,7 +266,7 @@ function diplomacyUnlokables()
 			UnlockPoints = 30 / GameSpeed,
 			PreReq = 1,
 			Unlocked = false,
-			Text = "Invest 10 income to help another player gain 20"
+			Text = "Earn 10 income by helping another player earn 20"
 		},
 		{
 			Type = "Sanctions",
@@ -274,7 +274,7 @@ function diplomacyUnlokables()
 			UnlockPoints = 60 / GameSpeed,
 			PreReq = 2,
 			Unlocked = false,
-			Text = "Loose 10 income to cost another player 20 income"
+			Text = "Spend 10 income to cost another player 20 income"
 		}
 	}
 	return unlockables
