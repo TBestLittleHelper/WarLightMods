@@ -147,9 +147,8 @@ function UpdateDialogView()
 				end
 			)
 			if (unlockable.TargetPlayerID ~= nil and unlockable.Type == "Support") then
-				--TODO display name, display color
 				local SelectedPlayerButton = UI.CreateButton(horzLayout).SetInteractable(false).SetText("No player selected")
-				SelectedPlayerButton.SetText("Selected player: " .. unlockable.TargetPlayerID)
+				SelectedPlayerButton.SetText("Selected player: " .. playerName(unlockable.TargetPlayerID, clientGame))
 			end
 		end
 	end
@@ -165,7 +164,6 @@ function DestroyOldUIelements(Container)
 		end
 	end
 end
-
 function BuyOnTerritory(rootParent, setMaxSize, setScrollable, game, close)
 	if (unlockableSelected == nil) then
 		UI.Alert("No unlockable selected")
@@ -262,4 +260,7 @@ function SelectedBuyWithPlayer(player)
 		)
 	end
 	return ret
+end
+function playerName(playerID, game)
+	return game.ServerGame.Game.Players[playerID].DisplayName(nil, true)
 end
