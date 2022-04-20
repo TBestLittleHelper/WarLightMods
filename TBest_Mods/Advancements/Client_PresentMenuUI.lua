@@ -244,7 +244,7 @@ function IsPotentialTarget(player)
 end
 
 function SelectedBuyWithPlayer(player)
-	local name = player.ID
+	local name = player.DisplayName(nil, false)
 	local ret = {}
 	ret["text"] = name
 	ret["selected"] = function()
