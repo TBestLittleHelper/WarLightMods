@@ -59,9 +59,9 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 				--Store what player we are targeting, both in the unlockable and in the bonus
 				privateGameData[playerID].Advancement.Unlockables[payload.TechTreeSelected][payload.key].TargetPlayerID =
 					targetPlayerID
-				if (privateGameData[playerID].Bonus[unlockable.Type] == nil) then
-					privateGameData[playerID].Bonus[unlockable.Type] = {TargetPlayerID = targetPlayerID}
-				end
+
+				privateGameData[playerID].Bonus[unlockable.Type] = {TargetPlayerID = targetPlayerID}
+
 				--Set this back to false, since we can unlock/change the advancement multiple times
 				privateGameData[playerID].Advancement.Unlockables[payload.TechTreeSelected][payload.key].Unlocked = false
 			else

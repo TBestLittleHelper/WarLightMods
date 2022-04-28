@@ -262,5 +262,5 @@ function SelectedBuyWithPlayer(player)
 	return ret
 end
 function playerName(playerID, game)
-	return game.ServerGame.Game.Players[playerID].DisplayName(nil, true)
+	return game.Game.Players[playerID].DisplayName(nil, true)
 end
