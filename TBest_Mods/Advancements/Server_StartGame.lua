@@ -236,7 +236,7 @@ function cultureUnlockables()
 			UnlockPoints = 25,
 			PreReq = 2,
 			Unlocked = false,
-			Text = "Defending neutral armies will surrender"
+			Text = "Neutral armies will not damage you"
 		},
 		{
 			Type = "DefenceLoot",
