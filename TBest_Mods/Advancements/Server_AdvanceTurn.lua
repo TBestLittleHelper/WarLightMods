@@ -44,7 +44,8 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 		players[playerID].Points = {
 			Technology = privateGameData[playerID].Advancement.Points.Technology,
 			Military = privateGameData[playerID].Advancement.Points.Military,
-			Culture = privateGameData[playerID].Advancement.Points.Culture
+			Culture = privateGameData[playerID].Advancement.Points.Culture,
+			Diplomacy = privateGameData[playerID].Advancement.Points.Diplomacy
 		}
 	end
 end
@@ -145,6 +146,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		local techPoints = privateGameData[playerID].Advancement.Points.Technology
 		local cultPoints = privateGameData[playerID].Advancement.Points.Culture
 		local miliPoints = privateGameData[playerID].Advancement.Points.Military
+		local diploPoints = privateGameData[playerID].Advancement.Points.Diplomacy
 
 		--Technology points. A point per turn; if over min income; a point per structure owned
 		if (Mod.Settings.Advancement.Technology) then
@@ -186,6 +188,14 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				miliPoints = miliPoints + 1
 			end
 			privateGameData[playerID].Advancement.Points.Military = miliPoints
+		end
+
+		--Diplomacy points. A point every turn
+		if (Mod.Settings.Advancement.Diplomacy) then
+			--TODO FIXME after the test game, make this check the Progress.TurnsEnded field.
+
+			diploPoints = diploPoints + 1
+			privateGameData[playerID].Advancement.Points.Diplomacy = diploPoints
 		end
 
 		if (not players[playerID].IsAI) then --For all non-AI players
