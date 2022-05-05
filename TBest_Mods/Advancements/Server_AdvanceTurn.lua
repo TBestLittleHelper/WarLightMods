@@ -155,7 +155,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				techPoints = techPoints + 1
 			end
 			if (Mod.PublicGameData.Advancement.Technology.Progress.StructuresOwned <= players[playerID].StructuresOwned) then
-				techPoints = techPoints + players[playerID].StructuresOwned
+				techPoints = techPoints + (players[playerID].StructuresOwned * Mod.Settings.GameSpeed)
 			end
 			privateGameData[playerID].Advancement.Points.Technology = techPoints
 		end
