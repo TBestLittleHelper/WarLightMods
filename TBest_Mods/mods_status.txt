@@ -5,6 +5,8 @@ CityFeatures  : Deploylimit on a city equal to city size
 CityFeatures : Deploy near a city/bonus :  https://www.warzone.com/wiki/Mod_API_Reference:IncomeMod
 City_Features : Link territory in chat
 Mafia Mod : Play Mafia in WZ
+Best Pick Last Pick : First pick starts with 1 army, second pick with 2, etc.
+
 
 Use https://www.warzone.com/wiki/Mod_API_Reference:GameOrderStateTransition to remove player data when eliminated
 
