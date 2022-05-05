@@ -38,7 +38,7 @@ function Server_StartGame(game, standing)
 	--Diplomacy
 	if (Mod.Settings.Advancement.Diplomacy) then
 		publicGameData.Advancement.Diplomacy = {
-			Progress = {},
+			Progress = {TurnsEnded = 1},
 			Color = "#0021FF",
 			Menu = "Diplomacy",
 			Helptext = "Diplomacy points can only be earned by other players supporting you. They can be a powerful way to assist your allies. Diplomacy actions happens at the end of a turn, against the latest selected player. Support will automaticaly renew, until a new player is selected"
