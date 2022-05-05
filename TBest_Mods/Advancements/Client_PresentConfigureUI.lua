@@ -24,7 +24,7 @@ function Client_PresentConfigureUI(rootParent)
 
 	local mainContainer = UI.CreateVerticalLayoutGroup(rootParent)
 	UI.CreateLabel(mainContainer).SetText(
-		"Select the game speed. A higher value gives a faster game. Most games will work best on the normal (3) game speed. On a big map with 40 players, a game speed of 1 is advisable. "
+		"Select the game speed. A higher value gives a faster game. Most games will work best on the normal (3) game speed. On a big map with 40 players, you can try a game speed of 1."
 	)
 	GameSpeedInput =
 		UI.CreateNumberInputField(mainContainer).SetSliderMinValue(1).SetSliderMaxValue(6).SetValue(initialGameSpeed)
