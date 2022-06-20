@@ -214,7 +214,7 @@ function ConfirmBuyWithTerritory(close)
 		end
 	)
 	closeMenu()
-	clientGame.CreateDialog(Client_PresentMenuUI) --TODO test
+	clientGame.CreateDialog(Client_PresentMenuUI)
 end
 function BuyWithPlayer()
 	if (unlockableSelected == nil) then
