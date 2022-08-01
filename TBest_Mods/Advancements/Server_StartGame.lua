@@ -2,6 +2,9 @@ function Server_StartGame(game, standing)
 	playerGameData = Mod.PlayerGameData
 	privateGameData = Mod.PrivateGameData
 	publicGameData = Mod.PublicGameData
+	
+	--TODO exspansion limit unlockable
+	-- "Had an idea for that tech tree you were working on. Expansion limit: have to upgrade via spending coins or something to increase territory count"
 
 	GameSpeed = Mod.Settings.GameSpeed -- From 1 to 6. Where 6 is a faster progress
 
