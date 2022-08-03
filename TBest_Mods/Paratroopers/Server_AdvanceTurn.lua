@@ -41,8 +41,6 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 
 		--Remove armies from the target territory
 		local removeFromSource = WL.TerritoryModification.Create(targetTerritoryID)
-		local armiesRemovedFromSource = WL.Armies.Create(numArmies)
-
 		removeFromSource.AddArmies = -numArmies
 
 		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, order.Message, {}, {removeFromSource}, nil, {incomeMod}))
