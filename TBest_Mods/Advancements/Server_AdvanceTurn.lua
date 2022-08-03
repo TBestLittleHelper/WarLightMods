@@ -14,7 +14,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			--If setting structure
 			if (order.terrModsOpt.Structure ~= nil) then
 				local newStructure = {[order.terrModsOpt.Structure] = 1}
-				terrMod.SetStructuresOpt = newStructure
+				terrMod.AddStructuresOpt = newStructure -- TODO test AddStructuresOpt
 				terrModsOpt[1] = terrMod
 			elseif (order.terrModsOpt.Armies ~= nil) then
 				--If adding armies, add a deploy order
