@@ -7,9 +7,12 @@ function Server_StartDistribution(game, standing)
 			table.insert(allPickableTerr, terr)
 		end
 	end
-	local wantedPickable = math.floor(pickable / 2)
-	if (wantedPickable < #game.Game.Players) then
-		wantedPickable = #game.Game.Players
+	local wantedPickable = math.floor(pickable * (Mod.Settings.PickablePercent * 0.01))
+	local minTerritories = game.Settings.LimitDistributionTerritories * #game.Game.PlayingPlayers
+	print(Mod.Settings.PickablePercent * 0.01)
+	print(minTerritories)
+	if (wantedPickable < minTerritories) then
+		wantedPickable = minTerritories
 	end
 	print("Pickable ", pickable)
 	print("Wanted pickable ", wantedPickable)
