@@ -1,7 +1,7 @@
 function Client_SaveConfigureUI(alert)
 	Mod.Settings.PickablePercent = numberInputField.GetValue()
 	if (Mod.Settings.PickablePercent < 1) then
-		Mod.Settings.NumPortals = 1
+		Mod.Settings.PickablePercent = 1
 	end
 
 	if (Mod.Settings.PickablePercent > 99) then
