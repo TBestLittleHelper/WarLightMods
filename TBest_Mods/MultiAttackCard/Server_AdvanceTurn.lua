@@ -10,13 +10,16 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 
 		--Make sure the territories boarders each other
 		if (game.Map.Territories[fromTerritoryID].ConnectedTo[toTerritoryID] == nil) then
-			skipThisOrder(WL.ModOrderControl.Skip)
+			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Territories does not boarder each other."))
 			return
 		end
 		--Make sure that the player has enough charges
 		local playerGameData = Mod.PlayerGameData
 		if (playerGameData[order.PlayerID].charges < 1) then
-			skipThisOrder(WL.ModOrderControl.Skip)
+			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Out of charges for MultiAttackCard"))
+
 			return
 		end
 		--Remove one charge
@@ -34,7 +37,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		removeFromSource.AddArmies = -armies.NumArmies
 		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Remove armies for multiattack", {}, {removeFromSource}, nil))
 
-	--	skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
+		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
 	end
 end
 
