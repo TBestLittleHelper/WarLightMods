@@ -1,7 +1,13 @@
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	--If a spectator, just alert then return
-	if (game.Us == nil and Mod.PublicGameData.GameFinalized == false) then
+	if (game.Us == nil) then
 		UI.Alert("You can't do anything as a spectator.")
+		return
+	end
+	--Prevent mod menu from opening during distribution
+	if (game.Game.NumberOfTurns == -1) then
+		UI.Alert("You can't do anything during distribution")
+		close()
 		return
 	end
 
@@ -36,6 +42,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Submit attack
 	local rowAttack = UI.CreateHorizontalLayoutGroup(vert)
 	UI.CreateButton(rowAttack).SetText("Confirm").SetColor("#00FF05").SetOnClick(ConfirmButtonClicked)
+	AutoConfrimToggle = UI.CreateCheckBox(rowAttack).SetIsChecked(false).SetText("Auto")
 end
 
 --Select from territory
@@ -69,6 +76,10 @@ function ToTerritoryClicked(terrDetails)
 		--Territory was clicked
 		ToTerritoryButton.SetText("To Territory: " .. terrDetails.Name)
 		toTerritory = terrDetails
+		--If auto confirm, clic the confirm button
+		if AutoConfrimToggle.GetIsChecked() then
+			ConfirmButtonClicked()
+		end
 	end
 end
 
