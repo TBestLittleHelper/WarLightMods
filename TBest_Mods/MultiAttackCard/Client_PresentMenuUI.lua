@@ -27,7 +27,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Info
 	local rowInfo = UI.CreateHorizontalLayoutGroup(vert)
 	PlayCardInfo =
-		UI.CreateButton(rowInfo).SetText("Saved multiattack charges : " .. Mod.PlayerGameData.charges).SetColor("#880085").SetPreferredHeight(
+		UI.CreateButton(rowInfo).SetText("Saved Multi-Attack Charges : " .. Mod.PlayerGameData.charges).SetColor("#880085").SetPreferredHeight(
 		400
 	).SetInteractable(false)
 
@@ -42,7 +42,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	--Submit attack
 	local rowAttack = UI.CreateHorizontalLayoutGroup(vert)
 	UI.CreateButton(rowAttack).SetText("Confirm").SetColor("#00FF05").SetOnClick(ConfirmButtonClicked)
-	AutoConfrimToggle = UI.CreateCheckBox(rowAttack).SetIsChecked(false).SetText("Auto")
+	AutoConfrimToggle = UI.CreateCheckBox(rowAttack).SetIsChecked(false).SetText("Auto Confirm")
 end
 
 --Select from territory

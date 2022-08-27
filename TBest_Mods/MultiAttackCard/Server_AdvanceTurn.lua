@@ -18,7 +18,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		local playerGameData = Mod.PlayerGameData
 		if (playerGameData[order.PlayerID].charges < 1) then
 			skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
-			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Out of charges for MultiAttackCard"))
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Out of charges for Multi-Attack Card"))
 
 			return
 		end
@@ -35,7 +35,7 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 			WL.GameOrderAttackTransfer.Create(order.PlayerID, fromTerritoryID, toTerritoryID, 3, false, armies, false)
 		)
 		removeFromSource.AddArmies = -armies.NumArmies
-		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Remove armies for multiattack", {}, {removeFromSource}, nil))
+		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Remove armies for Multi-Attack Card", {}, {removeFromSource}, nil))
 
 		skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
 	end
