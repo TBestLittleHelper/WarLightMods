@@ -26,9 +26,10 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		playerGameData[order.PlayerID].charges = playerGameData[order.PlayerID].charges - 1
 		Mod.PlayerGameData = playerGameData
 
+
 		local armies = WL.Armies.Create(game.ServerGame.LatestTurnStanding.Territories[fromTerritoryID].NumArmies.NumArmies)
 		if (game.Settings.OneArmyStandsGuard)then
-			armies = armies -1
+			armies = WL.Armies.Create(game.ServerGame.LatestTurnStanding.Territories[fromTerritoryID].NumArmies.NumArmies -1)
 		end
 
 		local removeFromSource = WL.TerritoryModification.Create(fromTerritoryID)
