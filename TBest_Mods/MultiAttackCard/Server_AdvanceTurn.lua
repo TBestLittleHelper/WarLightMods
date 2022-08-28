@@ -27,10 +27,14 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 		Mod.PlayerGameData = playerGameData
 
 		local armies = WL.Armies.Create(game.ServerGame.LatestTurnStanding.Territories[fromTerritoryID].NumArmies.NumArmies)
+		if (game.Settings.OneArmyStandsGuard)then
+			armies = armies -1
+		end
+
 		local removeFromSource = WL.TerritoryModification.Create(fromTerritoryID)
 
 		removeFromSource.AddArmies = armies.NumArmies
-		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Add armies for multiattack", {}, {removeFromSource}, nil))
+		addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, "Add armies for Multi-Attack Card", {}, {removeFromSource}, nil))
 		addNewOrder(
 			WL.GameOrderAttackTransfer.Create(order.PlayerID, fromTerritoryID, toTerritoryID, 3, false, armies, false)
 		)
