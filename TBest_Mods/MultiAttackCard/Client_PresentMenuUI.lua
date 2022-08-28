@@ -58,7 +58,8 @@ function FromTerritoryClicked(terrDetails)
 	else
 		--Territory was clicked
 		FromTerritoryButton.SetText("From Territory: " .. terrDetails.Name)
-		fromTerritory = terrDetails
+		fromTerritory =
+		print(toTerritory == nil)
 		if (toTerritory == nil)then
 			ToTerritoryButtonClicked()
 		end
