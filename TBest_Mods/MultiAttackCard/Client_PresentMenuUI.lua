@@ -59,10 +59,8 @@ function FromTerritoryClicked(terrDetails)
 		--Territory was clicked
 		FromTerritoryButton.SetText("From Territory: " .. terrDetails.Name)
 		fromTerritory = terrDetails
-		print(toTerritory == nil)
-		if (toTerritory == nil)then
-			ToTerritoryButtonClicked()
-		end
+		ToTerritoryClicked(nil)
+		ToTerritoryButtonClicked()
 	end
 end
 
@@ -90,11 +88,11 @@ end
 --Confirm attack
 function ConfirmButtonClicked()
 	if (fromTerritory == nil) then
-		UI.Alert("Error: No from territory selected")
+		UI.Alert("Error: No [From Territory] selected")
 		return
 	end
 	if (toTerritory == nil) then
-		UI.Alert("Error: No to territory selected")
+		UI.Alert("Error: No [To Territory] selected")
 		return
 	end
 	--Make sure fromTerritory boarders toTerritory
@@ -109,7 +107,7 @@ function ConfirmButtonClicked()
 	table.insert(orders, WL.GameOrderCustom.Create(Game.Us.ID, msg, payload))
 	Game.Orders = orders
 
-	--For convinience, set update 'from' and clear 'to territory'. Also start ToTerritoryButtonClicked
+	--For convinience, update 'from' and clear 'to territory'. Also start ToTerritoryButtonClicked
 	FromTerritoryClicked(toTerritory)
 	ToTerritoryClicked(nil)
 	ToTerritoryButtonClicked()
