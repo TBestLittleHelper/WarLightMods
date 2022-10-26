@@ -51,11 +51,8 @@ function FromTerritoryButtonClicked()
 	FromTerritoryButton.SetText("Please click on From territory.")
 end
 function FromTerritoryClicked(terrDetails)
-	print("here")
 	if (UI.IsDestroyed(FromTerritoryButton))then
-		print("2")
-
-		return end;
+		return WL.CancelClickIntercept end;
 
 	if (terrDetails == nil) then
 		--The click request was cancelled.   Return to our default state.
@@ -76,6 +73,9 @@ function ToTerritoryButtonClicked()
 	ToTerritoryButton.SetText("Please click on To territory.")
 end
 function ToTerritoryClicked(terrDetails)
+	if (UI.IsDestroyed(ToTerritoryButton))then
+		return WL.CancelClickIntercept end;
+
 
 	if (terrDetails == nil ) then
 		--The click request was cancelled.   Return to our default state.
