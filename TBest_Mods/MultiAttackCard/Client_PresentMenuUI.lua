@@ -22,7 +22,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	toTerritory = nil
 	Game = game
 
-	vert = UI.CreateVerticalLayoutGroup(rootParent)
+	local vert = UI.CreateVerticalLayoutGroup(rootParent)
 
 	--Info
 	local rowInfo = UI.CreateHorizontalLayoutGroup(vert)
@@ -52,7 +52,7 @@ function FromTerritoryButtonClicked()
 end
 function FromTerritoryClicked(terrDetails)
 	print("here")
-	if (UI.IsDestroyed(vert))then
+	if (UI.IsDestroyed(FromTerritoryButton))then
 		print("2")
 
 		return end;
