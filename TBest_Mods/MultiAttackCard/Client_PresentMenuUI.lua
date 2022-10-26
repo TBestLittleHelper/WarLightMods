@@ -52,7 +52,7 @@ function FromTerritoryButtonClicked()
 end
 function FromTerritoryClicked(terrDetails)
 	print("here")
-	if (UI.IsDestroyed)then
+	if (UI.IsDestroyed(vert))then
 		print("2")
 
 		return end;
