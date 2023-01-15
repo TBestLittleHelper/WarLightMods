@@ -162,7 +162,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 	--Give a X% def. bonus per city on defending territory
 	if (order.proxyType == "GameOrderAttackTransfer" and Mod.Settings.CityWallsActive == true) then
 		if (result.IsAttack) then
-			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil) then
+			if not (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures == nil or game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] == nil) then
 				if (game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] > 0) then
 					local DefBonus =
 						game.ServerGame.LatestTurnStanding.Territories[order.To].Structures[WL.StructureType.City] * Mod.Settings.DefPower
