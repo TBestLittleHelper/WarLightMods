@@ -1,3 +1,3 @@
-A player's income for the next turn, is reduced by 1 for each order they make this turn. The game creator can adjust a " free orders" parameter. For example, if you have 3 free order you want to make 1 deploy order and 2 attack orders, in order to have max income next turn.
+A player's income for the next turn, is reduced by 1 for each order they make on their current turn. The game creator can adjust a " free orders" parameter. For example, if you have 3 free order you want to make 1 deploy order and 2 attack orders, in order to have max income next turn.
 
 The design goal of this mod, was to make excessive and tedious delay orders (moving 1 army around) a thing of the past. Now, you want to try to achieve all your goals in the free order budget.
