@@ -83,7 +83,7 @@ function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 		local Cities = WL.StructureType.City
 		for _, territory in pairs(standing.Territories) do
 			--Can be 0, if a territory has been bombed. We don't want that city to grow.
-			if not (territory.Structures == nil or territory.Structures[WL.StructureType.City] == 0) then
+			if not (territory.Structures == nil or territory.Structures[WL.StructureType.City] == 0 or territory.Structures[WL.StructureType.City] == nil) then
 				local terrMod = WL.TerritoryModification.Create(territory.ID)
 				structure[Cities] = territory.Structures[WL.StructureType.City] + cityGrowth
 				if (structure[Cities] <= cityCap) then
