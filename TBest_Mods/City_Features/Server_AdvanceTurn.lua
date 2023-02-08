@@ -98,8 +98,9 @@ function BetterCities_Server_AdvanceTurn_Start(game, addNewOrder)
 end
 function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrder)
 	if (order.proxyType == "GameOrderDeploy") then
+		local terrStructures = game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures;
 		--if city is already destroyed (0) or is not present (nil), return or skip according to Mod.Settings
-		if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures == nil) then
+		if (terrStructures == nil) then
 			--If mod settings say city deploy only, skip. Else return
 			if (Mod.Settings.CityDeployOnly) then
 				skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
@@ -107,7 +108,8 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			end
 			return
 		else
-			if (game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] == 0) then
+
+			if (terrStructures[WL.StructureType.City] == 0 or terrStructures[WL.StructureType.City] == nil) then
 				if (Mod.Settings.CityDeployOnly) then
 					skipThisOrder(WL.ModOrderControl.SkipAndSupressSkippedMessage)
 					orderSkiped = true
@@ -124,7 +126,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			local structure = {}
 			local Cities = WL.StructureType.City
 			structure[Cities] =
-				game.ServerGame.LatestTurnStanding.Territories[order.DeployOn].Structures[WL.StructureType.City] - 1
+				terrStructures[WL.StructureType.City] - 1
 			terrMod.SetStructuresOpt = structure
 			--Add the deploy
 			terrMod.SetArmiesTo =
