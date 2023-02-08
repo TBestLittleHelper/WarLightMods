@@ -203,9 +203,10 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 
 	--Bomb cards reduces cities by the given X strength.
 	if (order.proxyType == "GameOrderPlayCardBomb" and Mod.Settings.BombcardActive == true) then
-		if not (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
-			--if city is already destroyed, return
-			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
+		local terrStructures = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures;
+		if not (terrStructures == nil) then
+			--if city is already destroyed, or there are no city structures: return
+			if (terrStructures[WL.StructureType.City] == 0 or terrStructures[WL.Structures.City] == nil) then
 				return
 			end
 
@@ -240,13 +241,14 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 			return
 		end
 		--If there is a structure present
-		if not (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures == nil) then
+		local terrStructures = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures;
+		if not (terrStructures == nil) then
 			--Check that the player controls the territory
 			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].OwnerPlayerID ~= order.PlayerID) then
 				return
 			end
-			--A city at size zero won't grow by itself.
-			if (game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures[WL.StructureType.City] == 0) then
+			--A city at size zero won't grow by itself. Or a city that does not exsist, since it's a diffrent structure here
+			if (terrStructures[WL.StructureType.City] == 0 or terrStructures[WL.Structures.City] == nil) then
 				return
 			end
 
