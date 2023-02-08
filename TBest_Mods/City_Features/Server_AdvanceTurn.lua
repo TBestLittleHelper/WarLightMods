@@ -206,7 +206,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 		local terrStructures = game.ServerGame.LatestTurnStanding.Territories[order.TargetTerritoryID].Structures;
 		if not (terrStructures == nil) then
 			--if city is already destroyed, or there are no city structures: return
-			if (terrStructures[WL.StructureType.City] == 0 or terrStructures[WL.Structures.City] == nil) then
+			if (terrStructures[WL.StructureType.City] == 0 or terrStructures[WL.StructureType.City] == nil) then
 				return
 			end
 
@@ -248,7 +248,7 @@ function BetterCities_Server_AdvanceTurn_Order(game, order, result, skipThisOrde
 				return
 			end
 			--A city at size zero won't grow by itself. Or a city that does not exsist, since it's a diffrent structure here
-			if (terrStructures[WL.StructureType.City] == 0 or terrStructures[WL.Structures.City] == nil) then
+			if (terrStructures[WL.StructureType.City] == 0 or terrStructures[WL.StructureType.City] == nil) then
 				return
 			end
 
