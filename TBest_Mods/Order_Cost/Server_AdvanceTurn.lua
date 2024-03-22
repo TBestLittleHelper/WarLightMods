@@ -1,5 +1,7 @@
 -- Count the number of orders, then subtract the non free amount from a player's income
 
+local playersTable = {}
+
 function Server_AdvanceTurn_Start(game, addNewOrder)
 	playersTable = {}
 	print("Start of Server_AdvanceTurn_Start: " .. tostring(playersTable));
