@@ -358,13 +358,7 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game, clos
 			end
 
 			if (TargetGroupID == nil) then
-				local temp = 0
-				for groupID, v in pairs(PlayerGameData.Chat) do
-					temp = temp + 1
-				end
-				temp = ClientGame.Us.ID .. "00" .. temp
-				TargetGroupID = toint(temp)
-
+				TargetGroupID = WL.TickCount()
 				print("made new groupID: " .. TargetGroupID)
 			else
 				print("found old group ID " .. TargetPlayerID)
