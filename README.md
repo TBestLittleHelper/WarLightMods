@@ -1,3 +1,10 @@
+--------------
+Before archving the repository, in favor of https://github.com/TBestLittleHelper/WarzoneMods , here is the status of the mods here 
+
+https://github.com/TBestLittleHelper/WarLightMods/tree/master/TBest_Mods/LocalDeploymentFixer inspired https://github.com/JustMe003/WarzoneMods/tree/main/Local_Deployment_Helper
+
+
+--------------
 #WarzoneMods
 https://www.warzone.com
 
