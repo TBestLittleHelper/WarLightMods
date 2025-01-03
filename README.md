@@ -6,6 +6,7 @@ Portals - Simple gimmick and no plans to add more features
 LottoMod - An example mod, really
 Bonus Overrider - It's a utility tool
 Paratroopers
+Group Chat - Is now a part of the base game. ( See below for city features ) 
 
 [LocalDeployment](https://github.com/TBestLittleHelper/WarLightMods/tree/master/TBest_Mods/LocalDeploymentFixer) inspired a [version 2.](https://github.com/JustMe003/WarzoneMods/tree/main/Local_Deployment_Helper)
 
